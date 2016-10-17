@@ -1,0 +1,16 @@
+{
+    "builders": [{
+        "type": "sakuracloud",
+        "zone": "is1b",
+        "disk_size": 100,
+        "os_type": "windows",
+        "source_archive" : 123456789012,
+        "user_name" : "Administrator",
+        "password": "TestUserPassword01"
+    }],
+    "provisioners":[
+        {
+            "type": "powershell",
+            "inline": ["dir c:\\"]
+        }]
+}

@@ -1,0 +1,10 @@
+FROM golang:1.7.1-alpine
+MAINTAINER Kazumichi Yamamoto <yamamoto.febc@gmail.com>
+
+RUN set -x && apk add --no-cache --virtual .build_deps bash git make zip 
+RUN go get -u github.com/kardianos/govendor
+
+ADD . /go/src/github.com/sacloud/packer-builder-sakuracloud
+
+WORKDIR /go/src/github.com/sacloud/packer-builder-sakuracloud
+CMD ["make"]
