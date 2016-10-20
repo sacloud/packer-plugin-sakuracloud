@@ -1,0 +1,19 @@
+{
+    "builders": [{
+        "type": "sakuracloud",
+        "zone": "is1b",
+        "os_type": "coreos",
+        "user_name": "core",
+        "password": "TestUserPassword01",
+        "disk_size": 20,
+        "core" : 2,
+        "memory_size": 4
+    }],
+    "provisioners":[
+    {
+        "type": "shell",
+        "inline": [
+            "docker info"
+        ]
+    }]
+}
