@@ -38,11 +38,12 @@ DockerHubでイメージを公開していますので、以下のように実�
 
 APIキーを環境変数で指定する場合、`-e`オプションなどを適切に指定して実行してください。
 
-    # APIキーを環境変数で指定して実行する例
+    # APIキーを環境変数で指定、カレントディレクトリのexample.jsonをテンプレートとして指定してビルドする例
     $ docker run -it --rm \
              -e SAKURACLOUD_ACCESS_TOKEN \
              -e SAKURACLOUD_ACCESS_TOKEN_SECRET \
-             sacloud/packer:latest [packerサブコマンド] [packerオプション]
+             -v $PWD:/work \
+             sacloud/packer:latest build example.json
 
 ## 使い方(アーカイブ作成)
 
