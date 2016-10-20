@@ -145,6 +145,13 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 - `archive_description`(string): 作成されるアーカイブに付与する説明
 
+## Windowsについて
+
+Windowsの場合、あらかじめWinRMを有効にしたアーカイブを作成しておく必要があります。
+`os_type`に`windows`を指定し、`source_archive`にWinRMを有効にしたアーカイブのIDを指定します。
+
+TODO : 詳細を追記
+
 ## License
 
   `packer-builder-sakuracloud` Copyright (C) 2016 Kazumichi Yamamoto.
