@@ -140,7 +140,11 @@ func setDefaultConfig(c *Config) {
 		c.Comm.WinRMPassword = c.Password
 		c.Comm.WinRMTimeout = 10 * time.Minute
 		if c.Comm.WinRMPort == 0 {
-			c.Comm.WinRMPort = 5985
+			if c.Comm.WinRMUseSSL {
+				c.Comm.WinRMPort = 5986
+			} else {
+				c.Comm.WinRMPort = 5985
+			}
 		}
 	}
 

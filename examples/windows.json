@@ -1,12 +1,14 @@
 {
     "builders": [{
         "type": "sakuracloud",
-        "zone": "is1b",
+        "zone": "is1a",
         "disk_size": 100,
         "os_type": "windows",
         "source_archive" : 123456789012,
         "user_name" : "Administrator",
-        "password": "TestUserPassword01"
+        "password": "TestUserPassword01",
+        "winrm_use_ssl": true,
+        "winrm_insecure" : true
     }],
     "provisioners":[
         {

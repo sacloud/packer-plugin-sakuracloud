@@ -115,9 +115,13 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 ### オプション項目
 
-- `user_name`(string): SSH/WinRM接続時のユーザー名、デフォルト値:`root`
+- `user_name`(string): SSH/WinRM接続時のユーザー名
 
-- `password`(string): SSH/WinRM接続時のユーザー名
+`os_type`が`windows`の場合のデフォルト値:`Administrator`
+
+`os_type`が`windows`以外の場合のデフォルト値:`root`
+
+- `password`(string): SSH/WinRM接続時のパスワード
 
 - `disk_size`(int): 作成するディスクのサイズ(GB単位)、デフォルト値:`20`
 
