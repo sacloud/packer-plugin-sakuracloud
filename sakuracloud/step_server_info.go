@@ -20,7 +20,7 @@ func (s *stepServerInfo) Run(state multistep.StateBag) multistep.StepAction {
 
 	ui.Say("Waiting for server to become active...")
 
-	// Set the IP on the state for later
+	// Set the Network informations on the state for later
 	server, err := client.Server.Read(serverID)
 	if err != nil {
 		err := fmt.Errorf("Error retrieving server: %s", err)
@@ -29,11 +29,38 @@ func (s *stepServerInfo) Run(state multistep.StateBag) multistep.StepAction {
 		return multistep.ActionHalt
 	}
 
-	ip := server.Interfaces[0].IPAddress
-	if server.Interfaces[0].Switch.Scope != sacloud.ESCopeShared {
-		ip = server.Interfaces[0].UserIPAddress
+	state.Put("server_ip", "")
+	state.Put("default_route", "")
+	state.Put("network_mask_len", "")
+	state.Put("dns1", "")
+	state.Put("dns2", "")
+
+	if len(server.Interfaces) > 0 && server.Interfaces[0].Switch != nil {
+		ip := server.Interfaces[0].IPAddress
+		if server.Interfaces[0].Switch.Scope != sacloud.ESCopeShared {
+			ip = server.Interfaces[0].UserIPAddress
+		}
+		state.Put("server_ip", ip)
+
+		state.Put("default_route", server.Interfaces[0].Switch.UserSubnet.DefaultRoute)
+		state.Put("network_mask_len", server.Interfaces[0].Switch.UserSubnet.NetworkMaskLen)
 	}
-	state.Put("server_ip", ip)
+	if len(server.Zone.Region.NameServers) > 0 {
+		state.Put("dns1", server.Zone.Region.NameServers[0])
+	}
+	if len(server.Zone.Region.NameServers) > 1 {
+		state.Put("dns2", server.Zone.Region.NameServers[1])
+	}
+
+	// Set the VNC proxy on the state for later
+	vnc, err := client.Server.GetVNCProxy(serverID)
+	if err != nil {
+		err := fmt.Errorf("Error vnc proxy info: %s", err)
+		state.Put("error", err)
+		ui.Error(err.Error())
+		return multistep.ActionHalt
+	}
+	state.Put("vnc", vnc)
 
 	return multistep.ActionContinue
 }

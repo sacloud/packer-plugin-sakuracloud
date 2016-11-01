@@ -114,6 +114,12 @@
 			"revisionTime": "2016-09-29T19:58:49Z"
 		},
 		{
+			"checksumSHA1": "SJOpcDnBxxKHq146atZmumzST3A=",
+			"path": "github.com/mitchellh/go-vnc",
+			"revision": "723ed9867aed0f3209a81151e52ddc61681f0b01",
+			"revisionTime": "2015-06-29T16:25:42Z"
+		},
+		{
 			"checksumSHA1": "v9y1OJ6NpBUhK4U8V4mmYUFBU4Q=",
 			"origin": "github.com/mitchellh/packer/vendor/github.com/mitchellh/iochan",
 			"path": "github.com/mitchellh/iochan",
@@ -248,32 +254,32 @@
 		{
 			"checksumSHA1": "AIhWqbjvTTFHGnV/k4mQID2HsOo=",
 			"path": "github.com/sacloud/libsacloud",
-			"revision": "3c730e12dd3b0f0bc9bd5462136c8388f7e2d930",
-			"revisionTime": "2016-10-18T07:10:39Z"
+			"revision": "1170387f69bb3a020aabe91c330f9ae740f35f8b",
+			"revisionTime": "2016-10-31T09:26:37Z"
 		},
 		{
 			"checksumSHA1": "1Pl38Wc1XeSecTK5UmTIQwT2v/k=",
 			"path": "github.com/sacloud/libsacloud/api",
-			"revision": "3c730e12dd3b0f0bc9bd5462136c8388f7e2d930",
-			"revisionTime": "2016-10-18T07:10:39Z"
+			"revision": "1170387f69bb3a020aabe91c330f9ae740f35f8b",
+			"revisionTime": "2016-10-31T09:26:37Z"
 		},
 		{
-			"checksumSHA1": "1vOJ1W2NODMsyP4ygBJ9BkPy4mM=",
+			"checksumSHA1": "uYnM4RO8m1t04U2AKnwCJfOBGA4=",
 			"path": "github.com/sacloud/libsacloud/builder",
-			"revision": "3c730e12dd3b0f0bc9bd5462136c8388f7e2d930",
-			"revisionTime": "2016-10-18T07:10:39Z"
+			"revision": "1170387f69bb3a020aabe91c330f9ae740f35f8b",
+			"revisionTime": "2016-10-31T09:26:37Z"
 		},
 		{
 			"checksumSHA1": "sdGyvM7C3HJ50Ba9tiUI1QMQFyY=",
 			"path": "github.com/sacloud/libsacloud/sacloud",
-			"revision": "3c730e12dd3b0f0bc9bd5462136c8388f7e2d930",
-			"revisionTime": "2016-10-18T07:10:39Z"
+			"revision": "1170387f69bb3a020aabe91c330f9ae740f35f8b",
+			"revisionTime": "2016-10-31T09:26:37Z"
 		},
 		{
 			"checksumSHA1": "qTiesxgZ+Fm5yiof2bGEepcWMcc=",
 			"path": "github.com/sacloud/libsacloud/sacloud/ostype",
-			"revision": "3c730e12dd3b0f0bc9bd5462136c8388f7e2d930",
-			"revisionTime": "2016-10-18T07:10:39Z"
+			"revision": "1170387f69bb3a020aabe91c330f9ae740f35f8b",
+			"revisionTime": "2016-10-31T09:26:37Z"
 		},
 		{
 			"checksumSHA1": "zmC8/3V4ls53DJlNTKDZwPSC/dA=",
@@ -292,6 +298,12 @@
 			"path": "github.com/ugorji/go/codec",
 			"revision": "faddd6128c66c4708f45fdc007f575f75e592a3c",
 			"revisionTime": "2016-09-28T01:52:44Z"
+		},
+		{
+			"checksumSHA1": "UHGJnJ4wrdMqimTN1U1DiEesi74=",
+			"path": "github.com/webguerilla/ftps",
+			"revision": "166035d4757922d70bb9747556298c802b410f35",
+			"revisionTime": "2014-08-12T21:16:33Z"
 		},
 		{
 			"checksumSHA1": "AMBhAXNq0e9HUcBFbcnSDEU5w5k=",

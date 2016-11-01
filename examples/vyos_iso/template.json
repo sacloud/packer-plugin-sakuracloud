@@ -1,0 +1,81 @@
+{
+    "builders": [{
+        "type": "sakuracloud",
+        "zone": "is1b",
+        "os_type": "iso",
+        "user_name": "vyos",
+        "password": "TestUserPassword01",
+        "ssh_password": "TestUserPassword01",
+        "us_keyboard": true,
+        "disk_size": 20,
+        "core" : 2,
+        "memory_size": 4,
+        "iso_url": "http://ftp.tsukuba.wide.ad.jp/software/vyos/iso/release/1.1.7/vyos-1.1.7-amd64.iso",
+        "iso_checksum": "c40a889469e0eea43d92c73149f1058e3650863b",
+        "iso_checksum_type": "sha1",
+        "boot_command": [
+            "vyos<enter><wait>",
+            "vyos<enter><wait>",
+            "install image<enter><wait>",
+            "<enter><wait>",
+            "<enter><wait>",
+            "<enter><wait>",
+            "Yes<enter><wait>",
+            "<enter><wait10>",
+            "<wait10>",
+            "<wait10>",
+            "<enter><wait>",
+            "<enter><wait>",
+            "TestUserPassword01<enter><wait>",
+            "TestUserPassword01<enter><wait>",
+            "<enter><wait10>",
+            "sudo sed -i 's/reboot -d -f -i/eject -m cdrom\\n\\treboot -d -f -i/' /etc/init.d/reboot<enter><wait>",
+            "reboot<enter><wait>",
+            "Yes<enter><wait10>",
+            "<wait10>",
+            "<wait10>",
+            "<wait10>",
+            "<wait10>",
+            "vyos<enter><wait>",
+            "TestUserPassword01<enter><wait>",
+            "configure<enter><wait>",
+            "delete system console<enter><wait>",
+            "set interface ethernet eth0 address dhcp<enter><wait>",
+            "set system login user vyos authentication plaintext-password TestUserPassword01<enter><wait>",
+            "set system login user vyos level admin<enter><wait>",
+            "set service ssh<enter><wait>",
+            "commit<enter><wait>",
+            "save<enter><wait>",
+            "exit<enter><wait>",
+            "reboot<enter><wait>",
+            "Yes<enter><wait10>",
+            "<wait10>",
+            "<wait10>",
+            "<wait10>",
+            "<wait10>"
+        ],
+        "boot_wait": "40s"
+    }],
+    "provisioners":[
+        {
+            "override": {
+                "sakuracloud": {
+                    "scripts": [
+                        "./scripts/helium/base.sh",
+                        "./scripts/helium/cleanup.sh",
+                        "./scripts/helium/zerodisk.sh"
+                    ]
+                }
+            },
+            "type": "shell"
+        },
+
+        {
+        "type": "shell",
+        "inline_shebang": "/bin/vbash",
+        "inline": [
+            "source /opt/vyatta/etc/functions/script-template",
+            "run show configuration"
+        ]
+    }]
+}

@@ -79,7 +79,8 @@ type DiskBuilder struct {
 	sourceDiskID    int64
 	description     string
 	*sacloud.TagsType
-	iconID int64
+	iconID   int64
+	serverID int64
 
 	ipAddress          string
 	networkMaskLen     int
@@ -249,6 +250,17 @@ func (b *DiskBuilder) GetIconID() int64 {
 // SetIconID アイコンID 設定
 func (b *DiskBuilder) SetIconID(id int64) *DiskBuilder {
 	b.iconID = id
+	return b
+}
+
+// GetServerID サーバーID 取得
+func (b *DiskBuilder) GetServerID() int64 {
+	return b.serverID
+}
+
+// SetServerID サーバーID 設定
+func (b *DiskBuilder) SetServerID(id int64) *DiskBuilder {
+	b.serverID = id
 	return b
 }
 
@@ -517,6 +529,9 @@ func (b *DiskBuilder) buildDiskParam() error {
 	d.Tags = b.GetTags()
 	if b.iconID > 0 {
 		d.Icon = &sacloud.Icon{Resource: sacloud.NewResource(b.iconID)}
+	}
+	if b.serverID > 0 {
+		d.Server = &sacloud.Server{Resource: sacloud.NewResource(b.serverID)}
 	}
 
 	if b.sourceArchiveID > 0 {

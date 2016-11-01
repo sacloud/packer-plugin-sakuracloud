@@ -93,11 +93,11 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 	client := state.Get("client").(*api.Client)
 	c := state.Get("config").(Config)
 
-	serverName := "packer_temporary_server"
+	serverName := "packer_builder_sakuracloud"
 
 	switch c.OSType {
-	case "centos", "ubuntu", "debian", "coreos", "kusanagi":
-		return builder.ServerPublicArchiveUnix(client, s.getOSTypeFromString(c.OSType), serverName, c.Password).
+	case "centos", "ubuntu", "debian", "coreos", "kusanagi", "vyos":
+		b := builder.ServerPublicArchiveUnix(client, s.getOSTypeFromString(c.OSType), serverName, c.Password).
 			SetCore(c.Core).
 			SetMemory(c.MemorySize).
 			SetUseVirtIONetPCI(!c.DisableVirtIONetPCI).
@@ -105,7 +105,15 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 			SetDiskSize(c.DiskSize).
 			SetDiskConnection(s.getDiskConnection(c)).
 			SetDiskPlanID(s.getDiskPlanID(c)).
-			AddSSHKey(state.Get("ssh_public_key").(string))
+			AddSSHKey(state.Get("ssh_public_key").(string)).
+			SetHostName(serverName)
+		if c.ISOImageID > 0 {
+			b.SetISOImageID(c.ISOImageID)
+		}
+		if c.UseUSKeyboard {
+			b.AppendTag(sacloud.TagKeyboardUS)
+		}
+		return b
 	case "custom":
 		var b *builder.CommonServerBuilder
 		if c.SourceArchive > 0 {
@@ -113,6 +121,13 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 		} else {
 			b = builder.ServerFromDisk(client, serverName, c.SourceDisk)
 		}
+		if c.ISOImageID > 0 {
+			b.SetISOImageID(c.ISOImageID)
+		}
+		if c.UseUSKeyboard {
+			b.AppendTag(sacloud.TagKeyboardUS)
+		}
+
 		return b.SetCore(c.Core).
 			SetMemory(c.MemorySize).
 			SetUseVirtIONetPCI(!c.DisableVirtIONetPCI).
@@ -120,10 +135,11 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 			SetDiskSize(c.DiskSize).
 			SetDiskConnection(s.getDiskConnection(c)).
 			SetDiskPlanID(s.getDiskPlanID(c)).
-			AddSSHKey(state.Get("ssh_public_key").(string))
+			AddSSHKey(state.Get("ssh_public_key").(string)).
+			SetHostName(serverName)
 
 	case "windows":
-		return builder.ServerPublicArchiveWindows(client, serverName, c.SourceArchive).
+		b := builder.ServerPublicArchiveWindows(client, serverName, c.SourceArchive).
 			SetCore(c.Core).
 			SetMemory(c.MemorySize).
 			SetUseVirtIONetPCI(!c.DisableVirtIONetPCI).
@@ -131,6 +147,30 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 			SetDiskSize(c.DiskSize).
 			SetDiskConnection(s.getDiskConnection(c)).
 			SetDiskPlanID(s.getDiskPlanID(c))
+		if c.ISOImageID > 0 {
+			b.SetISOImageID(c.ISOImageID)
+		}
+		if c.UseUSKeyboard {
+			b.AppendTag(sacloud.TagKeyboardUS)
+		}
+		return b
+	case "iso":
+		var b *builder.BlankDiskServerBuilder
+		b = builder.ServerBlankDisk(client, serverName)
+		if c.ISOImageID > 0 {
+			b.SetISOImageID(c.ISOImageID)
+		}
+		if c.UseUSKeyboard {
+			b.AppendTag(sacloud.TagKeyboardUS)
+		}
+		b.SetCore(c.Core).
+			SetMemory(c.MemorySize).
+			SetUseVirtIONetPCI(!c.DisableVirtIONetPCI).
+			AddPublicNWConnectedNIC().
+			SetDiskSize(c.DiskSize).
+			SetDiskConnection(s.getDiskConnection(c)).
+			SetDiskPlanID(s.getDiskPlanID(c))
+		return b
 	}
 
 	return nil
@@ -144,6 +184,8 @@ func (s *stepCreateServer) getOSTypeFromString(os string) ostype.ArchiveOSTypes 
 		return ostype.Ubuntu
 	case "debian":
 		return ostype.Debian
+	case "vyos":
+		return ostype.VyOS
 	case "coreos":
 		return ostype.CoreOS
 	case "kusanagi":

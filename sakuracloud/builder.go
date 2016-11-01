@@ -45,6 +45,7 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 	state.Put("client", client)
 	state.Put("hook", hook)
 	state.Put("ui", ui)
+	state.Put("cache", cache)
 
 	// Build the steps
 	var steps []multistep.Step
@@ -69,6 +70,27 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 		}
 	}
 
+	var isoSteps []multistep.Step
+	if b.config.ISOImageID > 0 {
+		isoSteps = []multistep.Step{
+			&stepPrepareISO{},
+		}
+	} else {
+		isoSteps = []multistep.Step{
+			&common.StepDownload{
+				Checksum:     b.config.ISOChecksum,
+				ChecksumType: b.config.ISOChecksumType,
+				Description:  "ISO",
+				Extension:    "iso",
+				ResultKey:    "iso_path",
+				TargetPath:   b.config.TargetPath,
+				Url:          b.config.ISOUrls,
+			},
+			&stepRemoteUpload{},
+			&stepPrepareISO{},
+		}
+	}
+
 	steps = []multistep.Step{
 		&stepCreateSSHKey{
 			Debug:        b.config.PackerDebug,
@@ -77,8 +99,12 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 		&stepCreateServer{
 			Debug: b.config.PackerDebug,
 		},
+		new(stepBootWait),
 		&stepServerInfo{
 			Debug: b.config.PackerDebug,
+		},
+		&stepTypeBootCommand{
+			Ctx: b.config.ctx,
 		},
 		communicateStep, // ssh or winrm
 		new(common.StepProvision),
@@ -91,6 +117,10 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 		&stepCreateArchive{
 			Debug: b.config.PackerDebug,
 		},
+	}
+
+	if b.config.OSType == constants.TargetOSISO {
+		steps = append(isoSteps, steps...)
 	}
 
 	// Run the steps

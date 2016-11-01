@@ -88,6 +88,9 @@ EOF
 
     $ packer build example.json
 
+さくらのクラウド上のパブリックアーカイブだけでなく、ISOイメージからの構築も可能です。
+詳細は[テンプレートのサンプル](#テンプレートサンプル)を参照してください。
+
 ## オプション一覧
 
 jsonファイルで指定できるオプションの一覧は以下の通りです。
@@ -108,10 +111,18 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
     - `kusanagi`: Kusanagi(CentOSベース)パブリックアーカイブ
     - `windows`: Windows系パブリックアーカイブ
     - `custom`: その他アーカイブ、又はディスク
+    - `iso`: さくらのクラウド上のISOイメージ、またはURLを指定してISOイメージをダウンロードする場合
 
 `os_type`が`windows`の場合、`source_archive`の指定が必須です。
 
 `os_type`が`custom`の場合、`source_archive` 又は `source_disk`の何れかの指定が必須です。
+
+`os_type`が`iso`の場合、`iso_id`、または以下のISOイメージ関連の値の指定が必須です。
+  - `iso_url`または`iso_urls` : ISOイメージのURL
+  - `iso_checksum`/`iso_checksum_url`: ISOイメージのチェックサム、またはチェックサムを記載したファイルのURL
+  - `iso_checksum_type`: チェックサムの形式(`none`, `md5`, `sha1`, `sha256`, or `sha512`のいずれか)
+
+`iso`の場合の詳細は[ISOイメージ関連項目の指定について](#isoイメージ関連項目の指定について)を参照ください。
 
 ### オプション項目
 
@@ -122,6 +133,8 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 `os_type`が`windows`以外の場合のデフォルト値:`root`
 
 - `password`(string): SSH/WinRM接続時のパスワード
+
+- `us_keyboard`(bool): ISOイメージからのインストール時、コマンド送信にUSキーボードレイアウトを利用するか、デフォルト値:`false`
 
 - `disk_size`(int): 作成するディスクのサイズ(GB単位)、デフォルト値:`20`
 
@@ -143,18 +156,131 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 - `source_disk`(int64): 元となるディスクのID、`os_type`が`custom`の場合のみ指定可能です。
 
+- `iso_size`(int): アップロードするISOファイルのサイズ、`5`または`10`が指定可能(GB単位)、デフォルト値: `5`
+
+- `iso_name`(string): アップロードするISOファイルの名前、デフォルト値: `iso_checksum`が空でない場合は`iso_checksum`、以外はタイムスタンプから自動生成
+
 - `archive_name`(string): 作成されるアーカイブの名前
 
 - `archive_tags`([]string): 作成されるアーカイブに付与するタグ、デフォルト値:`["@size-extendable"]`
 
 - `archive_description`(string): 作成されるアーカイブに付与する説明
 
-## Windowsについて
+- `boot_wait`(duration): 仮想マシンのプロビジョニング開始までの起動からの待ち時間。`10s`、`1m`のように指定する。デフォルト値:`0s`
 
-Windowsの場合、あらかじめWinRMを有効にしたアーカイブを作成しておく必要があります。
-`os_type`に`windows`を指定し、`source_archive`にWinRMを有効にしたアーカイブのIDを指定します。
+- `boot_command`([]string): 仮想マシン作成後にVNC経由で仮想マシンに送信するキーボード入力。デフォルト値:なし
 
-TODO : 詳細を追記
+`boot_command`はPackerの[VMWare Builder(from ISO)](https://www.packer.io/docs/builders/vmware-iso.html)や[Qemu Builder](https://www.packer.io/docs/builders/qemu.html)と
+互換性があります。
+
+### ISOイメージ関連項目の指定について
+
+ISOイメージからの構築を行う場合、以下の項目を指定してください。
+
+#### さくらのクラウド上のISOイメージを利用する場合
+
+  - `os_type`に`iso`を指定
+  - `iso_id`に利用したいISOイメージのIDを指定
+
+例:
+```json
+        "os_type": "iso",
+        "iso_id": 123456789012,
+```
+
+#### ISOイメージをダウンロードして利用する場合
+
+ダウンロード元のURLなどを以下のように指定します。
+PackerがISOイメージのダウンロードを行い、さくらのクラウド上へアップロードを行います。
+
+  - `os_type`に`iso`を指定
+  - `iso_url`または`iso_urls` にISOイメージのURLを指定
+  - `iso_checksum`/`iso_checksum_url`: ISOイメージのチェックサム、またはチェックサムを記載したファイルのURLを指定
+  - `iso_checksum_type`: チェックサムの形式(`none`, `md5`, `sha1`, `sha256`, or `sha512`のいずれか)を指定
+
+例:
+```json
+        "os_type": "iso",
+        "iso_url": "http://ftp.tsukuba.wide.ad.jp/software/vyos/iso/release/1.1.7/vyos-1.1.7-amd64.iso",
+        "iso_checksum": "c40a889469e0eea43d92c73149f1058e3650863b",
+        "iso_checksum_type": "sha1",
+```
+
+### boot_commandについて
+
+`boot_command`には通常の文字に加え、以下の特殊キーが指定可能です。
+
+- `<bs>` - バックスペース
+- `<del>` - デリート
+- `<enter>` `<return>` - エンター(リターン)キー
+- `<esc>` - エスケープ
+- `<tab>` - タブ
+- `<f1>` - `<f12>` - ファンクションキー(F1〜F12)
+- `<up>` `<down>` `<left>` `<right>` - 矢印キー
+- `<spacebar>` - スペース
+- `<insert>` - インサート
+- `<home>` `<end>` - ホーム、エンド
+- `<pageUp>` `<pageDown>` - ページアップ、ページダウン
+- `<leftAlt>` `<rightAlt>` - 左右それぞれのオルト
+- `<leftCtrl>` `<rightCtrl>` - 左右それぞれのコントロール
+- `<leftShift>` `<rightShift>` - 左右それぞれのシフト
+- `<leftAltOn>` `<rightAltOn>` - オルトを押下している状態にする
+- `<leftCtrlOn>` `<rightCtrlOn>` - コントロールを押下している状態にする
+- `<leftShiftOn>` `<rightShiftOn>` - シフトを押下している状態にする
+- `<leftAltOff>` `<rightAltOff>` - オルトを押下解除する
+- `<leftCtrlOff>` `<rightCtrlOff>` - コントロールを押下解除する
+- `<leftShiftOff>` `<rightShiftOff>` - シフトを押下解除する
+- `<wait>` `<wait5>` `<wait10>` - 指定秒数待機
+- `<waitXX>` - 指定時間待機する。待機数量 + 単位で指定する。例: `<wait10s>` `<wait1m>`
+
+#### 使用例
+
+この例は以下ののキー入力を行うものです。
+ - 1) Ctrl+Alt+Delを送信
+ - 2) 10秒待機
+ - 3) パスワード文字列("put-your-password") + Enterキーを送信
+
+```json
+"boot_command": [
+    "<leftAltOn><leftCtrlOn><del><leftAltOff><leftCtrlOff>",
+    "<wait10>",
+    "put-your-password<enter>"
+]
+```
+####
+
+その他の利用例や詳細は以下のテンプレートサンプルを参照してください。
+
+## テンプレートサンプル
+
+以下のサンプルを用意しています。
+
+### パブリックアーカイブからの構築サンプル
+
+ - [[CentOS]](examples/centos): CentOSパブリックアーカイブからの構築
+ - [[CoreOS]](examples/coreos): CoreOSパブリックアーカイブからの構築
+ - [[Ubuntu]](examples/ubuntu): Ubuntuパブリックアーカイブからの構築
+ - [[VyOS]](examples/vyos): VyOSパブリックアーカイブから`boot_command`でSSHを有効にする構成
+ 
+    VyOSパブリックアーカイブからサーバーを作成した場合、デフォルトの状態ではSSH接続ができないため、`boot_command`にてSSHを有効化しています。
+    
+ - [[Windows]](examples/windows): Windows Server 2012パブリックアーカイブから、`boot_command`でWinRMを有効にする構成
+ 
+    Windowsパブリックアーカイブから構築したサーバーに対し、`boot_command`にて初回ログイン〜WinRMの有効化までを行います。
+
+    WinRMの有効化にはAnsibleが公開しているPowerShellスクリプトを用いています。
+    
+    WinRMでの接続後にPowerShellでのプロビジョニングを行います。
+ 
+
+### ISOイメージからの構築サンプル
+
+ - [[CentOS Atomic Host]](examples/atomic_host_centos) : CentOS Atomic Host ISOイメージのダウンロード〜最小構成での構築
+ - [[CentOS]](examples/centos_iso): さくらのクラウド上のCentOS ISOイメージからの構築(ISOイメージをダウンロードするサンプルもあります)
+ - [[Scientific Linux]](examples/scientific_linux): さくらのクラウド上のScienfitic Linux ISOイメージからの構築
+ - [[Ubuntu]](examples/ubuntu_iso): さくらのクラウド上のUbuntu ISOイメージからの構築
+ - [[VyOS]](examples/vyos_iso): VyOSISOイメージのダウンロード〜構築(参考元:https://github.com/higebu/packer-templates)
+
 
 ## License
 
