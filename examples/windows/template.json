@@ -1,0 +1,44 @@
+{
+    "builders": [{
+        "type": "sakuracloud",
+        "zone": "is1b",
+        "disk_size": 100,
+        "core" : 2,
+        "memory_size": 4,
+        "os_type": "windows",
+        "source_archive" : 112800764405,
+        "user_name" : "Administrator",
+        "password": "TestUserPassword01",
+        "winrm_use_ssl": true,
+        "winrm_insecure" : true,
+        "boot_command": [
+            "<leftAltOn>n<leftAltOff><wait5>",
+            "<leftAltOn>a<leftAltOff><wait5>",
+            "<leftAltOn>p<leftAltOff>TestUserPassword01",
+            "<leftAltOn>r<leftAltOff>TestUserPassword01",
+            "<leftAltOn>f<leftAltOff>",
+            "<wait10>",
+            "<leftAltOn><leftCtrlOn><del><leftAltOff><leftCtrlOff>",
+            "<wait10>",
+            "TestUserPassword01<enter>",
+            "<wait10>",
+            "<wait10>",
+            "<leftAltOn><leftCtrlOn><del><leftAltOff><leftCtrlOff><wait5>",
+            "<leftAltOn>t<leftAltOff><wait>",
+            "<leftAltOn>d<leftAltOff><wait>",
+            "<leftAltOn>f<wait>n<leftAltOff><wait>",
+            "cmd<enter><wait5>",
+            "powershell<enter><wait>",
+            "mkdir C:\\tmp<enter><wait>",
+            "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1' -OutFile C:\\tmp\\tmp.ps1<enter><wait10>",
+            "powershell C:\\tmp\\tmp.ps1<enter><wait10>",
+            "rm C:\\tmp\\tmp.ps1<enter>"
+        ],
+        "boot_wait": "100s"
+    }],
+    "provisioners":[
+        {
+            "type": "powershell",
+            "inline": ["dir c:\\"]
+        }]
+}

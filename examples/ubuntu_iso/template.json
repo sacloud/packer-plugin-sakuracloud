@@ -1,0 +1,38 @@
+{
+    "builders": [{
+        "type": "sakuracloud",
+        "zone": "is1b",
+        "os_type": "iso",
+        "user_name": "ubuntu",
+        "password": "TestUserPassword01",
+        "iso_id": 112801105251,
+        "disk_size": 20,
+        "core" : 2,
+        "memory_size": 4,
+        "archive_name": "packer-example-ubuntu-from-iso",
+        "boot_command": [
+            "<esc><enter><wait10>",
+            "j<enter><wait><enter><wait><enter><wait><enter><wait><enter><wait><enter><wait1m>",
+            "<enter><wait5>",
+            "ubuntu<enter><wait><enter><wait>",
+            "TestUserPassword01<enter><wait>TestUserPassword01<enter><wait><enter><wait10>",
+            "<enter><wait10>",
+            "<enter><wait><enter><wait><tab><enter><wait5><enter><wait5><tab><enter><wait2m>",
+            "<enter><wait30s>",
+            "<enter><wait10>",
+            "<down><down><down><down><down><down><down><down><spacebar><enter><wait150s>",
+            "<enter><wait1m>",
+            "<enter>",
+            "<wait>"
+        ],
+        "boot_wait": "30s"
+
+    }],
+    "provisioners":[
+    {
+        "type": "shell",
+        "inline": [
+            "echo hoge"
+        ]
+    }]
+}

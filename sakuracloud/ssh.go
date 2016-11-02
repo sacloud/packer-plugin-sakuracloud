@@ -21,10 +21,17 @@ func sshConfig(state multistep.StateBag) (*ssh.ClientConfig, error) {
 		return nil, fmt.Errorf("Error setting up SSH config: %s", err)
 	}
 
+	auth := []ssh.AuthMethod{
+		ssh.PublicKeys(signer),
+	}
+
+	if config.Password != "" {
+		config.Comm.SSHPassword = config.Password
+		auth = append(auth, ssh.Password(config.Comm.SSHPassword))
+	}
+
 	return &ssh.ClientConfig{
 		User: config.Comm.SSHUsername,
-		Auth: []ssh.AuthMethod{
-			ssh.PublicKeys(signer),
-		},
+		Auth: auth,
 	}, nil
 }

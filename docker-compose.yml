@@ -1,0 +1,12 @@
+version: '2'
+services:
+  packer:
+    build:
+      context: .
+      dockerfile: scripts/Dockerfile.run
+    environment:
+      - SAKURACLOUD_ACCESS_TOKEN
+      - SAKURACLOUD_ACCESS_TOKEN_SECRET
+    volumes:
+      - $PWD/examples:/work
+    entrypoint: /bin/bash

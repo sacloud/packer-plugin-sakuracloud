@@ -1,0 +1,69 @@
+{
+    "builders": [{
+        "type": "sakuracloud",
+        "zone": "is1b",
+        "os_type": "iso",
+        "password": "TestUserPassword01",
+        "iso_id": 112800172045,
+        "disk_size": 20,
+        "core" : 2,
+        "memory_size": 4,
+        "archive_name": "packer-example-scientific-from-iso",
+        "boot_command": [
+            "<tab>",
+            "<tab>",
+            " inst.text net.ifnames^0<enter>",
+            "<wait10>",
+            "<esc>",
+            "<wait30s>",
+
+            "2<enter><wait5>",
+            "5<enter><wait5>",
+            "<enter><wait5>",
+            "70<enter><wait5>",
+            "<wait>",
+
+            "5<enter><wait5>",
+            "2<enter><wait5>",
+            "c<enter><wait5>",
+            "<wait>",
+
+            "6<enter><wait5>",
+            "c<enter><wait5>",
+            "c<enter><wait5>",
+            "c<enter><wait5>",
+            "<wait>",
+
+            "8<enter><wait5>",
+            "2<enter><wait>",
+            "7<enter><wait>",
+            "c<enter><wait5>",
+            "c<enter><wait5>",
+            "<wait>",
+
+            "9<enter><wait5>",
+            "TestUserPassword01<enter><wait>",
+            "TestUserPassword01<enter><wait>",
+            "<wait>",
+
+            "b<enter>",
+            "<wait3m>",
+
+            "<enter>",
+            "<wait1m>",
+
+            "<wait>"
+        ],
+        "boot_wait": "30s"
+
+    }],
+    "provisioners":[
+    {
+        "type": "shell",
+        "inline": [
+            "yum update -y",
+            "curl -fsSL https://get.docker.com/ | sh",
+            "systemctl enable docker.service"
+        ]
+    }]
+}

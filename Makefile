@@ -31,6 +31,9 @@ vet: fmt
 fmt:
 	gofmt -s -l -w $(GOFMT_FILES)
 
+docker-shell:
+	docker-compose run --rm packer
+
 docker-test:
 	sh -c "'$(CURDIR)/scripts/build_on_docker.sh' 'test'"
 

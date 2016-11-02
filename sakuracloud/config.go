@@ -23,8 +23,9 @@ type Config struct {
 	Zone              string `mapstructure:"zone"`
 
 	// for Communication
-	UserName string `mapstructure:"user_name"`
-	Password string `mapstructure:"password"`
+	UserName      string `mapstructure:"user_name"`
+	Password      string `mapstructure:"password"`
+	UseUSKeyboard bool   `mapstructure:"us_keyboard"`
 
 	// for Disk
 	DiskSize       int    `mapstructure:"disk_size"`
@@ -41,11 +42,20 @@ type Config struct {
 	SourceArchive int64  `mapstructure:"source_archive"`
 	SourceDisk    int64  `mapstructure:"source_disk"`
 
+	// for ISO
+	ISOImageID       int64 `mapstructure:"iso_id"`
+	common.ISOConfig `mapstructure:",squash"`
+	ISOImageSizeGB   int    `mapstructure:"iso_size"`
+	ISOImageName     string `mapstructure:"iso_name"`
+
 	// for artifact
 	ArchiveName        string        `mapstructure:"archive_name"`
 	ArchiveTags        []string      `mapstructure:"archive_tags"`
 	ArchiveDescription string        `mapstructure:"archive_description"`
 	StateTimeout       time.Duration `mapstructure:"state_timeout"`
+
+	BootWait    time.Duration `mapstructure:"boot_wait"`
+	BootCommand []string      `mapstructure:"boot_command"`
 
 	ctx interpolate.Context
 }
@@ -60,7 +70,7 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 		InterpolateContext: &c.ctx,
 		InterpolateFilter: &interpolate.RenderFilter{
 			Exclude: []string{
-				"run_command",
+				"boot_command",
 			},
 		},
 	}, raws...)
@@ -71,18 +81,25 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 	setDefaultConfig(c)
 
 	var errs *packer.MultiError
+	warnings := make([]string, 0)
 	if es := c.Comm.Prepare(&c.ctx); len(es) > 0 {
 		errs = packer.MultiErrorAppend(errs, es...)
+	}
+
+	if c.OSType == constants.TargetOSISO && c.ISOImageID == 0 {
+		isoWarnings, isoErrs := c.ISOConfig.Prepare(&c.ctx)
+		warnings = append(warnings, isoWarnings...)
+		errs = packer.MultiErrorAppend(errs, isoErrs...)
 	}
 
 	// validate
 	errs = validateConfig(c, errs)
 
 	if errs != nil && len(errs.Errors) > 0 {
-		return nil, nil, errs
+		return nil, warnings, errs
 	}
 
-	return c, nil, nil
+	return c, warnings, nil
 }
 
 func setDefaultConfig(c *Config) {
@@ -154,6 +171,27 @@ func setDefaultConfig(c *Config) {
 		c.StateTimeout = 20 * time.Minute
 	}
 
+	if c.ISOImageSizeGB == 0 {
+		c.ISOImageSizeGB = 5
+	}
+	if c.ISOImageName == "" {
+		def, err := interpolate.Render("packer-{{timestamp}}", nil)
+		if err != nil {
+			panic(err)
+		}
+
+		// Default to packer-{{ unix timestamp (utc) }}
+		if c.ISOChecksum == "" {
+			c.ISOImageName = def
+		} else {
+			c.ISOImageName = c.ISOChecksum
+		}
+	}
+
+	//if c.BootWait == 0 {
+	//	//c.BootWait = 10 * time.Second
+	//}
+
 	if len(c.ArchiveTags) == 0 {
 		c.ArchiveTags = append(c.ArchiveTags, "@size-extendable")
 	}
@@ -222,6 +260,11 @@ func validateConfig(c *Config, errs *packer.MultiError) *packer.MultiError {
 			errs, errors.New("memory_size is invalid"))
 	}
 
+	if c.ISOImageSizeGB != 5 && c.ISOImageSizeGB != 10 {
+		errs = packer.MultiErrorAppend(
+			errs, errors.New("iso_size is require 5 or 10"))
+	}
+
 	return errs
 }
 
@@ -230,10 +273,12 @@ func listOSType() []string {
 		constants.TargetOSCentOS,
 		constants.TargetOSUbuntu,
 		constants.TargetOSDebian,
+		constants.TargetOSVyOS,
 		constants.TargetOSCoreOS,
 		constants.TargetOSKusanagi,
 		constants.TargetOSCustom,
 		constants.TargetOSWindows,
+		constants.TargetOSISO,
 	}
 }
 
