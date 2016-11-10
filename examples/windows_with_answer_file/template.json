@@ -1,0 +1,22 @@
+{
+    "builders": [{
+        "type": "sakuracloud",
+        "zone": "is1b",
+        "disk_size": 100,
+        "core" : 2,
+        "memory_size": 4,
+        "os_type": "windows",
+        "source_archive" : 112800764405,
+        "iso_id": 112801168062,
+        "user_name" : "Administrator",
+        "password": "TestUserPassword01",
+        "winrm_use_ssl": true,
+        "winrm_insecure" : true,
+        "boot_wait": "120s"
+    }],
+    "provisioners":[
+        {
+            "type": "powershell",
+            "inline": ["dir c:\\"]
+        }]
+}
