@@ -69,7 +69,7 @@ $ cat <<EOF > example.json
         "type": "sakuracloud",
         "zone": "is1b",
         "os_type": "centos",
-        "password": "TestUserPassword01",
+        "password": "TestUserPassword01"
     }],
     "provisioners":[
     {
