@@ -52,7 +52,7 @@ type Config struct {
 	ArchiveName        string        `mapstructure:"archive_name"`
 	ArchiveTags        []string      `mapstructure:"archive_tags"`
 	ArchiveDescription string        `mapstructure:"archive_description"`
-	StateTimeout       time.Duration `mapstructure:"state_timeout"`
+	APIClientTimeout   time.Duration `mapstructure:"api_client_timeout"`
 
 	BootWait    time.Duration `mapstructure:"boot_wait"`
 	BootCommand []string      `mapstructure:"boot_command"`
@@ -165,10 +165,10 @@ func setDefaultConfig(c *Config) {
 		}
 	}
 
-	if c.StateTimeout == 0 {
+	if c.APIClientTimeout == 0 {
 		// Default to 20 minute timeouts waiting for
 		// desired state. i.e waiting for droplet to become active
-		c.StateTimeout = 20 * time.Minute
+		c.APIClientTimeout = 20 * time.Minute
 	}
 
 	if c.ISOImageSizeGB == 0 {

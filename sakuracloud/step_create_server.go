@@ -70,7 +70,7 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 		return
 	}
 	// wait for down
-	err = client.Server.SleepUntilDown(s.serverID, c.StateTimeout)
+	err = client.Server.SleepUntilDown(s.serverID, c.APIClientTimeout)
 	if err != nil {
 		ui.Error(fmt.Sprintf("Error destroying server. Please destroy it manually: %s", err))
 		return
