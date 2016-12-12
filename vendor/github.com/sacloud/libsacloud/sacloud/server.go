@@ -40,8 +40,9 @@ type Server struct {
 // SetServerPlanByID サーバープラン設定
 func (s *Server) SetServerPlanByID(planID string) {
 	if s.ServerPlan == nil {
-		s.ServerPlan = &ProductServer{Resource: NewResourceByStringID(planID)}
+		s.ServerPlan = &ProductServer{}
 	}
+	s.ServerPlan.Resource = NewResourceByStringID(planID)
 }
 
 // ClearConnectedSwitches 接続先スイッチ指定パラメータークリア

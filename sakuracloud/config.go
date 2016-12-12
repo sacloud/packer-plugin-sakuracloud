@@ -191,10 +191,6 @@ func setDefaultConfig(c *Config) {
 	//if c.BootWait == 0 {
 	//	//c.BootWait = 10 * time.Second
 	//}
-
-	if len(c.ArchiveTags) == 0 {
-		c.ArchiveTags = append(c.ArchiveTags, "@size-extendable")
-	}
 }
 
 func validateConfig(c *Config, errs *packer.MultiError) *packer.MultiError {
