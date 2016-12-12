@@ -265,6 +265,7 @@ PackerがISOイメージのダウンロードを行い、さくらのクラウ�
     VyOSパブリックアーカイブからサーバーを作成した場合、デフォルトの状態ではSSH接続ができないため、`boot_command`にてSSHを有効化しています。
     
  - [[Windows]](examples/windows): Windows Server 2012パブリックアーカイブから、`boot_command`でWinRMを有効にする構成
+ - [[Windows2016]](examples/windows2016): Windows Server 2016パブリックアーカイブから、`boot_command`でWinRMを有効にする構成
  
     Windowsパブリックアーカイブから構築したサーバーに対し、`boot_command`にて初回ログイン〜WinRMの有効化までを行います。
 
