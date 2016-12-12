@@ -40,7 +40,7 @@ func (s *stepPowerOff) Run(state multistep.StateBag) multistep.StepAction {
 		return multistep.ActionHalt
 	}
 
-	err = client.Server.SleepUntilDown(serverID, c.StateTimeout)
+	err = client.Server.SleepUntilDown(serverID, c.APIClientTimeout)
 	if err != nil {
 		state.Put("error", err)
 		ui.Error(err.Error())

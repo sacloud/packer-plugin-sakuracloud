@@ -53,7 +53,7 @@ func (s *stepCreateArchive) Run(state multistep.StateBag) multistep.StepAction {
 		return multistep.ActionHalt
 	}
 
-	if err := client.Archive.SleepWhileCopying(archive.ID, c.StateTimeout); err != nil {
+	if err := client.Archive.SleepWhileCopying(archive.ID, c.APIClientTimeout); err != nil {
 		err := fmt.Errorf("Error copying archive: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())

@@ -40,6 +40,7 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 
 	client := api.NewClient(b.config.AccessToken, b.config.AccessTokenSecret, b.config.Zone)
 	client.UserAgent = fmt.Sprintf("packer_for_sakuracloud:v%s", Version)
+	client.DefaultTimeoutDuration = b.config.APIClientTimeout
 
 	// Set up the state
 	state := new(multistep.BasicStateBag)

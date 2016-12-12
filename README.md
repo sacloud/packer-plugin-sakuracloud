@@ -173,6 +173,8 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 `boot_command`はPackerの[VMWare Builder(from ISO)](https://www.packer.io/docs/builders/vmware-iso.html)や[Qemu Builder](https://www.packer.io/docs/builders/qemu.html)と
 互換性があります。
 
+- `api_client_timeout`(duration): ディスクのコピーやアーカイブ作成待ちなどの、さくらのクラウドAPI呼び出しで利用するタイムアウト時間。`10s`、`1m`のように指定する。デフォルト値:`20m`
+
 ### ISOイメージ関連項目の指定について
 
 ISOイメージからの構築を行う場合、以下の項目を指定してください。
