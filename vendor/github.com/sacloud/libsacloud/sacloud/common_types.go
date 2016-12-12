@@ -336,7 +336,7 @@ type MigrationJobStatus struct {
 // TagsType タグ内包型
 type TagsType struct {
 	// Tags タグ
-	Tags []string `json:",omitempty"`
+	Tags []string
 }
 
 var (

@@ -12,6 +12,8 @@ type Database struct {
 	Remark *DatabaseRemark `json:",omitempty"`
 	// Settings データベース設定
 	Settings *DatabaseSettings `json:",omitempty"`
+	// SettingsResponse データベース固有設定
+	SettingsResponse *DatabaseSettingsResponse `json:",omitempty"`
 }
 
 // DatabaseRemark データベースリマーク
@@ -158,6 +160,14 @@ func (s *SourceNetwork) UnmarshalJSON(data []byte) error {
 	source := SourceNetwork(tmp)
 	*s = source
 	return nil
+}
+
+// DatabaseSettingsResponse データベース固有設定
+type DatabaseSettingsResponse struct {
+	// DBConf データベース設定
+	DBConf interface{} `json:",omitempty"`
+
+	*EServerInstanceStatus
 }
 
 // CreateDatabaseValue データベース作成用パラメータ

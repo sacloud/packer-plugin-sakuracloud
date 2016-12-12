@@ -37,7 +37,9 @@ func (b *Builder) Cancel() {
 }
 
 func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packer.Artifact, error) {
+
 	client := api.NewClient(b.config.AccessToken, b.config.AccessTokenSecret, b.config.Zone)
+	client.UserAgent = fmt.Sprintf("packer_for_sakuracloud:v%s", Version)
 
 	// Set up the state
 	state := new(multistep.BasicStateBag)

@@ -39,6 +39,11 @@ type databaseResponse struct {
 	Success interface{} `json:",omitempty"` //HACK: さくらのAPI側仕様: 戻り値:Successがbool値へ変換できないためinterface{}で受ける
 }
 
+type databaseSettingsResponse struct {
+	*sacloud.ResultFlagValue
+	*sacloud.Database `json:"Appliance,omitempty"`
+}
+
 // DatabaseAPI データベースAPI
 type DatabaseAPI struct {
 	*baseAPI
@@ -106,6 +111,21 @@ func (api *DatabaseAPI) Read(id int64) (*sacloud.Database, error) {
 	})
 }
 
+// Status DBの設定/起動状態の取得
+func (api *DatabaseAPI) Status(id int64) (*sacloud.DatabaseSettingsResponse, error) {
+	var (
+		method = "GET"
+		uri    = fmt.Sprintf("%s/%d/status", api.getResourceURL(), id)
+	)
+
+	res := &databaseResponse{}
+	err := api.baseAPI.request(method, uri, nil, res)
+	if err != nil {
+		return nil, err
+	}
+	return res.SettingsResponse, nil
+}
+
 // Update 更新
 func (api *DatabaseAPI) Update(id int64, value *sacloud.Database) (*sacloud.Database, error) {
 	return api.request(func(res *databaseResponse) error {
@@ -156,6 +176,16 @@ func (api *DatabaseAPI) IsDown(id int64) (bool, error) {
 		return false, err
 	}
 	return lb.Instance.IsDown(), nil
+}
+
+// IsDatabaseRunning データベースプロセスが起動しているか判定
+func (api *DatabaseAPI) IsDatabaseRunning(id int64) (bool, error) {
+	db, err := api.Status(id)
+	if err != nil {
+		return false, err
+	}
+	return db.IsUp(), nil
+
 }
 
 // Boot 起動
@@ -226,6 +256,33 @@ func (api *DatabaseAPI) SleepUntilUp(id int64, timeout time.Duration) error {
 
 		if timeout > 0 && current > timeout {
 			return fmt.Errorf("Timeout: WaitforAvailable")
+		}
+	}
+}
+
+// SleepUntilDatabaseRunning 起動するまで待機
+func (api *DatabaseAPI) SleepUntilDatabaseRunning(id int64, timeout time.Duration, maxRetryCount int) error {
+	current := 0 * time.Second
+	interval := 5 * time.Second
+	errCount := 0
+
+	for {
+		isUp, err := api.IsUp(id)
+		if err != nil {
+			errCount++
+			if errCount > maxRetryCount {
+				return err
+			}
+		}
+
+		if isUp {
+			return nil
+		}
+		time.Sleep(interval)
+		current += interval
+
+		if timeout > 0 && current > timeout {
+			return fmt.Errorf("Timeout: SleepUntilDatabaseRunning")
 		}
 	}
 }

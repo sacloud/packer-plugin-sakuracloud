@@ -23,6 +23,21 @@ func (s *stepCreateArchive) Run(state multistep.StateBag) multistep.StepAction {
 	archiveReq := client.Archive.New()
 	archiveReq.Name = c.ArchiveName
 	archiveReq.SetSourceDisk(diskID)
+
+	canEditDisk, err := client.Disk.CanEditDisk(diskID)
+	if canEditDisk {
+		tag := "@size-extendable"
+		if !archiveReq.HasTag(tag) {
+			archiveReq.AppendTag(tag)
+		}
+	}
+	if err != nil {
+		err := fmt.Errorf("Error creating archive - check for can edit disk: %s", err)
+		state.Put("error", err)
+		ui.Error(err.Error())
+		return multistep.ActionHalt
+	}
+
 	for _, tag := range c.ArchiveTags {
 		if !archiveReq.HasTag(tag) {
 			archiveReq.AppendTag(tag)
