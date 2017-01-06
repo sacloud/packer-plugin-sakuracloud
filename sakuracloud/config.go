@@ -30,7 +30,7 @@ type Config struct {
 	// for Disk
 	DiskSize       int    `mapstructure:"disk_size"`
 	DiskConnection string `mapstructure:"disk_connection"`
-	DiskPlan       string `mapstructure:"disk_connection"`
+	DiskPlan       string `mapstructure:"disk_plan"`
 
 	// for Server
 	Core                int  `mapstructure:"core"`
