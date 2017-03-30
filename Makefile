@@ -1,6 +1,7 @@
 TEST?=$$(go list ./... | grep -v vendor)
 VETARGS?=-all
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
+CURRENT_VERSION = $(shell cat sakuracloud/version.go | perl -ne 'if(/^var Version = "([0-9\.]+)"/){print $$1;exit}')
 
 default: test vet
 
@@ -40,5 +41,8 @@ docker-test:
 docker-build: clean 
 	sh -c "'$(CURDIR)/scripts/build_on_docker.sh' 'build-x'"
 
+prepare-homebrew:
+	rm -rf homebrew-packer-builder-sakuracloud/; \
+	sh -c "'$(CURDIR)/scripts/update_homebrew_formula.sh' '$(CURRENT_VERSION)'"
 
 .PHONY: default test vet fmt lint

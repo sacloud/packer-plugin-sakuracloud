@@ -20,6 +20,7 @@ A builder plugin of packer for SakuraCloud
 
  - ローカルマシンにインストール
  - Dockerを利用する
+ - (macOS + Homebrew)`homebrew`でインストール
 
 ### ローカルマシンへのインストール
 
@@ -44,6 +45,15 @@ APIキーを環境変数で指定する場合、`-e`オプションなどを適�
              -e SAKURACLOUD_ACCESS_TOKEN_SECRET \
              -v $PWD:/work \
              sacloud/packer:latest build example.json
+
+### `homebrew`を利用する場合(macOSでHomebrewをご利用の場合)
+
+以下のコマンドでインストール可能です。
+
+    brew tap sacloud/homebrew-packer-builder-sakuracloud; brew install packer-builder-sakuracloud
+
+インストール後は画面に表示される指示にしたがってコマンドを実行し、`~/.packer.d/plugins`配下にシンボリックリンクを作成します。
+
 
 ## 使い方(アーカイブ作成)
 
