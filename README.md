@@ -114,16 +114,29 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 - `zone`(string): 対象ゾーン。`tk1a`(東京)又は`is1b`(石狩第2)を指定
 
 - `os_type`(string): ベースとするアーカイブの種別。以下の値が指定可能です。
-    - `centos`: CentOSパブリックアーカイブ(さくらのクラウドで提供されている最新安定版)
-    - `ubuntu`: Ubuntuパブリックアーカイブ
-    - `debian`: Debianパブリックアーカイブ
-    - `coreos`: CoreOSパブリックアーカイブ
-    - `kusanagi`: Kusanagi(CentOSベース)パブリックアーカイブ
-    - `windows`: Windows系パブリックアーカイブ
-    - `custom`: その他アーカイブ、又はディスク
-    - `iso`: さくらのクラウド上のISOイメージ、またはURLを指定してISOイメージをダウンロードする場合
 
-`os_type`が`windows`の場合、`source_archive`の指定が必須です。
+|値|説明                                          |
+|---------------------------|--------------------|
+| `centos`                  | CentOS 7|
+| `ubuntu`                  | Ubuntu 16.04|
+| `debian`                  | Debian |
+| `vyos`                    | VyOS|
+| `coreos`                  | CoreOS|
+| `rancheros`               | RancherOS|
+| `kusanagi`                | Kusanagi(CentOS7)|
+| `site-guard`              | SiteGuard(CentOS7)|
+| `plesk`                   | Plesk(CentOS7)|
+| `freebsd`                 | FreeBSD|
+| `windows2012`             | Windows 2012|
+| `windows2012-rds`         | Windows 2012(RDS)|
+| `windows2012-rds-office`  | Windows 2012(RDS + Office)|
+| `windows2016`             | Windows 2016|
+| `windows2016-rds`         | Windows 2016(RDS)|
+| `windows2016-rds-office`  | Windows 2016(RDS + Office)|
+| `windows2016-sql-web`     | Windows 2016 SQLServer(Web)|
+| `windows2016-sql-standard`| Windows 2016 SQLServer(Standard)|
+| `iso`                     | さくらのクラウド上のISOイメージ、<br />またはURLを指定してISOイメージをダウンロードする場合|
+
 
 `os_type`が`custom`の場合、`source_archive` 又は `source_disk`の何れかの指定が必須です。
 
@@ -138,9 +151,9 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 - `user_name`(string): SSH/WinRM接続時のユーザー名
 
-`os_type`が`windows`の場合のデフォルト値:`Administrator`
+`os_type`にWindows系を指定した場合のデフォルト値:`Administrator`
 
-`os_type`が`windows`以外の場合のデフォルト値:`root`
+`os_type`がWindows系以外の場合のデフォルト値:`root`
 
 - `password`(string): SSH/WinRM接続時のパスワード
 

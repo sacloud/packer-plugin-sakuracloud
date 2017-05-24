@@ -96,64 +96,6 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 	serverName := "packer_builder_sakuracloud"
 
 	switch c.OSType {
-	case "centos", "ubuntu", "debian", "coreos", "kusanagi", "vyos":
-		b := builder.ServerPublicArchiveUnix(client, s.getOSTypeFromString(c.OSType), serverName, c.Password).
-			SetCore(c.Core).
-			SetMemory(c.MemorySize).
-			SetUseVirtIONetPCI(!c.DisableVirtIONetPCI).
-			AddPublicNWConnectedNIC().
-			SetDiskSize(c.DiskSize).
-			SetDiskConnection(s.getDiskConnection(c)).
-			SetDiskPlanID(s.getDiskPlanID(c)).
-			AddSSHKey(state.Get("ssh_public_key").(string)).
-			SetHostName(serverName)
-		if c.ISOImageID > 0 {
-			b.SetISOImageID(c.ISOImageID)
-		}
-		if c.UseUSKeyboard {
-			b.AppendTag(sacloud.TagKeyboardUS)
-		}
-		return b
-	case "custom":
-		var b *builder.CommonServerBuilder
-		if c.SourceArchive > 0 {
-			b = builder.ServerFromArchive(client, serverName, c.SourceArchive)
-		} else {
-			b = builder.ServerFromDisk(client, serverName, c.SourceDisk)
-		}
-		if c.ISOImageID > 0 {
-			b.SetISOImageID(c.ISOImageID)
-		}
-		if c.UseUSKeyboard {
-			b.AppendTag(sacloud.TagKeyboardUS)
-		}
-
-		return b.SetCore(c.Core).
-			SetMemory(c.MemorySize).
-			SetUseVirtIONetPCI(!c.DisableVirtIONetPCI).
-			AddPublicNWConnectedNIC().
-			SetDiskSize(c.DiskSize).
-			SetDiskConnection(s.getDiskConnection(c)).
-			SetDiskPlanID(s.getDiskPlanID(c)).
-			AddSSHKey(state.Get("ssh_public_key").(string)).
-			SetHostName(serverName)
-
-	case "windows":
-		b := builder.ServerPublicArchiveWindows(client, serverName, c.SourceArchive).
-			SetCore(c.Core).
-			SetMemory(c.MemorySize).
-			SetUseVirtIONetPCI(!c.DisableVirtIONetPCI).
-			AddPublicNWConnectedNIC().
-			SetDiskSize(c.DiskSize).
-			SetDiskConnection(s.getDiskConnection(c)).
-			SetDiskPlanID(s.getDiskPlanID(c))
-		if c.ISOImageID > 0 {
-			b.SetISOImageID(c.ISOImageID)
-		}
-		if c.UseUSKeyboard {
-			b.AppendTag(sacloud.TagKeyboardUS)
-		}
-		return b
 	case "iso":
 		var b *builder.BlankDiskServerBuilder
 		b = builder.ServerBlankDisk(client, serverName)
@@ -161,41 +103,86 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 			b.SetISOImageID(c.ISOImageID)
 		}
 		if c.UseUSKeyboard {
-			b.AppendTag(sacloud.TagKeyboardUS)
+			b.SetTags(append(b.GetTags(), sacloud.TagKeyboardUS))
 		}
-		b.SetCore(c.Core).
-			SetMemory(c.MemorySize).
-			SetUseVirtIONetPCI(!c.DisableVirtIONetPCI).
-			AddPublicNWConnectedNIC().
-			SetDiskSize(c.DiskSize).
-			SetDiskConnection(s.getDiskConnection(c)).
-			SetDiskPlanID(s.getDiskPlanID(c))
+		b.SetCore(c.Core)
+		b.SetMemory(c.MemorySize)
+		b.SetUseVirtIONetPCI(!c.DisableVirtIONetPCI)
+		b.AddPublicNWConnectedNIC()
+		b.SetDiskSize(c.DiskSize)
+		b.SetDiskConnection(s.getDiskConnection(c))
+		b.SetDiskPlanID(s.getDiskPlanID(c))
 		return b
-	}
+	default:
 
-	return nil
+		os := s.getOSTypeFromString(c.OSType)
+		switch {
+		case os == ostype.Custom:
+			var b *builder.CommonServerBuilder
+			if c.SourceArchive > 0 {
+				b = builder.ServerFromArchive(client, serverName, c.SourceArchive)
+			} else {
+				b = builder.ServerFromDisk(client, serverName, c.SourceDisk)
+			}
+			if c.ISOImageID > 0 {
+				b.SetISOImageID(c.ISOImageID)
+			}
+			if c.UseUSKeyboard {
+				b.SetTags(append(b.GetTags(), sacloud.TagKeyboardUS))
+			}
+
+			b.SetCore(c.Core)
+			b.SetMemory(c.MemorySize)
+			b.SetUseVirtIONetPCI(!c.DisableVirtIONetPCI)
+			b.AddPublicNWConnectedNIC()
+			b.SetDiskSize(c.DiskSize)
+			b.SetDiskConnection(s.getDiskConnection(c))
+			b.SetDiskPlanID(s.getDiskPlanID(c))
+			b.AddSSHKey(state.Get("ssh_public_key").(string))
+			b.SetHostName(serverName)
+			return b
+		case os.IsWindows():
+			b := builder.ServerPublicArchiveWindows(client, os, serverName)
+			b.SetCore(c.Core)
+			b.SetMemory(c.MemorySize)
+			b.SetUseVirtIONetPCI(!c.DisableVirtIONetPCI)
+			b.AddPublicNWConnectedNIC()
+			b.SetDiskSize(c.DiskSize)
+			b.SetDiskConnection(s.getDiskConnection(c))
+			b.SetDiskPlanID(s.getDiskPlanID(c))
+			if c.ISOImageID > 0 {
+				b.SetISOImageID(c.ISOImageID)
+			}
+			if c.UseUSKeyboard {
+				b.SetTags(append(b.GetTags(), sacloud.TagKeyboardUS))
+			}
+			return b
+
+		default:
+			b := builder.ServerPublicArchiveUnix(client, os, serverName, c.Password)
+			b.SetCore(c.Core)
+			b.SetMemory(c.MemorySize)
+			b.SetUseVirtIONetPCI(!c.DisableVirtIONetPCI)
+			b.AddPublicNWConnectedNIC()
+			b.SetDiskSize(c.DiskSize)
+			b.SetDiskConnection(s.getDiskConnection(c))
+			b.SetDiskPlanID(s.getDiskPlanID(c))
+			b.AddSSHKey(state.Get("ssh_public_key").(string))
+			b.SetHostName(serverName)
+			if c.ISOImageID > 0 {
+				b.SetISOImageID(c.ISOImageID)
+			}
+			if c.UseUSKeyboard {
+				b.SetTags(append(b.GetTags(), sacloud.TagKeyboardUS))
+			}
+			return b
+		}
+
+	}
 }
 
 func (s *stepCreateServer) getOSTypeFromString(os string) ostype.ArchiveOSTypes {
-	switch os {
-	case "centos":
-		return ostype.CentOS
-	case "ubuntu":
-		return ostype.Ubuntu
-	case "debian":
-		return ostype.Debian
-	case "vyos":
-		return ostype.VyOS
-	case "coreos":
-		return ostype.CoreOS
-	case "kusanagi":
-		return ostype.Kusanagi
-	case "custom":
-		return ostype.Custom
-	case "windows":
-		return ostype.Custom
-	}
-	panic(fmt.Errorf("invalid ostype [%s]", os))
+	return ostype.StrToOSType(os)
 }
 
 func (s *stepCreateServer) getDiskConnection(config Config) sacloud.EDiskConnection {

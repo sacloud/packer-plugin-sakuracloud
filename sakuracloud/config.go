@@ -8,6 +8,7 @@ import (
 	"github.com/mitchellh/packer/helper/config"
 	"github.com/mitchellh/packer/packer"
 	"github.com/mitchellh/packer/template/interpolate"
+	"github.com/sacloud/libsacloud/sacloud/ostype"
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 	"os"
 	"time"
@@ -146,8 +147,8 @@ func setDefaultConfig(c *Config) {
 			c.Comm.SSHUsername = "root"
 		}
 	}
-
-	if c.OSType == constants.TargetOSWindows {
+	os := ostype.StrToOSType(c.OSType)
+	if os.IsWindows() {
 		if c.Comm.WinRMUser == "" {
 			c.Comm.WinRMUser = c.UserName
 		}
@@ -219,16 +220,13 @@ func validateConfig(c *Config, errs *packer.MultiError) *packer.MultiError {
 			errs, errors.New("os_type is invalid"))
 	}
 
-	if c.OSType == constants.TargetOSWindows {
-		if c.SourceArchive == 0 {
-			errs = packer.MultiErrorAppend(
-				errs, errors.New("source_archive is required when os_type is windows"))
-		}
-	}
-	if c.OSType == constants.TargetOSCustom {
-		if c.SourceArchive == 0 && c.SourceDisk == 0 {
-			errs = packer.MultiErrorAppend(
-				errs, errors.New("source_archive or source_disk is required when os_type is custom"))
+	os := ostype.StrToOSType(c.OSType)
+	if c.OSType != constants.TargetOSISO {
+		if os == ostype.Custom {
+			if c.SourceArchive == 0 && c.SourceDisk == 0 {
+				errs = packer.MultiErrorAppend(
+					errs, errors.New("source_archive or source_disk is required when os_type is custom"))
+			}
 		}
 	}
 
@@ -265,17 +263,7 @@ func validateConfig(c *Config, errs *packer.MultiError) *packer.MultiError {
 }
 
 func listOSType() []string {
-	return []string{
-		constants.TargetOSCentOS,
-		constants.TargetOSUbuntu,
-		constants.TargetOSDebian,
-		constants.TargetOSVyOS,
-		constants.TargetOSCoreOS,
-		constants.TargetOSKusanagi,
-		constants.TargetOSCustom,
-		constants.TargetOSWindows,
-		constants.TargetOSISO,
-	}
+	return append(ostype.OSTypeShortNames, constants.TargetOSISO)
 }
 
 func listDiskConnection() []string {
