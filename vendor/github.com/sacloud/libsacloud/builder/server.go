@@ -64,7 +64,7 @@ type serverBuilder struct {
 	useVirtIONetPCI bool
 	description     string
 	iconID          int64
-	*sacloud.TagsType
+	tags            []string
 	bootAfterCreate bool
 
 	// CDROM
@@ -73,9 +73,14 @@ type serverBuilder struct {
 	// for nic
 	nicConnections []string
 
+	// for PacketFilter
+	packetFilterIDs []int64
+
 	// for disks
 	disk            *DiskBuilder
 	additionalDisks []*DiskBuilder
+
+	connectDiskIDs []int64
 
 	currentBuildValue  *ServerBuildValue
 	currentBuildResult *ServerBuildResult
@@ -107,7 +112,6 @@ func newServerBuilder(client *api.Client, serverName string) *serverBuilder {
 		core:               DefaultCore,
 		memory:             DefaultMemory,
 		useVirtIONetPCI:    DefaultUseVirtIONetCPI,
-		TagsType:           &sacloud.TagsType{},
 		description:        DefaultDescription,
 		iconID:             DefaultIconID,
 		bootAfterCreate:    DefaultBootAfterCreate,
@@ -139,10 +143,10 @@ func ServerPublicArchiveUnix(client *api.Client, os ostype.ArchiveOSTypes, name 
 }
 
 // ServerPublicArchiveWindows Windows系パブリックアーカイブを利用するビルダー
-func ServerPublicArchiveWindows(client *api.Client, name string, archiveID int64) *PublicArchiveWindowsServerBuilder {
+func ServerPublicArchiveWindows(client *api.Client, os ostype.ArchiveOSTypes, name string) *PublicArchiveWindowsServerBuilder {
 
 	b := newServerBuilder(client, name)
-	b.ServerPublicArchiveWindows(archiveID)
+	b.ServerPublicArchiveWindows(os)
 	return &PublicArchiveWindowsServerBuilder{
 		serverBuilder: b,
 	}
@@ -160,7 +164,16 @@ func ServerBlankDisk(client *api.Client, name string) *BlankDiskServerBuilder {
 
 }
 
-// ServerFromDisk 既存ディスクを利用するビルダー
+// ServerFromExistsDisk 既存ディスクを接続するビルダー
+func ServerFromExistsDisk(client *api.Client, name string, sourceDiskID int64) *ConnectDiskServerBuilder {
+	b := newServerBuilder(client, name)
+	b.connectDiskIDs = []int64{sourceDiskID}
+	return &ConnectDiskServerBuilder{
+		serverBuilder: b,
+	}
+}
+
+// ServerFromDisk 既存ディスクをコピーして新たなディスクを作成するビルダー
 func ServerFromDisk(client *api.Client, name string, sourceDiskID int64) *CommonServerBuilder {
 	b := newServerBuilder(client, name)
 
@@ -171,7 +184,7 @@ func ServerFromDisk(client *api.Client, name string, sourceDiskID int64) *Common
 
 }
 
-// ServerFromArchive 既存アーカイブを利用するビルダー
+// ServerFromArchive 既存アーカイブをコピーして新たなディスクを作成するビルダー
 func ServerFromArchive(client *api.Client, name string, sourceArchiveID int64) *CommonServerBuilder {
 	b := newServerBuilder(client, name)
 
@@ -187,6 +200,10 @@ func ServerFromArchive(client *api.Client, name string, sourceArchiveID int64) *
 ---------------------------------------------------------*/
 
 func (b *serverBuilder) ServerPublicArchiveUnix(os ostype.ArchiveOSTypes, password string) {
+	if !os.IsSupportDiskEdit() {
+		b.errors = append(b.errors, fmt.Errorf("%q is not support EditDisk", os))
+	}
+
 	archive, err := b.client.Archive.FindByOSType(os)
 	if err != nil {
 		b.errors = append(b.errors, err)
@@ -198,10 +215,20 @@ func (b *serverBuilder) ServerPublicArchiveUnix(os ostype.ArchiveOSTypes, passwo
 
 }
 
-func (b *serverBuilder) ServerPublicArchiveWindows(archiveID int64) {
+func (b *serverBuilder) ServerPublicArchiveWindows(os ostype.ArchiveOSTypes) {
+	if !os.IsWindows() {
+		b.errors = append(b.errors, fmt.Errorf("%q is not windows", os))
+	}
+
+	archive, err := b.client.Archive.FindByOSType(os)
+	if err != nil {
+		b.errors = append(b.errors, err)
+	}
+
 	b.disk = Disk(b.client, b.serverName)
-	b.disk.sourceArchiveID = archiveID
+	b.disk.sourceArchiveID = archive.ID
 	b.disk.sourceDiskID = 0
+	b.disk.forceEditDisk = true
 }
 
 func (b *serverBuilder) ServerFromDisk(sourceDiskID int64) {
@@ -231,6 +258,10 @@ func (b *serverBuilder) Build() (*ServerBuildResult, error) {
 	b.currentBuildValue = &ServerBuildValue{}
 	b.currentBuildResult = &ServerBuildResult{}
 
+	if len(b.errors) > 0 {
+		return b.currentBuildResult, b.getFlattenErrors()
+	}
+
 	// build parameter
 	if err := b.buildParams(); err != nil {
 		return b.currentBuildResult, err
@@ -248,6 +279,11 @@ func (b *serverBuilder) Build() (*ServerBuildResult, error) {
 		return b.currentBuildResult, err
 	}
 
+	// connect exists disks
+	if err := b.connectDisks(); err != nil {
+		return b.currentBuildResult, err
+	}
+
 	// insert cdrom
 	if b.isoImageID > 0 {
 		b.callEventHandlerIfExists(ServerBuildOnInsertCDROMBefore)
@@ -255,6 +291,11 @@ func (b *serverBuilder) Build() (*ServerBuildResult, error) {
 			return b.currentBuildResult, err
 		}
 		b.callEventHandlerIfExists(ServerBuildOnInsertCDROMAfter)
+	}
+
+	// connect packet filters
+	if err := b.connectPacketFilters(); err != nil {
+		return b.currentBuildResult, err
 	}
 
 	// boot server
@@ -303,13 +344,13 @@ func (b *serverBuilder) buildServerParams() error {
 	if b.useVirtIONetPCI {
 		s.AppendTag(sacloud.TagVirtIONetPCI)
 	}
-	for _, tag := range b.Tags {
+	for _, tag := range b.tags {
 		if !s.HasTag(tag) {
 			s.AppendTag(tag)
 		}
 	}
 	if b.iconID > 0 {
-		s.Icon = sacloud.NewResource(b.iconID)
+		s.SetIconByID(b.iconID)
 	}
 
 	// NIC
@@ -330,15 +371,17 @@ func (b *serverBuilder) buildServerParams() error {
 }
 
 func (b *serverBuilder) createDisks() error {
-	// build disk
-	if b.currentBuildResult.Server.ID > 0 {
-		b.disk.SetServerID(b.currentBuildResult.Server.ID)
+	if b.disk != nil {
+		// build disk
+		if b.currentBuildResult.Server.ID > 0 {
+			b.disk.SetServerID(b.currentBuildResult.Server.ID)
+		}
+		diskBuildResult, err := b.disk.Build()
+		if err != nil {
+			return err
+		}
+		b.currentBuildResult.addDisk(diskBuildResult)
 	}
-	diskBuildResult, err := b.disk.Build()
-	if err != nil {
-		return err
-	}
-	b.currentBuildResult.addDisk(diskBuildResult)
 	// build additional disks
 	if len(b.additionalDisks) > 0 {
 		for _, diskBuilder := range b.additionalDisks {
@@ -366,10 +409,26 @@ func (b *serverBuilder) createServer() error {
 
 func (b *serverBuilder) connectDisks() error {
 	server := b.currentBuildResult.Server
-	for _, disk := range b.currentBuildResult.Disks {
-		_, err := b.client.Disk.ConnectToServer(disk.Disk.ID, server.ID)
+	for _, diskID := range b.connectDiskIDs {
+		_, err := b.client.Disk.ConnectToServer(diskID, server.ID)
 		if err != nil {
 			return err
+		}
+	}
+	return nil
+}
+
+func (b *serverBuilder) connectPacketFilters() error {
+	server := b.currentBuildResult.Server
+	for i, pfID := range b.packetFilterIDs {
+		if len(server.Interfaces) <= i {
+			return fmt.Errorf("Number of packet filter and NIC are different")
+		}
+		if pfID > 0 {
+			_, err := b.client.Interface.ConnectToPacketFilter(server.Interfaces[i].ID, pfID)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
