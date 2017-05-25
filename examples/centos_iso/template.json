@@ -20,31 +20,32 @@
             "<wait30s>",
 
             "2<enter><wait5>",
+            "1<enter><wait5>",
             "5<enter><wait5>",
             "<enter><wait5>",
             "70<enter><wait5>",
             "<wait>",
 
-            "5<enter><wait5>",
+            "6<enter><wait5>",
             "c<enter><wait5>",
             "c<enter><wait5>",
             "c<enter><wait5>",
             "<wait>",
 
-            "7<enter><wait5>",
+            "8<enter><wait5>",
             "2<enter><wait>",
             "7<enter><wait>",
             "c<enter><wait5>",
             "c<enter><wait5>",
             "<wait>",
 
-            "8<enter><wait5>",
+            "9<enter><wait5>",
             "TestUserPassword01<enter><wait>",
             "TestUserPassword01<enter><wait>",
             "<wait>",
 
             "b<enter>",
-            "<wait3m>",
+            "<wait5m>",
 
             "<enter>",
             "<wait1m>",
