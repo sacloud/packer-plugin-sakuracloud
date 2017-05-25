@@ -7,6 +7,7 @@ import (
 	"github.com/mitchellh/packer/helper/communicator"
 	"github.com/mitchellh/packer/packer"
 	"github.com/sacloud/libsacloud/api"
+	"github.com/sacloud/libsacloud/sacloud/ostype"
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 	"log"
 )
@@ -54,7 +55,8 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 	var steps []multistep.Step
 
 	var communicateStep multistep.Step
-	if b.config.OSType == constants.TargetOSWindows {
+	os := ostype.StrToOSType(b.config.OSType)
+	if os.IsWindows() {
 		communicateStep = &communicator.StepConnectWinRM{
 			Config: &b.config.Comm,
 			Host:   commHost,

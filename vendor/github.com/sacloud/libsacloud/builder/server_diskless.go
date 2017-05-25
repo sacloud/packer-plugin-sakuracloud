@@ -17,8 +17,13 @@ func (b *DisklessServerBuilder) GetServerName() string {
 }
 
 // SetServerName サーバー名 設定
-func (b *DisklessServerBuilder) SetServerName(serverName string) *DisklessServerBuilder {
+func (b *DisklessServerBuilder) SetServerName(serverName string) {
 	b.serverName = serverName
+}
+
+// WithServerName サーバー名 設定
+func (b *DisklessServerBuilder) WithServerName(serverName string) *DisklessServerBuilder {
+	b.SetServerName(serverName)
 	return b
 }
 
@@ -28,8 +33,13 @@ func (b *DisklessServerBuilder) GetCore() int {
 }
 
 // SetCore CPUコア数 設定
-func (b *DisklessServerBuilder) SetCore(core int) *DisklessServerBuilder {
+func (b *DisklessServerBuilder) SetCore(core int) {
 	b.core = core
+}
+
+// WithCore CPUコア数 設定
+func (b *DisklessServerBuilder) WithCore(core int) *DisklessServerBuilder {
+	b.SetCore(core)
 	return b
 }
 
@@ -39,8 +49,13 @@ func (b *DisklessServerBuilder) GetMemory() int {
 }
 
 // SetMemory メモリサイズ(GB単位) 設定
-func (b *DisklessServerBuilder) SetMemory(memory int) *DisklessServerBuilder {
+func (b *DisklessServerBuilder) SetMemory(memory int) {
 	b.memory = memory
+}
+
+// WithMemory メモリサイズ(GB単位) 設定
+func (b *DisklessServerBuilder) WithMemory(memory int) *DisklessServerBuilder {
+	b.SetMemory(memory)
 	return b
 }
 
@@ -50,8 +65,13 @@ func (b *DisklessServerBuilder) IsUseVirtIONetPCI() bool {
 }
 
 // SetUseVirtIONetPCI NIC準仮装化モード(virtio)利用フラグ 設定
-func (b *DisklessServerBuilder) SetUseVirtIONetPCI(useVirtIONetPCI bool) *DisklessServerBuilder {
+func (b *DisklessServerBuilder) SetUseVirtIONetPCI(useVirtIONetPCI bool) {
 	b.useVirtIONetPCI = useVirtIONetPCI
+}
+
+// WithUseVirtIONetPCI NIC準仮装化モード(virtio)利用フラグ 設定
+func (b *DisklessServerBuilder) WithUseVirtIONetPCI(useVirtIONetPCI bool) *DisklessServerBuilder {
+	b.SetUseVirtIONetPCI(useVirtIONetPCI)
 	return b
 }
 
@@ -61,8 +81,13 @@ func (b *DisklessServerBuilder) GetDescription() string {
 }
 
 // SetDescription 説明 設定
-func (b *DisklessServerBuilder) SetDescription(description string) *DisklessServerBuilder {
+func (b *DisklessServerBuilder) SetDescription(description string) {
 	b.description = description
+}
+
+// WithDescription 説明 設定
+func (b *DisklessServerBuilder) WithDescription(description string) *DisklessServerBuilder {
+	b.SetDescription(description)
 	return b
 }
 
@@ -72,8 +97,13 @@ func (b *DisklessServerBuilder) GetIconID() int64 {
 }
 
 // SetIconID アイコンID 設定
-func (b *DisklessServerBuilder) SetIconID(iconID int64) *DisklessServerBuilder {
+func (b *DisklessServerBuilder) SetIconID(iconID int64) {
 	b.iconID = iconID
+}
+
+// WithIconID アイコンID 設定
+func (b *DisklessServerBuilder) WithIconID(iconID int64) *DisklessServerBuilder {
+	b.SetIconID(iconID)
 	return b
 }
 
@@ -83,19 +113,29 @@ func (b *DisklessServerBuilder) IsBootAfterCreate() bool {
 }
 
 // SetBootAfterCreate サーバー作成後すぐに起動フラグ 設定
-func (b *DisklessServerBuilder) SetBootAfterCreate(bootAfterCreate bool) *DisklessServerBuilder {
+func (b *DisklessServerBuilder) SetBootAfterCreate(bootAfterCreate bool) {
 	b.bootAfterCreate = bootAfterCreate
+}
+
+// WithBootAfterCreate サーバー作成後すぐに起動フラグ 設定
+func (b *DisklessServerBuilder) WithBootAfterCreate(bootAfterCreate bool) *DisklessServerBuilder {
+	b.SetBootAfterCreate(bootAfterCreate)
 	return b
 }
 
 // GetTags タグ 取得
 func (b *DisklessServerBuilder) GetTags() []string {
-	return b.Tags
+	return b.tags
 }
 
 // SetTags タグ 設定
-func (b *DisklessServerBuilder) SetTags(tags []string) *DisklessServerBuilder {
-	b.Tags = tags
+func (b *DisklessServerBuilder) SetTags(tags []string) {
+	b.tags = tags
+}
+
+// WithTags タグ 設定
+func (b *DisklessServerBuilder) WithTags(tags []string) *DisklessServerBuilder {
+	b.SetTags(tags)
 	return b
 }
 
@@ -104,26 +144,62 @@ func (b *DisklessServerBuilder) SetTags(tags []string) *DisklessServerBuilder {
 ---------------------------------------------------------*/
 
 // ClearNICConnections NIC接続設定 クリア
-func (b *DisklessServerBuilder) ClearNICConnections() *DisklessServerBuilder {
+func (b *DisklessServerBuilder) ClearNICConnections() {
 	b.nicConnections = nil
+}
+
+// WithEmptyNICConnections NIC接続設定 クリア
+func (b *DisklessServerBuilder) WithEmptyNICConnections() *DisklessServerBuilder {
+	b.ClearNICConnections()
 	return b
 }
 
 // AddPublicNWConnectedNIC 共有セグメントへの接続追加(注:共有セグメントはeth0のみ接続可能)
-func (b *DisklessServerBuilder) AddPublicNWConnectedNIC() *DisklessServerBuilder {
+func (b *DisklessServerBuilder) AddPublicNWConnectedNIC() {
 	b.nicConnections = append(b.nicConnections, "shared")
+}
+
+// WithAddPublicNWConnectedNIC 共有セグメントへの接続追加(注:共有セグメントはeth0のみ接続可能)
+func (b *DisklessServerBuilder) WithAddPublicNWConnectedNIC() *DisklessServerBuilder {
+	b.AddPublicNWConnectedNIC()
 	return b
 }
 
 // AddExistsSwitchConnectedNIC スイッチ or ルーター+スイッチへの接続追加(注:ルーター+スイッチはeth0のみ接続可能)
-func (b *DisklessServerBuilder) AddExistsSwitchConnectedNIC(switchID string) *DisklessServerBuilder {
+func (b *DisklessServerBuilder) AddExistsSwitchConnectedNIC(switchID string) {
 	b.nicConnections = append(b.nicConnections, switchID)
+}
+
+// WithAddExistsSwitchConnectedNIC スイッチ or ルーター+スイッチへの接続追加(注:ルーター+スイッチはeth0のみ接続可能)
+func (b *DisklessServerBuilder) WithAddExistsSwitchConnectedNIC(switchID string) *DisklessServerBuilder {
+	b.AddExistsSwitchConnectedNIC(switchID)
 	return b
 }
 
 // AddDisconnectedNIC 切断されたNIC追加
-func (b *DisklessServerBuilder) AddDisconnectedNIC() *DisklessServerBuilder {
+func (b *DisklessServerBuilder) AddDisconnectedNIC() {
 	b.nicConnections = append(b.nicConnections, "")
+}
+
+// WithAddDisconnectedNIC 切断されたNIC追加
+func (b *DisklessServerBuilder) WithAddDisconnectedNIC() *DisklessServerBuilder {
+	b.AddDisconnectedNIC()
+	return b
+}
+
+// GetPacketFilterIDs パケットフィルタID 取得
+func (b *DisklessServerBuilder) GetPacketFilterIDs() []int64 {
+	return b.packetFilterIDs
+}
+
+// SetPacketFilterIDs パケットフィルタID 設定
+func (b *DisklessServerBuilder) SetPacketFilterIDs(ids []int64) {
+	b.packetFilterIDs = ids
+}
+
+// WithPacketFilterIDs パケットフィルタID 設定
+func (b *DisklessServerBuilder) WithPacketFilterIDs(ids []int64) *DisklessServerBuilder {
+	b.packetFilterIDs = ids
 	return b
 }
 
@@ -133,7 +209,12 @@ func (b *DisklessServerBuilder) GetISOImageID() int64 {
 }
 
 // SetISOImageID ISOイメージ(CDROM)ID 設定
-func (b *DisklessServerBuilder) SetISOImageID(id int64) *DisklessServerBuilder {
+func (b *DisklessServerBuilder) SetISOImageID(id int64) {
+	b.isoImageID = id
+}
+
+// WithISOImageID ISOイメージ(CDROM)ID 設定
+func (b *DisklessServerBuilder) WithISOImageID(id int64) *DisklessServerBuilder {
 	b.isoImageID = id
 	return b
 }
@@ -143,14 +224,24 @@ func (b *DisklessServerBuilder) SetISOImageID(id int64) *DisklessServerBuilder {
 ---------------------------------------------------------*/
 
 // SetEventHandler イベントハンドラ 設定
-func (b *DisklessServerBuilder) SetEventHandler(event ServerBuildEvents, handler ServerBuildEventHandler) *DisklessServerBuilder {
+func (b *DisklessServerBuilder) SetEventHandler(event ServerBuildEvents, handler ServerBuildEventHandler) {
 	b.buildEventHandlers[event] = handler
+}
+
+// WithEventHandler イベントハンドラ 設定
+func (b *DisklessServerBuilder) WithEventHandler(event ServerBuildEvents, handler ServerBuildEventHandler) *DisklessServerBuilder {
+	b.SetEventHandler(event, handler)
 	return b
 }
 
 // ClearEventHandler イベントハンドラ クリア
-func (b *DisklessServerBuilder) ClearEventHandler(event ServerBuildEvents) *DisklessServerBuilder {
+func (b *DisklessServerBuilder) ClearEventHandler(event ServerBuildEvents) {
 	delete(b.buildEventHandlers, event)
+}
+
+// WithEmptyEventHandler イベントハンドラ クリア
+func (b *DisklessServerBuilder) WithEmptyEventHandler(event ServerBuildEvents) *DisklessServerBuilder {
+	b.ClearEventHandler(event)
 	return b
 }
 

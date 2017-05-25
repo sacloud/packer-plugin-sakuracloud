@@ -18,7 +18,7 @@
 //		client := api.NewClient("PUT-YOUR-TOKEN", "PUT-YOUR-SECRET", "tk1a")
 //
 //		// パブリックアーカイブ(CentOS)から作成するビルダー、共有セグメントに接続、以外はデフォルト値で作成
-//		res , err := builder.ServerPublicArchiveUnix(client, ostype.CentOS, "ServerName", "Password").AddPublicNWConnectedNIC().Build()
+//		res , err := builder.ServerPublicArchiveUnix(client, ostype.CentOS, "ServerName", "Password").WithAddPublicNWConnectedNIC().Build()
 //
 //		if err != nil {
 //			panic(err)
@@ -90,7 +90,7 @@
 //	res , err := b.Build()
 //
 //	// Fluent APIの場合
-//	res , err := builder.ServerPublicArchiveUnix(client, ostype.CentOS, "ServerName", "Password").AddPublicNWConnectedNIC().Build()
+//	res , err := builder.ServerPublicArchiveUnix(client, ostype.CentOS, "ServerName", "Password").WithAddPublicNWConnectedNIC().Build()
 //
 //
 // Event handling
@@ -102,7 +102,7 @@
 //
 //		// ディスクレスビルダー、イベントハンドラ(ServerBuildOnComplete)を登録
 //		builder.ServerDiskless(client, "example").
-//			SetEventHandler(builder.ServerBuildOnComplete, callbackFunc).
+//			WithEventHandler(builder.ServerBuildOnComplete, callbackFunc).
 //			Build()
 //	}
 //
