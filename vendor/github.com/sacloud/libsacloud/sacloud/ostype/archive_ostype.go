@@ -21,8 +21,6 @@ const (
 	RancherOS
 	// Kusanagi OS種別:Kusanagi(CentOS)
 	Kusanagi
-	// SiteGuard OS種別:SiteGuard(CentOS)
-	SiteGuard
 	// Plesk OS種別:Plesk(CentOS)
 	Plesk
 	// FreeBSD OS種別:FreeBSD
@@ -43,6 +41,8 @@ const (
 	Windows2016SQLServerWeb
 	// Windows2016SQLServerStandard OS種別:Windows Server 2016 SQLServer(Standard)
 	Windows2016SQLServerStandard
+	// Windows2016SQLServerStandardAll OS種別:Windows Server 2016 SQLServer(Standard) + RDS + Office
+	Windows2016SQLServerStandardAll
 	// Custom OS種別:カスタム
 	Custom
 )
@@ -50,10 +50,10 @@ const (
 // OSTypeShortNames OSTypeとして利用できる文字列のリスト
 var OSTypeShortNames = []string{
 	"centos", "ubuntu", "debian", "vyos", "coreos", "rancheros",
-	"kusanagi", "site-guard", "plesk", "freebsd",
+	"kusanagi", "plesk", "freebsd",
 	"windows2012", "windows2012-rds", "windows2012-rds-office",
 	"windows2016", "windows2016-rds", "windows2016-rds-office",
-	"windows2016-sql-web", "windows2016-sql-standard",
+	"windows2016-sql-web", "windows2016-sql-standard", "windows2016-sql-standard-all",
 }
 
 // IsWindows Windowsか
@@ -61,7 +61,7 @@ func (o ArchiveOSTypes) IsWindows() bool {
 	switch o {
 	case Windows2012, Windows2012RDS, Windows2012RDSOffice,
 		Windows2016, Windows2016RDS, Windows2016RDSOffice,
-		Windows2016SQLServerWeb, Windows2016SQLServerStandard:
+		Windows2016SQLServerWeb, Windows2016SQLServerStandard, Windows2016SQLServerStandardAll:
 		return true
 	default:
 		return false
@@ -71,7 +71,7 @@ func (o ArchiveOSTypes) IsWindows() bool {
 // IsSupportDiskEdit ディスクの修正機能をフルサポートしているか(Windowsは一部サポートのためfalseを返す)
 func (o ArchiveOSTypes) IsSupportDiskEdit() bool {
 	switch o {
-	case CentOS, Ubuntu, Debian, VyOS, CoreOS, RancherOS, Kusanagi, SiteGuard, Plesk, FreeBSD:
+	case CentOS, Ubuntu, Debian, VyOS, CoreOS, RancherOS, Kusanagi, Plesk, FreeBSD:
 		return true
 	default:
 		return false
@@ -94,8 +94,6 @@ func StrToOSType(osType string) ArchiveOSTypes {
 		return RancherOS
 	case "kusanagi":
 		return Kusanagi
-	case "site-guard":
-		return SiteGuard
 	case "plesk":
 		return Plesk
 	case "freebsd":
@@ -116,6 +114,8 @@ func StrToOSType(osType string) ArchiveOSTypes {
 		return Windows2016SQLServerWeb
 	case "windows2016-sql-standard":
 		return Windows2016SQLServerStandard
+	case "windows2016-sql-standard-all":
+		return Windows2016SQLServerStandardAll
 	default:
 		return Custom
 	}
