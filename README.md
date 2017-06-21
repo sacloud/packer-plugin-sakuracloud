@@ -124,7 +124,6 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 | `coreos`                  | CoreOS|
 | `rancheros`               | RancherOS|
 | `kusanagi`                | Kusanagi(CentOS7)|
-| `site-guard`              | SiteGuard(CentOS7)|
 | `plesk`                   | Plesk(CentOS7)|
 | `freebsd`                 | FreeBSD|
 | `windows2012`             | Windows 2012|
@@ -135,6 +134,7 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 | `windows2016-rds-office`  | Windows 2016(RDS + Office)|
 | `windows2016-sql-web`     | Windows 2016 SQLServer(Web)|
 | `windows2016-sql-standard`| Windows 2016 SQLServer(Standard)|
+| `windows2016-sql-standard-all`| Windows 2016 SQLServer(RDS+Office)|
 | `custom`                  | 任意のアーカイブID/ディスクIDを指定する場合|
 | `iso`                     | さくらのクラウド上のISOイメージ、<br />またはURLを指定してISOイメージをダウンロードする場合|
 
