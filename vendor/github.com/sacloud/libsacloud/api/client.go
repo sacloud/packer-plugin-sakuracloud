@@ -10,11 +10,13 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
-const (
-	sakuraCloudAPIRoot = "https://secure.sakura.ad.jp/cloud/zone"
+var (
+	// SakuraCloudAPIRoot APIリクエスト送信先ルートURL(末尾にスラッシュを含まない)
+	SakuraCloudAPIRoot = "https://secure.sakura.ad.jp/cloud/zone"
 )
 
 // Client APIクライアント
@@ -67,7 +69,7 @@ func (c *Client) Clone() *Client {
 }
 
 func (c *Client) getEndpoint() string {
-	return fmt.Sprintf("%s/%s", sakuraCloudAPIRoot, c.Zone)
+	return fmt.Sprintf("%s/%s", SakuraCloudAPIRoot, c.Zone)
 }
 
 func (c *Client) isOkStatus(code int) bool {
@@ -97,10 +99,13 @@ func (c *Client) isOkStatus(code int) bool {
 func (c *Client) newRequest(method, uri string, body interface{}) ([]byte, error) {
 	var (
 		client = &http.Client{}
-		url    = fmt.Sprintf("%s/%s", c.getEndpoint(), uri)
 		err    error
 		req    *http.Request
 	)
+	var url = uri
+	if !strings.HasPrefix(url, "https://") {
+		url = fmt.Sprintf("%s/%s", c.getEndpoint(), uri)
+	}
 
 	if body != nil {
 		var bodyJSON []byte
@@ -109,7 +114,7 @@ func (c *Client) newRequest(method, uri string, body interface{}) ([]byte, error
 			return nil, err
 		}
 		if method == "GET" {
-			url = fmt.Sprintf("%s/%s?%s", c.getEndpoint(), uri, bytes.NewBuffer(bodyJSON))
+			url = fmt.Sprintf("%s?%s", url, bytes.NewBuffer(bodyJSON))
 			req, err = http.NewRequest(method, url, nil)
 		} else {
 			req, err = http.NewRequest(method, url, bytes.NewBuffer(bodyJSON))
@@ -197,6 +202,8 @@ type API struct {
 	IPv6Net       *IPv6NetAPI       // IPv6ネットワークAPI
 	License       *LicenseAPI       // ライセンスAPI
 	LoadBalancer  *LoadBalancerAPI  // ロードバランサーAPI
+	NewsFeed      *NewsFeedAPI      // フィード(障害/メンテナンス情報)API
+	NFS           *NFSAPI           // NFS API
 	Note          *NoteAPI          // スタートアップスクリプトAPI
 	PacketFilter  *PacketFilterAPI  // パケットフィルタAPI
 	Product       *ProductAPI       // 製品情報API
@@ -307,6 +314,16 @@ func (api *API) GetLicenseAPI() *LicenseAPI {
 // GetLoadBalancerAPI ロードバランサーAPI取得
 func (api *API) GetLoadBalancerAPI() *LoadBalancerAPI {
 	return api.LoadBalancer
+}
+
+// GetNewsFeedAPI フィード(障害/メンテナンス情報)API取得
+func (api *API) GetNewsFeedAPI() *NewsFeedAPI {
+	return api.NewsFeed
+}
+
+// GetNFSAPI NFS API取得
+func (api *API) GetNFSAPI() *NFSAPI {
+	return api.NFS
 }
 
 // GetNoteAPI スタートアップAPI取得
@@ -453,6 +470,8 @@ func newAPI(client *Client) *API {
 		IPv6Net:      NewIPv6NetAPI(client),
 		License:      NewLicenseAPI(client),
 		LoadBalancer: NewLoadBalancerAPI(client),
+		NewsFeed:     NewNewsFeedAPI(client),
+		NFS:          NewNFSAPI(client),
 		Note:         NewNoteAPI(client),
 		PacketFilter: NewPacketFilterAPI(client),
 		Product: &ProductAPI{

@@ -107,7 +107,9 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 		}
 		b.SetCore(c.Core)
 		b.SetMemory(c.MemorySize)
-		b.SetUseVirtIONetPCI(!c.DisableVirtIONetPCI)
+		if !c.DisableVirtIONetPCI {
+			b.SetInterfaceDriver(sacloud.InterfaceDriverE1000)
+		}
 		b.AddPublicNWConnectedNIC()
 		b.SetDiskSize(c.DiskSize)
 		b.SetDiskConnection(s.getDiskConnection(c))
@@ -133,7 +135,9 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 
 			b.SetCore(c.Core)
 			b.SetMemory(c.MemorySize)
-			b.SetUseVirtIONetPCI(!c.DisableVirtIONetPCI)
+			if !c.DisableVirtIONetPCI {
+				b.SetInterfaceDriver(sacloud.InterfaceDriverE1000)
+			}
 			b.AddPublicNWConnectedNIC()
 			b.SetDiskSize(c.DiskSize)
 			b.SetDiskConnection(s.getDiskConnection(c))
@@ -145,7 +149,9 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 			b := builder.ServerPublicArchiveWindows(client, os, serverName)
 			b.SetCore(c.Core)
 			b.SetMemory(c.MemorySize)
-			b.SetUseVirtIONetPCI(!c.DisableVirtIONetPCI)
+			if !c.DisableVirtIONetPCI {
+				b.SetInterfaceDriver(sacloud.InterfaceDriverE1000)
+			}
 			b.AddPublicNWConnectedNIC()
 			b.SetDiskSize(c.DiskSize)
 			b.SetDiskConnection(s.getDiskConnection(c))
@@ -162,7 +168,9 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 			b := builder.ServerPublicArchiveUnix(client, os, serverName, c.Password)
 			b.SetCore(c.Core)
 			b.SetMemory(c.MemorySize)
-			b.SetUseVirtIONetPCI(!c.DisableVirtIONetPCI)
+			if !c.DisableVirtIONetPCI {
+				b.SetInterfaceDriver(sacloud.InterfaceDriverE1000)
+			}
 			b.AddPublicNWConnectedNIC()
 			b.SetDiskSize(c.DiskSize)
 			b.SetDiskConnection(s.getDiskConnection(c))
