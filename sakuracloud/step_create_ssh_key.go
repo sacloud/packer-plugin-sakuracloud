@@ -23,7 +23,9 @@ type stepCreateSSHKey struct {
 func (s *stepCreateSSHKey) Run(state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packer.Ui)
 
-	ui.Say("Creating temporary SSH key for instance...")
+	stepStartMsg(ui, s.Debug, "CreateSSHKey")
+
+	ui.Say("\tCreating temporary SSH key for instance...")
 	priv, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		err := fmt.Errorf("Error creating temporary ssh key: %s", err)
@@ -68,6 +70,8 @@ func (s *stepCreateSSHKey) Run(state multistep.StateBag) multistep.StepAction {
 			return multistep.ActionHalt
 		}
 	}
+
+	stepEndMsg(ui, s.Debug, "CreateSSHKey")
 	return multistep.ActionContinue
 }
 

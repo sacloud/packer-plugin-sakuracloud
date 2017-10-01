@@ -25,8 +25,10 @@ type stepCreateServer struct {
 func (s *stepCreateServer) Run(state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packer.Ui)
 
+	stepStartMsg(ui, s.Debug, "CreateServer")
+
 	// create Server
-	ui.Say("Creating server...")
+	ui.Say("\tCreating server...")
 
 	b := s.createServerBuilder(state)
 	createResult, err := b.Build()
@@ -46,6 +48,7 @@ func (s *stepCreateServer) Run(state multistep.StateBag) multistep.StepAction {
 	state.Put("server_id", s.serverID)
 	state.Put("disk_id", s.diskIDs[0])
 
+	stepEndMsg(ui, s.Debug, "CreateServer")
 	return multistep.ActionContinue
 }
 
@@ -61,7 +64,7 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 	c := state.Get("config").(Config)
 
 	// Destroy the server we just created
-	ui.Say("Destroying server...")
+	ui.Say("\tDestroying server...")
 
 	// force shutdown
 	_, err := client.Server.Stop(s.serverID)

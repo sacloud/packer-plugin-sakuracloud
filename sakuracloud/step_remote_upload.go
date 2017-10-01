@@ -13,11 +13,15 @@ import (
 	"strings"
 )
 
-type stepRemoteUpload struct{}
+type stepRemoteUpload struct {
+	Debug bool
+}
 
 func (s *stepRemoteUpload) Run(state multistep.StateBag) multistep.StepAction {
 	client := state.Get("client").(*api.Client)
 	ui := state.Get("ui").(packer.Ui)
+
+	stepStartMsg(ui, s.Debug, "ISO-Image Upload")
 
 	filepath, ok := state.Get("iso_path").(string)
 	if !ok {
@@ -38,11 +42,12 @@ func (s *stepRemoteUpload) Run(state multistep.StateBag) multistep.StepAction {
 		}
 		if len(res.CDROMs) > 0 {
 			state.Put("iso_id", res.CDROMs[0].ID)
+			stepEndMsg(ui, s.Debug, "ISO-Image Upload")
 			return multistep.ActionContinue
 		}
 	}
 
-	ui.Say("Uploading ISO to SakuraCloud...")
+	ui.Say("\tUploading ISO to SakuraCloud...")
 	log.Printf("Remote uploading: %s", filepath)
 
 	req := client.CDROM.New()
@@ -111,6 +116,7 @@ func (s *stepRemoteUpload) Run(state multistep.StateBag) multistep.StepAction {
 	}
 
 	state.Put("iso_id", isoImage.ID)
+	stepEndMsg(ui, s.Debug, "ISO-Image Upload")
 	return multistep.ActionContinue
 }
 

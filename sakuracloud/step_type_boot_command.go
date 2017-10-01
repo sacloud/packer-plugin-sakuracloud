@@ -39,7 +39,8 @@ type bootCommandTemplateData struct {
 // Produces:
 //   <nothing>
 type stepTypeBootCommand struct {
-	Ctx interpolate.Context
+	Ctx   interpolate.Context
+	Debug bool
 }
 
 func (s *stepTypeBootCommand) Run(state multistep.StateBag) multistep.StepAction {
@@ -49,6 +50,7 @@ func (s *stepTypeBootCommand) Run(state multistep.StateBag) multistep.StepAction
 	}
 
 	ui := state.Get("ui").(packer.Ui)
+	stepStartMsg(ui, s.Debug, "Type BootCommand")
 	vncCredentials := state.Get("vnc").(*sacloud.VNCProxyResponse)
 
 	serverIP := state.Get("server_ip").(string)
@@ -60,7 +62,7 @@ func (s *stepTypeBootCommand) Run(state multistep.StateBag) multistep.StepAction
 	privateKey := state.Get("ssh_private_key").(string)
 
 	// Connect to VNC
-	ui.Say("Connecting to VM via VNC")
+	ui.Say("\tConnecting to VM via VNC")
 	nc, err := net.Dial("tcp", fmt.Sprintf("%s:%s", vncCredentials.Host, vncCredentials.Port))
 	if err != nil {
 		err := fmt.Errorf("Error connecting to VNC: %s", err)
@@ -92,7 +94,7 @@ func (s *stepTypeBootCommand) Run(state multistep.StateBag) multistep.StepAction
 		PrivateKey:     privateKey,
 	}
 
-	ui.Say("Typing the boot command over VNC...")
+	ui.Say("\tTyping the boot command over VNC...")
 	for _, command := range config.BootCommand {
 		command, err := interpolate.Render(command, &s.Ctx)
 		if err != nil {
@@ -111,6 +113,7 @@ func (s *stepTypeBootCommand) Run(state multistep.StateBag) multistep.StepAction
 		vncSendString(c, command, config.UseUSKeyboard)
 	}
 
+	stepEndMsg(ui, s.Debug, "BootWait")
 	return multistep.ActionContinue
 }
 

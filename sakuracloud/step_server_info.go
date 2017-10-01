@@ -18,7 +18,9 @@ func (s *stepServerInfo) Run(state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packer.Ui)
 	serverID := state.Get("server_id").(int64)
 
-	ui.Say("Waiting for server to become active...")
+	stepStartMsg(ui, s.Debug, "Read Server Info")
+
+	ui.Say("\tWaiting for server to become active...")
 
 	// Set the Network informations on the state for later
 	server, err := client.Server.Read(serverID)
@@ -62,6 +64,7 @@ func (s *stepServerInfo) Run(state multistep.StateBag) multistep.StepAction {
 	}
 	state.Put("vnc", vnc)
 
+	stepEndMsg(ui, s.Debug, "Read Server Info")
 	return multistep.ActionContinue
 }
 

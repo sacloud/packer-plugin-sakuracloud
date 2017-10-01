@@ -18,7 +18,9 @@ func (s *stepShutdown) Run(state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packer.Ui)
 	serverID := state.Get("server_id").(int64)
 
-	ui.Say("Gracefully shutting down server...")
+	stepStartMsg(ui, s.Debug, "Shutdown Server")
+
+	ui.Say("\tGracefully shutting down server...")
 
 	_, err := client.Server.Shutdown(serverID)
 	if err != nil {
@@ -30,6 +32,7 @@ func (s *stepShutdown) Run(state multistep.StateBag) multistep.StepAction {
 
 	client.Server.SleepUntilDown(serverID, 1*time.Minute)
 
+	stepEndMsg(ui, s.Debug, "Shutdown Server")
 	return multistep.ActionContinue
 }
 

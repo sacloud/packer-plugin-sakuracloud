@@ -78,7 +78,9 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 	var isoSteps []multistep.Step
 	if b.config.ISOImageID > 0 {
 		isoSteps = []multistep.Step{
-			&stepPrepareISO{},
+			&stepPrepareISO{
+				Debug: b.config.PackerDebug,
+			},
 		}
 	} else {
 		isoSteps = []multistep.Step{
@@ -91,8 +93,12 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 				TargetPath:   b.config.TargetPath,
 				Url:          b.config.ISOUrls,
 			},
-			&stepRemoteUpload{},
-			&stepPrepareISO{},
+			&stepRemoteUpload{
+				Debug: b.config.PackerDebug,
+			},
+			&stepPrepareISO{
+				Debug: b.config.PackerDebug,
+			},
 		}
 	}
 
@@ -104,12 +110,15 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 		&stepCreateServer{
 			Debug: b.config.PackerDebug,
 		},
-		new(stepBootWait),
+		&stepBootWait{
+			Debug: b.config.PackerDebug,
+		},
 		&stepServerInfo{
 			Debug: b.config.PackerDebug,
 		},
 		&stepTypeBootCommand{
-			Ctx: b.config.ctx,
+			Debug: b.config.PackerDebug,
+			Ctx:   b.config.ctx,
 		},
 		communicateStep, // ssh or winrm
 		new(common.StepProvision),

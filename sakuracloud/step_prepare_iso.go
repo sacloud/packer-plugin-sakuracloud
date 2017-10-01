@@ -7,12 +7,16 @@ import (
 	"github.com/sacloud/libsacloud/api"
 )
 
-type stepPrepareISO struct{}
+type stepPrepareISO struct {
+	Debug bool
+}
 
 func (s *stepPrepareISO) Run(state multistep.StateBag) multistep.StepAction {
 	client := state.Get("client").(*api.Client)
 	config := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
+
+	stepStartMsg(ui, s.Debug, "PrepareISO")
 
 	isoID := config.ISOImageID
 	if isoID == 0 {
@@ -36,6 +40,7 @@ func (s *stepPrepareISO) Run(state multistep.StateBag) multistep.StepAction {
 	}
 
 	state.Put("config", config)
+	stepEndMsg(ui, s.Debug, "PrepareISO")
 	return multistep.ActionContinue
 }
 

@@ -18,7 +18,9 @@ func (s *stepCreateArchive) Run(state multistep.StateBag) multistep.StepAction {
 	c := state.Get("config").(Config)
 	diskID := state.Get("disk_id").(int64)
 
-	ui.Say(fmt.Sprintf("Creating archive: %v", c.ArchiveName))
+	stepStartMsg(ui, s.Debug, "CreateArchive")
+
+	ui.Say(fmt.Sprintf("\tCreating archive: %v", c.ArchiveName))
 
 	archiveReq := client.Archive.New()
 	archiveReq.Name = c.ArchiveName
@@ -64,6 +66,7 @@ func (s *stepCreateArchive) Run(state multistep.StateBag) multistep.StepAction {
 	state.Put("archive_id", archive.ID)
 	state.Put("archive_name", archive.Name)
 	state.Put("zone", client.Zone)
+	stepEndMsg(ui, s.Debug, "BootWait")
 	return multistep.ActionContinue
 }
 
