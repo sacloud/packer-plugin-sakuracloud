@@ -12,13 +12,13 @@ install: build
 	cp -f $(CURDIR)/bin/packer-builder-sakuracloud $(GOPATH)/bin/packer-builder-sakuracloud
 
 build: clean vet
-	govendor build -ldflags "-s -w" -o $(CURDIR)/bin/packer-builder-sakuracloud $(CURDIR)/main.go
+	go build -ldflags "-s -w" -o $(CURDIR)/bin/packer-builder-sakuracloud $(CURDIR)/main.go
 
 build-x: clean vet
 	sh -c "'$(CURDIR)/scripts/build.sh'"
 
 test: vet
-	govendor test $(TEST) $(TESTARGS) -v -timeout=30m -parallel=4 ;
+	go test $(TEST) $(TESTARGS) -v -timeout=30m -parallel=4 ;
 
 vet: fmt
 	@echo "go tool vet $(VETARGS) ."

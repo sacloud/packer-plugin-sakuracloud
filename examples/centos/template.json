@@ -9,7 +9,6 @@
         "core" : 2,
         "memory_size": 4,
         "archive_name": "packer-example-centos",
-        "archive_tags": ["tag1","tag2"],
         "archive_description": "description of archive"
     }],
     "provisioners":[
