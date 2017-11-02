@@ -9,6 +9,8 @@ type ArchiveOSTypes int
 const (
 	// CentOS OS種別:CentOS
 	CentOS ArchiveOSTypes = iota
+	// CentOS6 OS種別:CentOS6
+	CentOS6
 	// Ubuntu OS種別:Ubuntu
 	Ubuntu
 	// Debian OS種別:Debian
@@ -21,8 +23,6 @@ const (
 	RancherOS
 	// Kusanagi OS種別:Kusanagi(CentOS)
 	Kusanagi
-	// Plesk OS種別:Plesk(CentOS)
-	Plesk
 	// FreeBSD OS種別:FreeBSD
 	FreeBSD
 	// Windows2012 OS種別:Windows Server 2012 R2 Datacenter Edition
@@ -49,8 +49,8 @@ const (
 
 // OSTypeShortNames OSTypeとして利用できる文字列のリスト
 var OSTypeShortNames = []string{
-	"centos", "ubuntu", "debian", "vyos", "coreos", "rancheros",
-	"kusanagi", "plesk", "freebsd",
+	"centos", "centos6", "ubuntu", "debian", "vyos", "coreos",
+	"rancheros", "kusanagi", "freebsd",
 	"windows2012", "windows2012-rds", "windows2012-rds-office",
 	"windows2016", "windows2016-rds", "windows2016-rds-office",
 	"windows2016-sql-web", "windows2016-sql-standard", "windows2016-sql-standard-all",
@@ -71,7 +71,7 @@ func (o ArchiveOSTypes) IsWindows() bool {
 // IsSupportDiskEdit ディスクの修正機能をフルサポートしているか(Windowsは一部サポートのためfalseを返す)
 func (o ArchiveOSTypes) IsSupportDiskEdit() bool {
 	switch o {
-	case CentOS, Ubuntu, Debian, VyOS, CoreOS, RancherOS, Kusanagi, Plesk, FreeBSD:
+	case CentOS, CentOS6, Ubuntu, Debian, VyOS, CoreOS, RancherOS, Kusanagi, FreeBSD:
 		return true
 	default:
 		return false
@@ -83,6 +83,8 @@ func StrToOSType(osType string) ArchiveOSTypes {
 	switch osType {
 	case "centos":
 		return CentOS
+	case "centos6":
+		return CentOS6
 	case "ubuntu":
 		return Ubuntu
 	case "debian":
@@ -95,8 +97,6 @@ func StrToOSType(osType string) ArchiveOSTypes {
 		return RancherOS
 	case "kusanagi":
 		return Kusanagi
-	case "plesk":
-		return Plesk
 	case "freebsd":
 		return FreeBSD
 	case "windows2012":

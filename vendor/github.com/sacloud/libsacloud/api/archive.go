@@ -16,13 +16,13 @@ type ArchiveAPI struct {
 
 var (
 	archiveLatestStableCentOSTags                      = []string{"current-stable", "distro-centos"}
+	archiveLatestStableCentOS6Tags                     = []string{"distro-centos", "distro-ver-6.9"}
 	archiveLatestStableUbuntuTags                      = []string{"current-stable", "distro-ubuntu"}
 	archiveLatestStableDebianTags                      = []string{"current-stable", "distro-debian"}
 	archiveLatestStableVyOSTags                        = []string{"current-stable", "distro-vyos"}
 	archiveLatestStableCoreOSTags                      = []string{"current-stable", "distro-coreos"}
 	archiveLatestStableRancherOSTags                   = []string{"current-stable", "distro-rancheros"}
 	archiveLatestStableKusanagiTags                    = []string{"current-stable", "pkg-kusanagi"}
-	archiveLatestStablePleskTags                       = []string{"current-stable", "pkg-plesk"}
 	archiveLatestStableFreeBSDTags                     = []string{"current-stable", "distro-freebsd"}
 	archiveLatestStableWindows2012Tags                 = []string{"os-windows", "distro-ver-2012.2"}
 	archiveLatestStableWindows2012RDSTags              = []string{"os-windows", "distro-ver-2012.2", "windows-rds"}
@@ -48,13 +48,13 @@ func NewArchiveAPI(client *Client) *ArchiveAPI {
 
 	api.findFuncMapPerOSType = map[ostype.ArchiveOSTypes]func() (*sacloud.Archive, error){
 		ostype.CentOS:                          api.FindLatestStableCentOS,
+		ostype.CentOS6:                         api.FindLatestStableCentOS6,
 		ostype.Ubuntu:                          api.FindLatestStableUbuntu,
 		ostype.Debian:                          api.FindLatestStableDebian,
 		ostype.VyOS:                            api.FindLatestStableVyOS,
 		ostype.CoreOS:                          api.FindLatestStableCoreOS,
 		ostype.RancherOS:                       api.FindLatestStableRancherOS,
 		ostype.Kusanagi:                        api.FindLatestStableKusanagi,
-		ostype.Plesk:                           api.FindLatestStablePlesk,
 		ostype.FreeBSD:                         api.FindLatestStableFreeBSD,
 		ostype.Windows2012:                     api.FindLatestStableWindows2012,
 		ostype.Windows2012RDS:                  api.FindLatestStableWindows2012RDS,
@@ -235,6 +235,11 @@ func (api *ArchiveAPI) FindLatestStableCentOS() (*sacloud.Archive, error) {
 	return api.findByOSTags(archiveLatestStableCentOSTags)
 }
 
+// FindLatestStableCentOS6 安定版最新のCentOS6パブリックアーカイブを取得
+func (api *ArchiveAPI) FindLatestStableCentOS6() (*sacloud.Archive, error) {
+	return api.findByOSTags(archiveLatestStableCentOS6Tags)
+}
+
 // FindLatestStableDebian 安定版最新のDebianパブリックアーカイブを取得
 func (api *ArchiveAPI) FindLatestStableDebian() (*sacloud.Archive, error) {
 	return api.findByOSTags(archiveLatestStableDebianTags)
@@ -263,11 +268,6 @@ func (api *ArchiveAPI) FindLatestStableRancherOS() (*sacloud.Archive, error) {
 // FindLatestStableKusanagi 安定版最新のKusanagiパブリックアーカイブを取得
 func (api *ArchiveAPI) FindLatestStableKusanagi() (*sacloud.Archive, error) {
 	return api.findByOSTags(archiveLatestStableKusanagiTags)
-}
-
-// FindLatestStablePlesk 安定版最新のPleskパブリックアーカイブを取得
-func (api *ArchiveAPI) FindLatestStablePlesk() (*sacloud.Archive, error) {
-	return api.findByOSTags(archiveLatestStablePleskTags)
 }
 
 // FindLatestStableFreeBSD 安定版最新のFreeBSDパブリックアーカイブを取得
