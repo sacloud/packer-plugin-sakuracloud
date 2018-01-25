@@ -96,7 +96,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 	client := state.Get("client").(*api.Client)
 	c := state.Get("config").(Config)
 
-	serverName := "packer_builder_sakuracloud"
+	serverName := "packer-builder-sakuracloud"
 
 	switch c.OSType {
 	case "iso":
