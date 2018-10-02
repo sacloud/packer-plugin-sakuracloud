@@ -147,6 +147,7 @@ func setDefaultConfig(c *Config) {
 			c.Comm.SSHUsername = "root"
 		}
 	}
+
 	os := ostype.StrToOSType(c.OSType)
 	if os.IsWindows() {
 		if c.Comm.WinRMUser == "" {

@@ -6,7 +6,6 @@ import (
 	"github.com/mitchellh/multistep"
 	"github.com/mitchellh/packer/packer"
 	"github.com/sacloud/libsacloud/api"
-	"github.com/sacloud/libsacloud/sacloud"
 )
 
 type stepServerInfo struct {
@@ -38,14 +37,9 @@ func (s *stepServerInfo) Run(state multistep.StateBag) multistep.StepAction {
 	state.Put("dns2", "")
 
 	if len(server.Interfaces) > 0 && server.Interfaces[0].Switch != nil {
-		ip := server.Interfaces[0].IPAddress
-		if server.Interfaces[0].Switch.Scope != sacloud.ESCopeShared {
-			ip = server.Interfaces[0].UserIPAddress
-		}
-		state.Put("server_ip", ip)
-
-		state.Put("default_route", server.Interfaces[0].Switch.UserSubnet.DefaultRoute)
-		state.Put("network_mask_len", server.Interfaces[0].Switch.UserSubnet.NetworkMaskLen)
+		state.Put("server_ip", server.IPAddress())
+		state.Put("default_route", server.DefaultRoute())
+		state.Put("network_mask_len", server.NetworkMaskLen())
 	}
 	if len(server.Zone.Region.NameServers) > 0 {
 		state.Put("dns1", server.Zone.Region.NameServers[0])

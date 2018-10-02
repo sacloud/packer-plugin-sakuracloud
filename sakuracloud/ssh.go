@@ -2,9 +2,9 @@ package sakuracloud
 
 import (
 	"fmt"
-	"golang.org/x/crypto/ssh"
 
 	"github.com/mitchellh/multistep"
+	"golang.org/x/crypto/ssh"
 )
 
 func commHost(state multistep.StateBag) (string, error) {
@@ -21,13 +21,10 @@ func sshConfig(state multistep.StateBag) (*ssh.ClientConfig, error) {
 		return nil, fmt.Errorf("Error setting up SSH config: %s", err)
 	}
 
-	auth := []ssh.AuthMethod{
-		ssh.PublicKeys(signer),
-	}
-
+	auth := []ssh.AuthMethod{ssh.PublicKeys(signer)}
 	if config.Password != "" {
 		config.Comm.SSHPassword = config.Password
-		auth = append(auth, ssh.Password(config.Comm.SSHPassword))
+		auth = append(auth, ssh.Password(config.Password))
 	}
 
 	return &ssh.ClientConfig{
