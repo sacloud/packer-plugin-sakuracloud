@@ -70,6 +70,9 @@ type serverBuilder struct {
 	// CDROM
 	isoImageID int64
 
+	// privateHost
+	privateHostID int64
+
 	// for nic
 	nicConnections []string
 
@@ -140,6 +143,17 @@ func ServerPublicArchiveUnix(client *api.Client, os ostype.ArchiveOSTypes, name 
 	b := newServerBuilder(client, name)
 	b.ServerPublicArchiveUnix(os, password)
 	return &PublicArchiveUnixServerBuilder{
+		serverBuilder: b,
+	}
+
+}
+
+// ServerPublicArchiveFixedUnix ディスクの編集が不可なLinux(Unix)系パブリックアーカイブを利用するビルダー
+func ServerPublicArchiveFixedUnix(client *api.Client, os ostype.ArchiveOSTypes, name string) *FixedUnixArchiveServerBuilder {
+
+	b := newServerBuilder(client, name)
+	b.ServerPublicArchiveFixedUnix(os)
+	return &FixedUnixArchiveServerBuilder{
 		serverBuilder: b,
 	}
 
@@ -216,6 +230,16 @@ func (b *serverBuilder) ServerPublicArchiveUnix(os ostype.ArchiveOSTypes, passwo
 	b.disk.sourceArchiveID = archive.ID
 	b.disk.password = password
 
+}
+
+func (b *serverBuilder) ServerPublicArchiveFixedUnix(os ostype.ArchiveOSTypes) {
+	archive, err := b.client.Archive.FindByOSType(os)
+	if err != nil {
+		b.errors = append(b.errors, err)
+	}
+
+	b.disk = Disk(b.client, b.serverName)
+	b.disk.sourceArchiveID = archive.ID
 }
 
 func (b *serverBuilder) ServerPublicArchiveWindows(os ostype.ArchiveOSTypes) {
@@ -328,7 +352,7 @@ func (b *serverBuilder) buildServerParams() error {
 	b.callEventHandlerIfExists(ServerBuildOnSetPlanBefore)
 
 	// plan
-	plan, err := b.client.Product.Server.GetBySpec(b.core, b.memory)
+	plan, err := b.client.Product.Server.GetBySpec(b.core, b.memory, sacloud.PlanDefault)
 	if err != nil {
 		err = fmt.Errorf("Error building server parameters : setting plan / [%s]", err)
 		return err
@@ -349,6 +373,10 @@ func (b *serverBuilder) buildServerParams() error {
 	}
 	if b.iconID > 0 {
 		s.SetIconByID(b.iconID)
+	}
+
+	if b.privateHostID > 0 {
+		s.SetPrivateHostByID(b.privateHostID)
 	}
 
 	// NIC
