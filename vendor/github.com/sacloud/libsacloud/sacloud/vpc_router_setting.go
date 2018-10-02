@@ -1,8 +1,12 @@
 package sacloud
 
 import (
+	"bytes"
 	"fmt"
+	"net"
 	"reflect"
+	"strconv"
+	"strings"
 )
 
 // VPCRouterSetting VPCルーター設定
@@ -18,6 +22,7 @@ type VPCRouterSetting struct {
 	RemoteAccessUsers  *VPCRouterRemoteAccessUsers  `json:",omitempty"` // リモートアクセスユーザー設定
 	SiteToSiteIPsecVPN *VPCRouterSiteToSiteIPsecVPN `json:",omitempty"` // サイト間VPN設定
 	StaticRoutes       *VPCRouterStaticRoutes       `json:",omitempty"` // スタティックルート設定
+	InternetConnection *VPCRouterInternetConnection `json:",omitempty"` // インターネット接続
 	VRID               *int                         `json:",omitempty"` // VRID
 	SyslogHost         string                       `json:",omitempty"` // syslog転送先ホスト
 
@@ -67,7 +72,7 @@ func (s *VPCRouterSetting) HasStaticNAT() bool {
 }
 
 // AddStaticNAT スタティックNAT設定 追加
-func (s *VPCRouterSetting) AddStaticNAT(globalAddress string, privateAddress string, description string) {
+func (s *VPCRouterSetting) AddStaticNAT(globalAddress string, privateAddress string, description string) (int, *VPCRouterStaticNATConfig) {
 	if s.StaticNAT == nil {
 		s.StaticNAT = &VPCRouterStaticNAT{
 			Enabled: "True",
@@ -78,11 +83,14 @@ func (s *VPCRouterSetting) AddStaticNAT(globalAddress string, privateAddress str
 		s.StaticNAT.Config = []*VPCRouterStaticNATConfig{}
 	}
 
-	s.StaticNAT.Config = append(s.StaticNAT.Config, &VPCRouterStaticNATConfig{
+	c := &VPCRouterStaticNATConfig{
 		GlobalAddress:  globalAddress,
 		PrivateAddress: privateAddress,
 		Description:    description,
-	})
+	}
+
+	s.StaticNAT.Config = append(s.StaticNAT.Config, c)
+	return len(s.StaticNAT.Config) - 1, c
 }
 
 // RemoveStaticNAT スタティックNAT設定 削除
@@ -111,14 +119,31 @@ func (s *VPCRouterSetting) RemoveStaticNAT(globalAddress string, privateAddress 
 	s.StaticNAT.Enabled = "True"
 }
 
+// RemoveStaticNATAt スタティックNAT設定 削除
+func (s *VPCRouterSetting) RemoveStaticNATAt(index int) {
+	if s.StaticNAT == nil {
+		return
+	}
+
+	if s.StaticNAT.Config == nil || len(s.StaticNAT.Config) == 0 {
+		s.StaticNAT.Enabled = "False"
+		return
+	}
+
+	if index < len(s.StaticNAT.Config) {
+		c := s.StaticNAT.Config[index]
+		s.RemoveStaticNAT(c.GlobalAddress, c.PrivateAddress)
+	}
+}
+
 // FindStaticNAT スタティックNAT設定検索
-func (s *VPCRouterSetting) FindStaticNAT(globalAddress string, privateAddress string) *VPCRouterStaticNATConfig {
-	for _, c := range s.StaticNAT.Config {
+func (s *VPCRouterSetting) FindStaticNAT(globalAddress string, privateAddress string) (int, *VPCRouterStaticNATConfig) {
+	for i, c := range s.StaticNAT.Config {
 		if c.GlobalAddress == globalAddress && c.PrivateAddress == privateAddress {
-			return c
+			return i, c
 		}
 	}
-	return nil
+	return -1, nil
 }
 
 // HasPortForwarding ポートフォワーディング設定を保持しているか
@@ -142,7 +167,8 @@ type VPCRouterPortForwardingConfig struct {
 }
 
 // AddPortForwarding ポートフォワーディング 追加
-func (s *VPCRouterSetting) AddPortForwarding(protocol string, globalPort string, privateAddress string, privatePort string, description string) {
+func (s *VPCRouterSetting) AddPortForwarding(protocol string, globalPort string, privateAddress string,
+	privatePort string, description string) (int, *VPCRouterPortForwardingConfig) {
 	if s.PortForwarding == nil {
 		s.PortForwarding = &VPCRouterPortForwarding{
 			Enabled: "True",
@@ -153,13 +179,17 @@ func (s *VPCRouterSetting) AddPortForwarding(protocol string, globalPort string,
 		s.PortForwarding.Config = []*VPCRouterPortForwardingConfig{}
 	}
 
-	s.PortForwarding.Config = append(s.PortForwarding.Config, &VPCRouterPortForwardingConfig{
+	c := &VPCRouterPortForwardingConfig{
 		Protocol:       protocol,
 		GlobalPort:     globalPort,
 		PrivateAddress: privateAddress,
 		PrivatePort:    privatePort,
 		Description:    description,
-	})
+	}
+
+	s.PortForwarding.Config = append(s.PortForwarding.Config, c)
+
+	return len(s.PortForwarding.Config) - 1, c
 }
 
 // RemovePortForwarding ポートフォワーディング 削除
@@ -189,15 +219,34 @@ func (s *VPCRouterSetting) RemovePortForwarding(protocol string, globalPort stri
 	s.PortForwarding.Enabled = "True"
 }
 
+// RemovePortForwardingAt ポートフォワーディング 削除
+func (s *VPCRouterSetting) RemovePortForwardingAt(index int) {
+	if s.PortForwarding == nil {
+		return
+	}
+
+	if s.PortForwarding.Config == nil || len(s.PortForwarding.Config) == 0 {
+		s.PortForwarding.Enabled = "False"
+		return
+	}
+
+	if index < len(s.PortForwarding.Config) {
+		c := s.PortForwarding.Config[index]
+		s.RemovePortForwarding(c.Protocol, c.GlobalPort, c.PrivateAddress, c.PrivatePort)
+	}
+}
+
 // FindPortForwarding ポートフォワーディング検索
-func (s *VPCRouterSetting) FindPortForwarding(protocol string, globalPort string, privateAddress string, privatePort string) *VPCRouterPortForwardingConfig {
-	for _, c := range s.PortForwarding.Config {
+func (s *VPCRouterSetting) FindPortForwarding(protocol string, globalPort string,
+	privateAddress string, privatePort string) (int, *VPCRouterPortForwardingConfig) {
+
+	for i, c := range s.PortForwarding.Config {
 		if c.Protocol == protocol && c.GlobalPort == globalPort &&
 			c.PrivateAddress == privateAddress && c.PrivatePort == privatePort {
-			return c
+			return i, c
 		}
 	}
-	return nil
+	return -1, nil
 }
 
 // HasFirewall ファイアウォール設定を保持しているか
@@ -229,77 +278,92 @@ type VPCRouterFirewallRule struct {
 	Description        string `json:",omitempty"` // 説明
 }
 
-func (s *VPCRouterSetting) addFirewallRule(direction string, rule *VPCRouterFirewallRule) {
+// VPCRouterMaxInterfaceCount VPCルータでの最大NIC数(グローバル含む)
+const VPCRouterMaxInterfaceCount = 8
+
+func (s *VPCRouterSetting) addFirewallRule(ifIndex int, direction string, rule *VPCRouterFirewallRule) int {
+	if ifIndex < 0 {
+		ifIndex = 0
+	}
 	if s.Firewall == nil {
 		s.Firewall = &VPCRouterFirewall{
 			Enabled: "True",
 		}
 	}
-	if s.Firewall.Config == nil || len(s.Firewall.Config) == 0 {
-		s.Firewall.Config = []*VPCRouterFirewallSetting{
-			{
-				Receive: []*VPCRouterFirewallRule{},
-				Send:    []*VPCRouterFirewallRule{},
-			},
-		}
+	if s.Firewall.Config == nil {
+		s.Firewall.Config = []*VPCRouterFirewallSetting{}
+	}
+	for len(s.Firewall.Config) < VPCRouterMaxInterfaceCount {
+		s.Firewall.Config = append(s.Firewall.Config, &VPCRouterFirewallSetting{
+			Receive: []*VPCRouterFirewallRule{},
+			Send:    []*VPCRouterFirewallRule{},
+		})
 	}
 
 	switch direction {
 	case "send":
-		s.Firewall.Config[0].Send = append(s.Firewall.Config[0].Send, rule)
+		s.Firewall.Config[ifIndex].Send = append(s.Firewall.Config[ifIndex].Send, rule)
+		return len(s.Firewall.Config[ifIndex].Send) - 1
 	case "receive":
-		s.Firewall.Config[0].Receive = append(s.Firewall.Config[0].Receive, rule)
+		s.Firewall.Config[ifIndex].Receive = append(s.Firewall.Config[ifIndex].Receive, rule)
+		return len(s.Firewall.Config[ifIndex].Receive) - 1
 	}
+	return -1
 }
 
-func (s *VPCRouterSetting) removeFirewallRule(direction string, rule *VPCRouterFirewallRule) {
+func (s *VPCRouterSetting) removeFirewallRule(ifIndex int, direction string, rule *VPCRouterFirewallRule) {
 
-	if s.Firewall == nil {
+	if s.Firewall == nil || !(len(s.Firewall.Config) < ifIndex) {
 		return
 	}
-
+	if ifIndex < 0 {
+		ifIndex = 0
+	}
 	switch direction {
 	case "send":
 		dest := []*VPCRouterFirewallRule{}
-		for _, c := range s.Firewall.Config[0].Send {
+		for _, c := range s.Firewall.Config[ifIndex].Send {
 			if !s.isSameRule(rule, c) {
 				dest = append(dest, c)
 			}
 		}
-		s.Firewall.Config[0].Send = dest
+		s.Firewall.Config[ifIndex].Send = dest
 	case "receive":
 		dest := []*VPCRouterFirewallRule{}
-		for _, c := range s.Firewall.Config[0].Receive {
+		for _, c := range s.Firewall.Config[ifIndex].Receive {
 			if !s.isSameRule(rule, c) {
 				dest = append(dest, c)
 			}
 		}
-		s.Firewall.Config[0].Receive = dest
+		s.Firewall.Config[ifIndex].Receive = dest
 	}
 
-	if len(s.Firewall.Config) == 0 {
-		s.Firewall.Enabled = "False"
-		return
-	}
-
-	if len(s.Firewall.Config[0].Send) == 0 && len(s.Firewall.Config[0].Send) == 0 {
-		s.Firewall.Enabled = "False"
-		return
-	}
+	//if len(s.Firewall.Config) == 0 {
+	//	s.Firewall.Enabled = "False"
+	//	return
+	//}
+	//
+	//if len(s.Firewall.Config[0].Send) == 0 && len(s.Firewall.Config[0].Send) == 0 {
+	//	s.Firewall.Enabled = "False"
+	//	return
+	//}
 
 	s.PortForwarding.Enabled = "True"
 
 }
 
-func (s *VPCRouterSetting) removeFirewallRuleAt(direction string, index int) {
-	if s.Firewall == nil {
+func (s *VPCRouterSetting) removeFirewallRuleAt(ifIndex int, direction string, index int) {
+	if s.Firewall == nil || !(len(s.Firewall.Config) < ifIndex) {
 		return
+	}
+	if ifIndex < 0 {
+		ifIndex = 0
 	}
 
 	switch direction {
 	case "send":
 		dest := []*VPCRouterFirewallRule{}
-		for i, c := range s.Firewall.Config[0].Send {
+		for i, c := range s.Firewall.Config[ifIndex].Send {
 			if i != index {
 				dest = append(dest, c)
 			}
@@ -307,7 +371,7 @@ func (s *VPCRouterSetting) removeFirewallRuleAt(direction string, index int) {
 		s.Firewall.Config[0].Send = dest
 	case "receive":
 		dest := []*VPCRouterFirewallRule{}
-		for i, c := range s.Firewall.Config[0].Receive {
+		for i, c := range s.Firewall.Config[ifIndex].Receive {
 			if i != index {
 				dest = append(dest, c)
 			}
@@ -315,37 +379,44 @@ func (s *VPCRouterSetting) removeFirewallRuleAt(direction string, index int) {
 		s.Firewall.Config[0].Receive = dest
 	}
 
-	if len(s.Firewall.Config) == 0 {
-		s.Firewall.Enabled = "False"
-		return
-	}
-
-	if len(s.Firewall.Config[0].Send) == 0 && len(s.Firewall.Config[0].Send) == 0 {
-		s.Firewall.Enabled = "False"
-		return
-	}
+	//if len(s.Firewall.Config) == 0 {
+	//	s.Firewall.Enabled = "False"
+	//	return
+	//}
+	//
+	//if len(s.Firewall.Config[0].Send) == 0 && len(s.Firewall.Config[0].Send) == 0 {
+	//	s.Firewall.Enabled = "False"
+	//	return
+	//}
 
 	s.PortForwarding.Enabled = "True"
 
 }
 
-func (s *VPCRouterSetting) findFirewallRule(direction string, rule *VPCRouterFirewallRule) *VPCRouterFirewallRule {
+func (s *VPCRouterSetting) findFirewallRule(ifIndex int, direction string, rule *VPCRouterFirewallRule) (int, *VPCRouterFirewallRule) {
+	if s.Firewall == nil || !(len(s.Firewall.Config) < ifIndex) {
+		return -1, nil
+	}
+	if ifIndex < 0 {
+		ifIndex = 0
+	}
+
 	switch direction {
 	case "send":
-		for _, c := range s.Firewall.Config[0].Send {
+		for i, c := range s.Firewall.Config[ifIndex].Send {
 			if s.isSameRule(rule, c) {
-				return c
+				return i, c
 			}
 		}
 	case "receive":
-		for _, c := range s.Firewall.Config[0].Receive {
+		for i, c := range s.Firewall.Config[ifIndex].Receive {
 			if s.isSameRule(rule, c) {
-				return c
+				return i, c
 			}
 		}
 	}
 
-	return nil
+	return -1, nil
 
 }
 
@@ -359,7 +430,9 @@ func (s *VPCRouterSetting) isSameRule(r1 *VPCRouterFirewallRule, r2 *VPCRouterFi
 }
 
 // AddFirewallRuleSend 送信ルール 追加
-func (s *VPCRouterSetting) AddFirewallRuleSend(isAllow bool, protocol string, sourceNetwork string, sourcePort string, destNetwork string, destPort string, logging bool, description string) {
+func (s *VPCRouterSetting) AddFirewallRuleSend(ifIndex int, isAllow bool, protocol string,
+	sourceNetwork string, sourcePort string, destNetwork string, destPort string,
+	logging bool, description string) (int, *VPCRouterFirewallRule) {
 	action := "deny"
 	if isAllow {
 		action = "allow"
@@ -380,11 +453,12 @@ func (s *VPCRouterSetting) AddFirewallRuleSend(isAllow bool, protocol string, so
 		Description:        description,
 	}
 
-	s.addFirewallRule("send", rule)
+	i := s.addFirewallRule(ifIndex, "send", rule)
+	return i, rule
 }
 
 // RemoveFirewallRuleSend 送信ルール 削除
-func (s *VPCRouterSetting) RemoveFirewallRuleSend(isAllow bool, protocol string, sourceNetwork string, sourcePort string, destNetwork string, destPort string) {
+func (s *VPCRouterSetting) RemoveFirewallRuleSend(ifIndex int, isAllow bool, protocol string, sourceNetwork string, sourcePort string, destNetwork string, destPort string) {
 	action := "deny"
 	if isAllow {
 		action = "allow"
@@ -399,16 +473,17 @@ func (s *VPCRouterSetting) RemoveFirewallRuleSend(isAllow bool, protocol string,
 		DestinationPort:    destPort,
 	}
 
-	s.removeFirewallRule("send", rule)
+	s.removeFirewallRule(ifIndex, "send", rule)
 }
 
 // RemoveFirewallRuleSendAt 指定位置の送信ルールを削除
-func (s *VPCRouterSetting) RemoveFirewallRuleSendAt(index int) {
-	s.removeFirewallRuleAt("send", index)
+func (s *VPCRouterSetting) RemoveFirewallRuleSendAt(ifIndex int, index int) {
+	s.removeFirewallRuleAt(ifIndex, "send", index)
 }
 
 // FindFirewallRuleSend 送信ルール 検索
-func (s *VPCRouterSetting) FindFirewallRuleSend(isAllow bool, protocol string, sourceNetwork string, sourcePort string, destNetwork string, destPort string) *VPCRouterFirewallRule {
+func (s *VPCRouterSetting) FindFirewallRuleSend(ifIndex int, isAllow bool, protocol string,
+	sourceNetwork string, sourcePort string, destNetwork string, destPort string) (int, *VPCRouterFirewallRule) {
 	action := "deny"
 	if isAllow {
 		action = "allow"
@@ -422,11 +497,12 @@ func (s *VPCRouterSetting) FindFirewallRuleSend(isAllow bool, protocol string, s
 		DestinationPort:    destPort,
 	}
 
-	return s.findFirewallRule("send", rule)
+	return s.findFirewallRule(ifIndex, "send", rule)
 }
 
 // AddFirewallRuleReceive 受信ルール 追加
-func (s *VPCRouterSetting) AddFirewallRuleReceive(isAllow bool, protocol string, sourceNetwork string, sourcePort string, destNetwork string, destPort string, logging bool, description string) {
+func (s *VPCRouterSetting) AddFirewallRuleReceive(ifIndex int, isAllow bool, protocol string,
+	sourceNetwork string, sourcePort string, destNetwork string, destPort string, logging bool, description string) (int, *VPCRouterFirewallRule) {
 	action := "deny"
 	if isAllow {
 		action = "allow"
@@ -446,16 +522,17 @@ func (s *VPCRouterSetting) AddFirewallRuleReceive(isAllow bool, protocol string,
 		Description:        description,
 	}
 
-	s.addFirewallRule("receive", rule)
+	i := s.addFirewallRule(ifIndex, "receive", rule)
+	return i, rule
 }
 
 // RemoveFirewallRuleReceiveAt 指定位置の受信ルールを削除
-func (s *VPCRouterSetting) RemoveFirewallRuleReceiveAt(index int) {
-	s.removeFirewallRuleAt("receive", index)
+func (s *VPCRouterSetting) RemoveFirewallRuleReceiveAt(ifIndex int, index int) {
+	s.removeFirewallRuleAt(ifIndex, "receive", index)
 }
 
 // RemoveFirewallRuleReceive 受信ルール 削除
-func (s *VPCRouterSetting) RemoveFirewallRuleReceive(isAllow bool, protocol string, sourceNetwork string, sourcePort string, destNetwork string, destPort string) {
+func (s *VPCRouterSetting) RemoveFirewallRuleReceive(ifIndex int, isAllow bool, protocol string, sourceNetwork string, sourcePort string, destNetwork string, destPort string) {
 	action := "deny"
 	if isAllow {
 		action = "allow"
@@ -469,11 +546,12 @@ func (s *VPCRouterSetting) RemoveFirewallRuleReceive(isAllow bool, protocol stri
 		DestinationPort:    destPort,
 	}
 
-	s.removeFirewallRule("receive", rule)
+	s.removeFirewallRule(ifIndex, "receive", rule)
 }
 
 // FindFirewallRuleReceive 受信ルール 検索
-func (s *VPCRouterSetting) FindFirewallRuleReceive(isAllow bool, protocol string, sourceNetwork string, sourcePort string, destNetwork string, destPort string) *VPCRouterFirewallRule {
+func (s *VPCRouterSetting) FindFirewallRuleReceive(ifIndex int, isAllow bool, protocol string,
+	sourceNetwork string, sourcePort string, destNetwork string, destPort string) (int, *VPCRouterFirewallRule) {
 	action := "deny"
 	if isAllow {
 		action = "allow"
@@ -487,7 +565,7 @@ func (s *VPCRouterSetting) FindFirewallRuleReceive(isAllow bool, protocol string
 		DestinationPort:    destPort,
 	}
 
-	return s.findFirewallRule("receive", rule)
+	return s.findFirewallRule(ifIndex, "receive", rule)
 }
 
 // HasDHCPServer DHCPサーバー設定を保持しているか
@@ -503,13 +581,24 @@ type VPCRouterDHCPServer struct {
 
 // VPCRouterDHCPServerConfig DHCPサーバー設定
 type VPCRouterDHCPServerConfig struct {
-	Interface  string `json:",omitempty"` // 対象NIC
-	RangeStart string `json:",omitempty"` // 割り当て範囲 開始アドレス
-	RangeStop  string `json:",omitempty"` // 割り当て範囲 終了アドレス
+	Interface  string   `json:",omitempty"` // 対象NIC
+	RangeStart string   `json:",omitempty"` // 割り当て範囲 開始アドレス
+	RangeStop  string   `json:",omitempty"` // 割り当て範囲 終了アドレス
+	DNSServers []string // 配布するDNSサーバIPアドレスのリスト
+}
+
+// InterfaceIndex 対象NICのインデックス
+func (c *VPCRouterDHCPServerConfig) InterfaceIndex() int {
+	strIndex := strings.Replace(c.Interface, "eth", "", -1)
+	index, err := strconv.Atoi(strIndex)
+	if err != nil {
+		return -1
+	}
+	return index
 }
 
 // AddDHCPServer DHCPサーバー設定追加
-func (s *VPCRouterSetting) AddDHCPServer(nicIndex int, rangeStart string, rangeStop string) {
+func (s *VPCRouterSetting) AddDHCPServer(nicIndex int, rangeStart string, rangeStop string, dnsServers ...string) (int, *VPCRouterDHCPServerConfig) {
 	if s.DHCPServer == nil {
 		s.DHCPServer = &VPCRouterDHCPServer{
 			Enabled: "True",
@@ -520,16 +609,19 @@ func (s *VPCRouterSetting) AddDHCPServer(nicIndex int, rangeStart string, rangeS
 	}
 
 	nic := fmt.Sprintf("eth%d", nicIndex)
-	s.DHCPServer.Config = append(s.DHCPServer.Config, &VPCRouterDHCPServerConfig{
+	c := &VPCRouterDHCPServerConfig{
 		Interface:  nic,
 		RangeStart: rangeStart,
 		RangeStop:  rangeStop,
-	})
+		DNSServers: dnsServers,
+	}
+	s.DHCPServer.Config = append(s.DHCPServer.Config, c)
 
+	return len(s.DHCPServer.Config) - 1, c
 }
 
 // RemoveDHCPServer DHCPサーバー設定削除
-func (s *VPCRouterSetting) RemoveDHCPServer(nicIndex int, rangeStart string, rangeStop string) {
+func (s *VPCRouterSetting) RemoveDHCPServer(nicIndex int) {
 	if s.DHCPServer == nil {
 		return
 	}
@@ -541,7 +633,7 @@ func (s *VPCRouterSetting) RemoveDHCPServer(nicIndex int, rangeStart string, ran
 
 	dest := []*VPCRouterDHCPServerConfig{}
 	for _, c := range s.DHCPServer.Config {
-		if c.Interface != fmt.Sprintf("eth%d", nicIndex) || c.RangeStart != rangeStart || c.RangeStop != rangeStop {
+		if c.Interface != fmt.Sprintf("eth%d", nicIndex) {
 			dest = append(dest, c)
 		}
 	}
@@ -558,50 +650,36 @@ func (s *VPCRouterSetting) RemoveDHCPServer(nicIndex int, rangeStart string, ran
 
 // RemoveDHCPServerAt DHCPサーバー設定削除
 func (s *VPCRouterSetting) RemoveDHCPServerAt(nicIndex int) {
-	if s.DHCPServer == nil {
-		return
-	}
-
-	if s.DHCPServer.Config == nil {
-		s.DHCPServer.Enabled = "False"
-		return
-	}
-
-	dest := []*VPCRouterDHCPServerConfig{}
-	for i, c := range s.DHCPServer.Config {
-		if i != nicIndex-1 {
-			dest = append(dest, c)
-		}
-	}
-	s.DHCPServer.Config = dest
-
-	if len(s.DHCPServer.Config) == 0 {
-		s.DHCPServer.Enabled = "False"
-		s.DHCPServer.Config = nil
-		return
-	}
-	s.DHCPServer.Enabled = "True"
-
+	s.RemoveDHCPServer(nicIndex)
 }
 
 // FindDHCPServer DHCPサーバー設定 検索
-func (s *VPCRouterSetting) FindDHCPServer(nicIndex int, rangeStart string, rangeStop string) *VPCRouterDHCPServerConfig {
-	for _, c := range s.DHCPServer.Config {
-		if c.Interface == fmt.Sprintf("eth%d", nicIndex) && c.RangeStart == rangeStart && c.RangeStop == rangeStop {
-			return c
+func (s *VPCRouterSetting) FindDHCPServer(nicIndex int) (int, *VPCRouterDHCPServerConfig) {
+	for i, c := range s.DHCPServer.Config {
+		if c.InterfaceIndex() == nicIndex {
+			return i, c
 		}
 	}
-	return nil
+	return -1, nil
 }
 
 // FindDHCPServerAt DHCPサーバー設定 検索
-func (s *VPCRouterSetting) FindDHCPServerAt(nicIndex int) *VPCRouterDHCPServerConfig {
-	for _, c := range s.DHCPServer.Config {
-		if c.Interface == fmt.Sprintf("eth%d", nicIndex) {
-			return c
+func (s *VPCRouterSetting) FindDHCPServerAt(nicIndex int) (int, *VPCRouterDHCPServerConfig) {
+	return s.FindDHCPServer(nicIndex)
+}
+
+// FindBelongsDHCPServer 指定のIPアドレスが所属するIPレンジを持つをDHCPサーバを検索
+func (s *VPCRouterSetting) FindBelongsDHCPServer(ip net.IP) (int, *VPCRouterDHCPServerConfig) {
+	target := ip.To4()
+	for i, c := range s.DHCPServer.Config {
+		start := net.ParseIP(c.RangeStart).To4()
+		end := net.ParseIP(c.RangeStop).To4()
+
+		if bytes.Compare(target, start) >= 0 && bytes.Compare(target, end) <= 0 {
+			return i, c
 		}
 	}
-	return nil
+	return -1, nil
 }
 
 // HasDHCPStaticMapping DHCPスタティックマッピング設定を保持しているか
@@ -622,7 +700,7 @@ type VPCRouterDHCPStaticMappingConfig struct {
 }
 
 // AddDHCPStaticMapping DHCPスタティックマッピング設定追加
-func (s *VPCRouterSetting) AddDHCPStaticMapping(ipAddress string, macAddress string) {
+func (s *VPCRouterSetting) AddDHCPStaticMapping(ipAddress string, macAddress string) (int, *VPCRouterDHCPStaticMappingConfig) {
 	if s.DHCPStaticMapping == nil {
 		s.DHCPStaticMapping = &VPCRouterDHCPStaticMapping{
 			Enabled: "True",
@@ -632,10 +710,12 @@ func (s *VPCRouterSetting) AddDHCPStaticMapping(ipAddress string, macAddress str
 		s.DHCPStaticMapping.Config = []*VPCRouterDHCPStaticMappingConfig{}
 	}
 
-	s.DHCPStaticMapping.Config = append(s.DHCPStaticMapping.Config, &VPCRouterDHCPStaticMappingConfig{
+	c := &VPCRouterDHCPStaticMappingConfig{
 		IPAddress:  ipAddress,
 		MACAddress: macAddress,
-	})
+	}
+	s.DHCPStaticMapping.Config = append(s.DHCPStaticMapping.Config, c)
+	return len(s.DHCPStaticMapping.Config) - 1, c
 }
 
 // RemoveDHCPStaticMapping DHCPスタティックマッピング設定 削除
@@ -672,36 +752,25 @@ func (s *VPCRouterSetting) RemoveDHCPStaticMappingAt(index int) {
 		return
 	}
 
-	if s.DHCPStaticMapping.Config == nil {
+	if s.DHCPStaticMapping.Config == nil || len(s.DHCPStaticMapping.Config) == 0 {
 		s.DHCPStaticMapping.Enabled = "False"
 		return
 	}
 
-	dest := []*VPCRouterDHCPStaticMappingConfig{}
-	for i, c := range s.DHCPStaticMapping.Config {
-		if i != index {
-			dest = append(dest, c)
-		}
+	if index < len(s.DHCPStaticMapping.Config) {
+		c := s.DHCPStaticMapping.Config[index]
+		s.RemoveDHCPStaticMapping(c.IPAddress, c.MACAddress)
 	}
-	s.DHCPStaticMapping.Config = dest
-
-	if len(s.DHCPStaticMapping.Config) == 0 {
-		s.DHCPStaticMapping.Enabled = "False"
-		s.DHCPStaticMapping.Config = nil
-		return
-	}
-	s.DHCPStaticMapping.Enabled = "True"
-
 }
 
 // FindDHCPStaticMapping DHCPスタティックマッピング設定 検索
-func (s *VPCRouterSetting) FindDHCPStaticMapping(ipAddress string, macAddress string) *VPCRouterDHCPStaticMappingConfig {
-	for _, c := range s.DHCPStaticMapping.Config {
+func (s *VPCRouterSetting) FindDHCPStaticMapping(ipAddress string, macAddress string) (int, *VPCRouterDHCPStaticMappingConfig) {
+	for i, c := range s.DHCPStaticMapping.Config {
 		if c.IPAddress == ipAddress && c.MACAddress == macAddress {
-			return c
+			return i, c
 		}
 	}
-	return nil
+	return -1, nil
 }
 
 // HasL2TPIPsecServer L2TP/IPSecサーバを保持しているか
@@ -802,7 +871,7 @@ type VPCRouterRemoteAccessUsersConfig struct {
 }
 
 // AddRemoteAccessUser リモートアクセスユーザー設定 追加
-func (s *VPCRouterSetting) AddRemoteAccessUser(userName string, password string) {
+func (s *VPCRouterSetting) AddRemoteAccessUser(userName string, password string) (int, *VPCRouterRemoteAccessUsersConfig) {
 	if s.RemoteAccessUsers == nil {
 		s.RemoteAccessUsers = &VPCRouterRemoteAccessUsers{
 			Enabled: "True",
@@ -811,10 +880,13 @@ func (s *VPCRouterSetting) AddRemoteAccessUser(userName string, password string)
 	if s.RemoteAccessUsers.Config == nil {
 		s.RemoteAccessUsers.Config = []*VPCRouterRemoteAccessUsersConfig{}
 	}
-	s.RemoteAccessUsers.Config = append(s.RemoteAccessUsers.Config, &VPCRouterRemoteAccessUsersConfig{
+
+	c := &VPCRouterRemoteAccessUsersConfig{
 		UserName: userName,
 		Password: password,
-	})
+	}
+	s.RemoteAccessUsers.Config = append(s.RemoteAccessUsers.Config, c)
+	return len(s.RemoteAccessUsers.Config) - 1, c
 }
 
 // RemoveRemoteAccessUser リモートアクセスユーザー設定 削除
@@ -850,35 +922,25 @@ func (s *VPCRouterSetting) RemoveRemoteAccessUserAt(index int) {
 		return
 	}
 
-	if s.RemoteAccessUsers.Config == nil {
+	if s.RemoteAccessUsers.Config == nil || len(s.RemoteAccessUsers.Config) == 0 {
 		s.RemoteAccessUsers.Enabled = "False"
 		return
 	}
 
-	dest := []*VPCRouterRemoteAccessUsersConfig{}
-	for i, c := range s.RemoteAccessUsers.Config {
-		if i != index {
-			dest = append(dest, c)
-		}
+	if index < len(s.RemoteAccessUsers.Config) {
+		c := s.RemoteAccessUsers.Config[index]
+		s.RemoveRemoteAccessUser(c.UserName, c.Password)
 	}
-	s.RemoteAccessUsers.Config = dest
-
-	if len(s.RemoteAccessUsers.Config) == 0 {
-		s.RemoteAccessUsers.Enabled = "False"
-		s.RemoteAccessUsers.Config = nil
-		return
-	}
-	s.RemoteAccessUsers.Enabled = "True"
 }
 
 // FindRemoteAccessUser リモートアクセスユーザー設定 検索
-func (s *VPCRouterSetting) FindRemoteAccessUser(userName string, password string) *VPCRouterRemoteAccessUsersConfig {
-	for _, c := range s.RemoteAccessUsers.Config {
+func (s *VPCRouterSetting) FindRemoteAccessUser(userName string, password string) (int, *VPCRouterRemoteAccessUsersConfig) {
+	for i, c := range s.RemoteAccessUsers.Config {
 		if c.UserName == userName && c.Password == password {
-			return c
+			return i, c
 		}
 	}
-	return nil
+	return -1, nil
 }
 
 // HasSiteToSiteIPsecVPN サイト間VPN設定を保持しているか
@@ -902,7 +964,8 @@ type VPCRouterSiteToSiteIPsecVPNConfig struct {
 }
 
 // AddSiteToSiteIPsecVPN サイト間VPN設定 追加
-func (s *VPCRouterSetting) AddSiteToSiteIPsecVPN(localPrefix []string, peer string, preSharedSecret string, remoteID string, routes []string) {
+func (s *VPCRouterSetting) AddSiteToSiteIPsecVPN(localPrefix []string, peer string,
+	preSharedSecret string, remoteID string, routes []string) (int, *VPCRouterSiteToSiteIPsecVPNConfig) {
 	if s.SiteToSiteIPsecVPN == nil {
 		s.SiteToSiteIPsecVPN = &VPCRouterSiteToSiteIPsecVPN{
 			Enabled: "True",
@@ -915,13 +978,15 @@ func (s *VPCRouterSetting) AddSiteToSiteIPsecVPN(localPrefix []string, peer stri
 		s.SiteToSiteIPsecVPN.Config = []*VPCRouterSiteToSiteIPsecVPNConfig{}
 	}
 
-	s.SiteToSiteIPsecVPN.Config = append(s.SiteToSiteIPsecVPN.Config, &VPCRouterSiteToSiteIPsecVPNConfig{
+	c := &VPCRouterSiteToSiteIPsecVPNConfig{
 		LocalPrefix:     localPrefix,
 		Peer:            peer,
 		PreSharedSecret: preSharedSecret,
 		RemoteID:        remoteID,
 		Routes:          routes,
-	})
+	}
+	s.SiteToSiteIPsecVPN.Config = append(s.SiteToSiteIPsecVPN.Config, c)
+	return len(s.SiteToSiteIPsecVPN.Config) - 1, c
 }
 
 // RemoveSiteToSiteIPsecVPN サイト間VPN設定 削除
@@ -965,29 +1030,20 @@ func (s *VPCRouterSetting) RemoveSiteToSiteIPsecVPNAt(index int) {
 		return
 	}
 
-	if s.SiteToSiteIPsecVPN.Config == nil {
+	if s.SiteToSiteIPsecVPN.Config == nil || len(s.SiteToSiteIPsecVPN.Config) == 0 {
 		s.SiteToSiteIPsecVPN.Enabled = "False"
 		return
 	}
 
-	dest := []*VPCRouterSiteToSiteIPsecVPNConfig{}
-	for i, c := range s.SiteToSiteIPsecVPN.Config {
-		if i != index {
-			dest = append(dest, c)
-		}
+	if index < len(s.SiteToSiteIPsecVPN.Config) {
+		c := s.SiteToSiteIPsecVPN.Config[index]
+		s.RemoveSiteToSiteIPsecVPN(c.LocalPrefix, c.Peer, c.PreSharedSecret, c.RemoteID, c.Routes)
 	}
-	s.SiteToSiteIPsecVPN.Config = dest
-
-	if len(s.SiteToSiteIPsecVPN.Config) == 0 {
-		s.SiteToSiteIPsecVPN.Enabled = "False"
-		s.SiteToSiteIPsecVPN.Config = nil
-		return
-	}
-	s.SiteToSiteIPsecVPN.Enabled = "True"
 }
 
 // FindSiteToSiteIPsecVPN  サイト間VPC設定 検索
-func (s *VPCRouterSetting) FindSiteToSiteIPsecVPN(localPrefix []string, peer string, preSharedSecret string, remoteID string, routes []string) *VPCRouterSiteToSiteIPsecVPNConfig {
+func (s *VPCRouterSetting) FindSiteToSiteIPsecVPN(localPrefix []string, peer string,
+	preSharedSecret string, remoteID string, routes []string) (int, *VPCRouterSiteToSiteIPsecVPNConfig) {
 	config := &VPCRouterSiteToSiteIPsecVPNConfig{
 		LocalPrefix:     localPrefix,
 		Peer:            peer,
@@ -996,12 +1052,12 @@ func (s *VPCRouterSetting) FindSiteToSiteIPsecVPN(localPrefix []string, peer str
 		Routes:          routes,
 	}
 
-	for _, c := range s.SiteToSiteIPsecVPN.Config {
+	for i, c := range s.SiteToSiteIPsecVPN.Config {
 		if s.isSameSiteToSiteIPsecVPNConfig(c, config) {
-			return c
+			return i, c
 		}
 	}
-	return nil
+	return -1, nil
 }
 
 func (s *VPCRouterSetting) isSameSiteToSiteIPsecVPNConfig(c1 *VPCRouterSiteToSiteIPsecVPNConfig, c2 *VPCRouterSiteToSiteIPsecVPNConfig) bool {
@@ -1030,7 +1086,7 @@ type VPCRouterStaticRoutesConfig struct {
 }
 
 // AddStaticRoute スタティックルート設定 追加
-func (s *VPCRouterSetting) AddStaticRoute(prefix string, nextHop string) {
+func (s *VPCRouterSetting) AddStaticRoute(prefix string, nextHop string) (int, *VPCRouterStaticRoutesConfig) {
 	if s.StaticRoutes == nil {
 		s.StaticRoutes = &VPCRouterStaticRoutes{
 			Enabled: "True",
@@ -1039,10 +1095,13 @@ func (s *VPCRouterSetting) AddStaticRoute(prefix string, nextHop string) {
 	if s.StaticRoutes.Config == nil {
 		s.StaticRoutes.Config = []*VPCRouterStaticRoutesConfig{}
 	}
-	s.StaticRoutes.Config = append(s.StaticRoutes.Config, &VPCRouterStaticRoutesConfig{
+
+	c := &VPCRouterStaticRoutesConfig{
 		Prefix:  prefix,
 		NextHop: nextHop,
-	})
+	}
+	s.StaticRoutes.Config = append(s.StaticRoutes.Config, c)
+	return len(s.StaticRoutes.Config) - 1, c
 }
 
 // RemoveStaticRoute スタティックルート設定 削除
@@ -1078,33 +1137,42 @@ func (s *VPCRouterSetting) RemoveStaticRouteAt(index int) {
 		return
 	}
 
-	if s.StaticRoutes.Config == nil {
+	if s.StaticRoutes.Config == nil || len(s.StaticRoutes.Config) == 0 {
 		s.StaticRoutes.Enabled = "False"
 		return
 	}
 
-	dest := []*VPCRouterStaticRoutesConfig{}
-	for i, c := range s.StaticRoutes.Config {
-		if i != index {
-			dest = append(dest, c)
-		}
+	if index < len(s.StaticRoutes.Config) {
+		c := s.StaticRoutes.Config[index]
+		s.RemoveStaticRoute(c.Prefix, c.NextHop)
 	}
-	s.StaticRoutes.Config = dest
-
-	if len(s.StaticRoutes.Config) == 0 {
-		s.StaticRoutes.Enabled = "False"
-		s.StaticRoutes.Config = nil
-		return
-	}
-	s.StaticRoutes.Enabled = "True"
 }
 
 // FindStaticRoute スタティックルート設定 検索
-func (s *VPCRouterSetting) FindStaticRoute(prefix string, nextHop string) *VPCRouterStaticRoutesConfig {
-	for _, c := range s.StaticRoutes.Config {
+func (s *VPCRouterSetting) FindStaticRoute(prefix string, nextHop string) (int, *VPCRouterStaticRoutesConfig) {
+	for i, c := range s.StaticRoutes.Config {
 		if c.Prefix == prefix && c.NextHop == nextHop {
-			return c
+			return i, c
 		}
 	}
-	return nil
+	return -1, nil
+}
+
+// VPCRouterInternetConnection インターネット接続
+type VPCRouterInternetConnection struct {
+	Enabled string `json:",omitempty"` // 有効/無効
+}
+
+// SetInternetConnection インターネット接続 有効/無効 設定
+func (s *VPCRouterSetting) SetInternetConnection(enabled bool) {
+	if s.InternetConnection == nil {
+		s.InternetConnection = &VPCRouterInternetConnection{
+			Enabled: "True",
+		}
+	}
+	if enabled {
+		s.InternetConnection.Enabled = "True"
+	} else {
+		s.InternetConnection.Enabled = "False"
+	}
 }

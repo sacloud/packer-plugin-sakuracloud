@@ -110,7 +110,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 		}
 		b.SetCore(c.Core)
 		b.SetMemory(c.MemorySize)
-		if !c.DisableVirtIONetPCI {
+		if c.DisableVirtIONetPCI {
 			b.SetInterfaceDriver(sacloud.InterfaceDriverE1000)
 		}
 		b.AddPublicNWConnectedNIC()
@@ -138,7 +138,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 
 			b.SetCore(c.Core)
 			b.SetMemory(c.MemorySize)
-			if !c.DisableVirtIONetPCI {
+			if c.DisableVirtIONetPCI {
 				b.SetInterfaceDriver(sacloud.InterfaceDriverE1000)
 			}
 			b.AddPublicNWConnectedNIC()
@@ -152,7 +152,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 			b := builder.ServerPublicArchiveWindows(client, os, serverName)
 			b.SetCore(c.Core)
 			b.SetMemory(c.MemorySize)
-			if !c.DisableVirtIONetPCI {
+			if c.DisableVirtIONetPCI {
 				b.SetInterfaceDriver(sacloud.InterfaceDriverE1000)
 			}
 			b.AddPublicNWConnectedNIC()
@@ -166,12 +166,29 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 				b.SetTags(append(b.GetTags(), sacloud.TagKeyboardUS))
 			}
 			return b
-
+		case os == ostype.Netwiser, os == ostype.SophosUTM, os == ostype.OPNsense:
+			b := builder.ServerPublicArchiveFixedUnix(client, os, serverName)
+			b.SetCore(c.Core)
+			b.SetMemory(c.MemorySize)
+			if c.DisableVirtIONetPCI {
+				b.SetInterfaceDriver(sacloud.InterfaceDriverE1000)
+			}
+			b.AddPublicNWConnectedNIC()
+			b.SetDiskSize(c.DiskSize)
+			b.SetDiskConnection(s.getDiskConnection(c))
+			b.SetDiskPlanID(s.getDiskPlanID(c))
+			if c.ISOImageID > 0 {
+				b.SetISOImageID(c.ISOImageID)
+			}
+			if c.UseUSKeyboard {
+				b.SetTags(append(b.GetTags(), sacloud.TagKeyboardUS))
+			}
+			return b
 		default:
 			b := builder.ServerPublicArchiveUnix(client, os, serverName, c.Password)
 			b.SetCore(c.Core)
 			b.SetMemory(c.MemorySize)
-			if !c.DisableVirtIONetPCI {
+			if c.DisableVirtIONetPCI {
 				b.SetInterfaceDriver(sacloud.InterfaceDriverE1000)
 			}
 			b.AddPublicNWConnectedNIC()
@@ -188,7 +205,6 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 			}
 			return b
 		}
-
 	}
 }
 
