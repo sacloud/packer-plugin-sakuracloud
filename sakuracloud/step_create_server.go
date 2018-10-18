@@ -100,7 +100,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 
 	switch c.OSType {
 	case "iso":
-		var b *builder.BlankDiskServerBuilder
+		var b builder.BlankDiskServerBuilder
 		b = builder.ServerBlankDisk(client, serverName)
 		if c.ISOImageID > 0 {
 			b.SetISOImageID(c.ISOImageID)
@@ -123,7 +123,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 		os := s.getOSTypeFromString(c.OSType)
 		switch {
 		case os == ostype.Custom:
-			var b *builder.CommonServerBuilder
+			var b builder.CommonServerBuilder
 			if c.SourceArchive > 0 {
 				b = builder.ServerFromArchive(client, serverName, c.SourceArchive)
 			} else {
