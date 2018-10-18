@@ -24,13 +24,13 @@ class PackerBuilderSakuracloud < Formula
   head "https://github.com/sacloud/packer-builder-sakuracloud.git"
   version _version
 
-  depends_on "packer" => :run
+  depends_on "packer"
 
   def install
     bin.install "packer-builder-sakuracloud"
   end
 
-  def caveats; <<-EOS.undent
+  def caveats; <<~EOS
 
     This plugin requires locate into "~/.packer.d/plugins" directory.
     To enable, execute following:
@@ -44,7 +44,7 @@ class PackerBuilderSakuracloud < Formula
 
   test do
     minimal = testpath/"minimal.tf"
-    minimal.write <<-EOS.undent
+    minimal.write <<~EOS
     {
       "builders": [{
           "type": "sakuracloud",
