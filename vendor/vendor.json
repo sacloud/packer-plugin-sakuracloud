@@ -3,18 +3,6 @@
 	"ignore": "test",
 	"package": [
 		{
-			"path": "github.com/Azure/azure-sdk-for-go/core/http",
-			"revision": ""
-		},
-		{
-			"path": "github.com/Azure/azure-sdk-for-go/core/tls",
-			"revision": ""
-		},
-		{
-			"path": "github.com/digitalocean/godo",
-			"revision": ""
-		},
-		{
 			"checksumSHA1": "GCskdwYAPW2S34918Z5CgNMJ2Wc=",
 			"origin": "github.com/mitchellh/packer/vendor/github.com/dylanmei/iso8601",
 			"path": "github.com/dylanmei/iso8601",
@@ -27,10 +15,6 @@
 			"path": "github.com/dylanmei/winrmtest",
 			"revision": "025617847eb2cf9bd1d851bc3b22ed28e6245ce5",
 			"revisionTime": "2015-12-26T19:50:28Z"
-		},
-		{
-			"path": "github.com/google/go-querystring/query",
-			"revision": ""
 		},
 		{
 			"checksumSHA1": "cdOCt0Yb+hdErz8NAQqayxPmRsY=",
@@ -287,10 +271,6 @@
 			"path": "github.com/satori/go.uuid",
 			"revision": "b061729afc07e77a8aa4fad0a2fd840958f1942a",
 			"revisionTime": "2016-09-27T10:08:44Z"
-		},
-		{
-			"path": "github.com/tent/http-link-go",
-			"revision": ""
 		},
 		{
 			"checksumSHA1": "jfIUoeCY4uLz1zCgnCxndi5/UNE=",
