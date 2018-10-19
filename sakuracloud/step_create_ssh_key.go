@@ -1,6 +1,7 @@
 package sakuracloud
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
@@ -8,8 +9,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/mitchellh/multistep"
-	"github.com/mitchellh/packer/packer"
+	"github.com/hashicorp/packer/helper/multistep"
+	"github.com/hashicorp/packer/packer"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -20,7 +21,7 @@ type stepCreateSSHKey struct {
 	keyID int64
 }
 
-func (s *stepCreateSSHKey) Run(state multistep.StateBag) multistep.StepAction {
+func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packer.Ui)
 
 	stepStartMsg(ui, s.Debug, "CreateSSHKey")

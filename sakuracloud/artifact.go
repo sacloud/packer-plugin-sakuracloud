@@ -2,8 +2,9 @@ package sakuracloud
 
 import (
 	"fmt"
-	"github.com/sacloud/libsacloud/api"
 	"log"
+
+	"github.com/sacloud/libsacloud/api"
 )
 
 type Artifact struct {

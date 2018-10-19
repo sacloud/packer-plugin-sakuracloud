@@ -3,7 +3,7 @@ package sakuracloud
 import (
 	"fmt"
 
-	"github.com/mitchellh/multistep"
+	"github.com/hashicorp/packer/helper/multistep"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -28,7 +28,8 @@ func sshConfig(state multistep.StateBag) (*ssh.ClientConfig, error) {
 	}
 
 	return &ssh.ClientConfig{
-		User: config.Comm.SSHUsername,
-		Auth: auth,
+		User:            config.Comm.SSHUsername,
+		Auth:            auth,
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}, nil
 }
