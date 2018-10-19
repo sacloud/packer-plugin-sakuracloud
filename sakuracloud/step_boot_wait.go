@@ -1,10 +1,12 @@
 package sakuracloud
 
 import (
+	"context"
 	"fmt"
-	"github.com/mitchellh/multistep"
-	"github.com/mitchellh/packer/packer"
 	"time"
+
+	"github.com/hashicorp/packer/helper/multistep"
+	"github.com/hashicorp/packer/packer"
 )
 
 // stepBootWait waits the configured time period.
@@ -12,7 +14,7 @@ type stepBootWait struct {
 	Debug bool
 }
 
-func (s *stepBootWait) Run(state multistep.StateBag) multistep.StepAction {
+func (s *stepBootWait) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	config := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
 

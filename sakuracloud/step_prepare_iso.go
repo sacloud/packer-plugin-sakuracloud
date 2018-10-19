@@ -1,9 +1,11 @@
 package sakuracloud
 
 import (
+	"context"
 	"fmt"
-	"github.com/mitchellh/multistep"
-	"github.com/mitchellh/packer/packer"
+
+	"github.com/hashicorp/packer/helper/multistep"
+	"github.com/hashicorp/packer/packer"
 	"github.com/sacloud/libsacloud/api"
 )
 
@@ -11,7 +13,7 @@ type stepPrepareISO struct {
 	Debug bool
 }
 
-func (s *stepPrepareISO) Run(state multistep.StateBag) multistep.StepAction {
+func (s *stepPrepareISO) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	client := state.Get("client").(*api.Client)
 	config := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)

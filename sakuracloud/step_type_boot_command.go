@@ -1,6 +1,7 @@
 package sakuracloud
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -10,10 +11,10 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/hashicorp/packer/helper/multistep"
+	"github.com/hashicorp/packer/packer"
+	"github.com/hashicorp/packer/template/interpolate"
 	"github.com/mitchellh/go-vnc"
-	"github.com/mitchellh/multistep"
-	"github.com/mitchellh/packer/packer"
-	"github.com/mitchellh/packer/template/interpolate"
 	"github.com/sacloud/libsacloud/sacloud"
 )
 
@@ -43,7 +44,7 @@ type stepTypeBootCommand struct {
 	Debug bool
 }
 
-func (s *stepTypeBootCommand) Run(state multistep.StateBag) multistep.StepAction {
+func (s *stepTypeBootCommand) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	config := state.Get("config").(Config)
 	if len(config.BootCommand) == 0 {
 		return multistep.ActionContinue

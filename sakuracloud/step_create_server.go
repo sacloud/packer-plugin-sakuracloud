@@ -1,10 +1,11 @@
 package sakuracloud
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/mitchellh/multistep"
-	"github.com/mitchellh/packer/packer"
+	"github.com/hashicorp/packer/helper/multistep"
+	"github.com/hashicorp/packer/packer"
 	"github.com/sacloud/libsacloud/api"
 	"github.com/sacloud/libsacloud/builder"
 	"github.com/sacloud/libsacloud/sacloud"
@@ -22,7 +23,7 @@ type stepCreateServer struct {
 	diskIDs  []int64
 }
 
-func (s *stepCreateServer) Run(state multistep.StateBag) multistep.StepAction {
+func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packer.Ui)
 
 	stepStartMsg(ui, s.Debug, "CreateServer")

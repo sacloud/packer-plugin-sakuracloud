@@ -1,11 +1,12 @@
 package sakuracloud
 
 import (
+	"context"
 	"fmt"
 	"time"
 
-	"github.com/mitchellh/multistep"
-	"github.com/mitchellh/packer/packer"
+	"github.com/hashicorp/packer/helper/multistep"
+	"github.com/hashicorp/packer/packer"
 	"github.com/sacloud/libsacloud/api"
 )
 
@@ -13,7 +14,7 @@ type stepShutdown struct {
 	Debug bool
 }
 
-func (s *stepShutdown) Run(state multistep.StateBag) multistep.StepAction {
+func (s *stepShutdown) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	client := state.Get("client").(*api.Client)
 	ui := state.Get("ui").(packer.Ui)
 	serverID := state.Get("server_id").(int64)

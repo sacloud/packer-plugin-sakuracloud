@@ -2,16 +2,17 @@ package sakuracloud
 
 import (
 	"errors"
-	"github.com/mitchellh/mapstructure"
-	"github.com/mitchellh/packer/common"
-	"github.com/mitchellh/packer/helper/communicator"
-	"github.com/mitchellh/packer/helper/config"
-	"github.com/mitchellh/packer/packer"
-	"github.com/mitchellh/packer/template/interpolate"
-	"github.com/sacloud/libsacloud/sacloud/ostype"
-	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 	"os"
 	"time"
+
+	"github.com/hashicorp/packer/common"
+	"github.com/hashicorp/packer/helper/communicator"
+	"github.com/hashicorp/packer/helper/config"
+	"github.com/hashicorp/packer/packer"
+	"github.com/hashicorp/packer/template/interpolate"
+	"github.com/mitchellh/mapstructure"
+	"github.com/sacloud/libsacloud/sacloud/ostype"
+	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 )
 
 type Config struct {
