@@ -1,6 +1,8 @@
 # WinRM for Go
 
-This is a Go library (and command-line executable) to execute remote commands on Windows machines through
+_Note_: if you're looking for the `winrm` command-line tool, this has been splitted from this project and is available at [winrm-cli](https://github.com/masterzen/winrm-cli)
+
+This is a Go library to execute remote commands on Windows machines through
 the use of WinRM/WinRS.
 
 _Note_: this library doesn't support domain users (it doesn't support GSSAPI nor Kerberos). It's primary target is to execute remote commands on EC2 windows machines.
@@ -21,13 +23,13 @@ This project supports only basic authentication for local accounts (domain users
 
 _For a PowerShell script to do what is described below in one go, check [Richard Downer's blog](http://www.frontiertown.co.uk/2011/12/overthere-control-windows-from-java/)_
 
-On the remote host, open a Command Prompt (not a PowerShell prompt!) using the __Run as Administrator__ option and paste in the following lines:
+On the remote host, a PowerShell prompt, using the __Run as Administrator__ option and paste in the following lines:
 
 		winrm quickconfig
 		y
-		winrm set winrm/config/service/Auth @{Basic="true"}
-		winrm set winrm/config/service @{AllowUnencrypted="true"}
-		winrm set winrm/config/winrs @{MaxMemoryPerShellMB="1024"}
+		winrm set winrm/config/service/Auth '@{Basic="true"}'
+		winrm set winrm/config/service '@{AllowUnencrypted="true"}'
+		winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}'
 
 __N.B.:__ The Windows Firewall needs to be running to run this command. See [Microsoft Knowledge Base article #2004640](http://support.microsoft.com/kb/2004640).
 
@@ -47,11 +49,9 @@ cd winrm
 make
 ```
 
-This will generate a binary in the base directory called `./winrm`.
-
 _Note_: this winrm code doesn't depend anymore on [Gokogiri](https://github.com/moovweb/gokogiri) which means it is now in pure Go.
 
-_Note_: you need go 1.1+. Please check your installation with
+_Note_: you need go 1.5+. Please check your installation with
 
 ```
 go version
@@ -59,72 +59,108 @@ go version
 
 ## Command-line usage
 
-Once built, you can run remote commands like this:
-
-```sh
-./winrm -hostname remote.domain.com -username "Administrator" -password "secret" "ipconfig /all"
-```
+For command-line usage check the [winrm-cli project](https://github.com/masterzen/winrm-cli)
 
 ## Library Usage
 
 **Warning the API might be subject to change.**
 
-For the fast version (this doesn't allow to send input to the command):
+For the fast version (this doesn't allow to send input to the command) and it's using HTTP as the transport:
 
 ```go
-import "github.com/masterzen/winrm/winrm"
+package main
 
-client := winrm.NewClient("localhost", "Administrator", "secret")
+import (
+	"github.com/masterzen/winrm"
+	"os"
+)
+
+endpoint := winrm.NewEndpoint(host, 5986, false, false, nil, nil, nil, 0)
+client, err := winrm.NewClient(endpoint, "Administrator", "secret")
+if err != nil {
+	panic(err)
+}
 client.Run("ipconfig /all", os.Stdout, os.Stderr)
 ```
 
 or
 ```go
+package main
 import (
-  "github.com/masterzen/winrm/winrm"
+  "github.com/masterzen/winrm"
   "fmt"
   "os"
 )
 
-client, err := winrm.NewClient(&winrm.Endpoint{Host: "localhost", Port: 5985, HTTPS: false, Insecure: false}, "Administrator", "secret")
+endpoint := winrm.NewEndpoint("localhost", 5985, false, false, nil, nil, nil, 0)
+client, err := winrm.NewClient(endpoint,"Administrator", "secret")
 if err != nil {
-	fmt.Println(err)
+	panic(err)
 }
 
-run, err := client.RunWithInput("ipconfig /all", os.Stdout, os.Stderr, os.Stdin)
+_, err := client.RunWithInput("ipconfig", os.Stdout, os.Stderr, os.Stdin)
 if err != nil {
-	fmt.Println(err)
+	panic(err)
 }
 
-fmt.Println(run)
+```
+
+By passing a TransportDecorator in the Parameters struct it is possible to use different Transports (e.g. NTLM)
+
+```go
+package main
+import (
+  "github.com/masterzen/winrm"
+  "fmt"
+  "os"
+)
+
+endpoint := winrm.NewEndpoint("localhost", 5985, false, false, nil, nil, nil, 0)
+
+params := DefaultParameters
+params.TransportDecorator = func() Transporter { return &ClientNTLM{} }
+
+client, err := NewClientWithParameters(endpoint, "test", "test", params)
+if err != nil {
+	panic(err)
+}
+
+_, err := client.RunWithInput("ipconfig", os.Stdout, os.Stderr, os.Stdin)
+if err != nil {
+	panic(err)
+}
+
 ```
 
 For a more complex example, it is possible to call the various functions directly:
 
 ```go
+package main
+
 import (
-  "github.com/masterzen/winrm/winrm"
+  "github.com/masterzen/winrm"
   "fmt"
   "bytes"
   "os"
 )
 
 stdin := bytes.NewBufferString("ipconfig /all")
-
-client := winrm.NewClient(&winrm.Endpoint{Host: "localhost", Port: 5985, HTTPS: false, Insecure: false}, "Administrator", "secret")
+endpoint := winrm.NewEndpoint("localhost", 5985, false, false,nil, nil, nil, 0)
+client , err := winrm.NewClient(endpoint, "Administrator", "secret")
+if err != nil {
+	panic(err)
+}
 shell, err := client.CreateShell()
 if err != nil {
-  fmt.Printf("Impossible to create shell %s\n", err)
-  os.Exit(1)
+  panic(err)
 }
-var cmd *Command
+var cmd *winrm.Command
 cmd, err = shell.Execute("cmd.exe")
 if err != nil {
-  fmt.Printf("Impossible to create Command %s\n", err)
-  os.Exit(1)
+  panic(err)
 }
 
-go io.Copy(cmd.Stdin, &stdin)
+go io.Copy(cmd.Stdin, stdin)
 go io.Copy(os.Stdout, cmd.Stdout)
 go io.Copy(os.Stderr, cmd.Stderr)
 
@@ -132,24 +168,43 @@ cmd.Wait()
 shell.Close()
 ```
 
-### Pluggable authentication example: Negotiate/NTLM authentication
-Using the winrm.Parameters.TransportDecorator, it is possible to wrap or completely replace the outgoing http.RoundTripper. For example, use github.com/paulmey/go-ntlmssp to plug in Negotiate/NTLM authentication :
-
+For using HTTPS authentication with x 509 cert without checking the CA
 ```go
-import (
-  "github.com/masterzen/winrm/winrm"
-  "github.com/paulmey/go-ntlmssp"
-)
+	package main
 
-params := winrm.DefaultParameters()
-params.TransportDecorator = func(t *http.Transport) http.RoundTripper { return ntlmssp.Negotiator{t} }
-client, err := winrm.NewClientWithParameters(..., params)
+	import (
+		"github.com/masterzen/winrm"
+		"os"
+		"io/ioutil"
+	)
+
+	clientCert, err := ioutil.ReadFile("path/to/cert")
+	if err != nil {
+		panic(err)
+	}
+
+	clientKey, err := ioutil.ReadFile("path/to/key")
+	if err != nil {
+		panic(err)
+	}
+
+	winrm.DefaultParameters.TransportDecorator = func() winrm.Transporter {
+		// winrm https module
+		return &winrm.ClientAuthRequest{}
+	}
+
+	endpoint := winrm.NewEndpoint(host, 5986, false, false, clientCert, clientKey, nil, 0)
+	client, err := winrm.NewClient(endpoint, "Administrator", ""
+	if err != nil {
+		panic(err)
+	}
+	client.Run("ipconfig /all", os.Stdout, os.Stderr)
 ```
 
 ## Developing on WinRM
 
 If you wish to work on `winrm` itself, you'll first need [Go](http://golang.org)
-installed (version 1.1+ is _required_). Make sure you have Go properly installed,
+installed (version 1.5+ is _required_). Make sure you have Go properly installed,
 including setting up your [GOPATH](http://golang.org/doc/code.html#GOPATH).
 
 For some additional dependencies, Go needs [Mercurial](http://mercurial.selenic.com/)
@@ -157,18 +212,12 @@ and [Bazaar](http://bazaar.canonical.com/en/) to be installed.
 Winrm itself doesn't require these, but a dependency of a dependency does.
 
 Next, clone this repository into `$GOPATH/src/github.com/masterzen/winrm` and
-then just type `make`. In a few moments, you'll have a working `winrm` executable:
+then just type `make`.
 
-```
-$ make
-...
-$ bin/winrm
-...
-```
 You can run tests by typing `make test`.
 
 If you make any changes to the code, run `make format` in order to automatically
 format the code according to Go standards.
 
 When new dependencies are added to winrm you can use `make updatedeps` to
-get the latest and subsequently use `make` to compile and generate the `winrm` binary.
+get the latest and subsequently use `make` to compile.
