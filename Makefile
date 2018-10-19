@@ -2,6 +2,7 @@ TEST?=$$(go list ./... | grep -v vendor)
 VETARGS?=-all
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
 CURRENT_VERSION = $(shell cat sakuracloud/version.go | perl -ne 'if(/^var Version = "([0-9\.]+)"/){print $$1;exit}')
+export GO111MODULE=on
 
 default: test vet
 
