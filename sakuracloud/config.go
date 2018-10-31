@@ -265,7 +265,7 @@ func validateConfig(c *Config, errs *packer.MultiError) *packer.MultiError {
 }
 
 func listOSType() []string {
-	return append(ostype.OSTypeShortNames, constants.TargetOSISO)
+	return append(ostype.OSTypeShortNames, constants.TargetOSCustom, constants.TargetOSISO)
 }
 
 func listDiskConnection() []string {

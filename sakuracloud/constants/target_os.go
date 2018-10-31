@@ -1,3 +1,6 @@
 package constants
 
-const TargetOSISO string = "iso"
+const (
+	TargetOSCustom string = "custom"
+	TargetOSISO    string = "iso"
+)
