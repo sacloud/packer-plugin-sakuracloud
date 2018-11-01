@@ -16,6 +16,7 @@ docker run --name $DOCKER_CONTAINER_NAME \
        -e SAKURACLOUD_ACCESS_TOKEN_SECRET \
        -e SAKURACLOUD_TRACE_MODE \
        -e TESTARGS \
+       -e GO111MODULE=on \
        $DOCKER_IMAGE_NAME make "$@"
 if [[ "$@" == *"build"* ]]; then
   docker cp $DOCKER_CONTAINER_NAME:/go/src/github.com/sacloud/packer-builder-sakuracloud/bin ./
