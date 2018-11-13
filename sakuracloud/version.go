@@ -1,3 +1,3 @@
 package sakuracloud
 
-var Version = "0.2.1"
+var Version = "0.2.2"
