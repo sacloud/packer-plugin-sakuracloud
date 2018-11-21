@@ -20,6 +20,9 @@ import (
 
 const keyLeftShift uint32 = 0xFFE1
 
+// TODO: use packer's bootcommand lib.
+//   https://github.com/hashicorp/packer/tree/v1.3.2/common/bootcommand
+
 type bootCommandTemplateData struct {
 	ServerIP       string
 	DefaultRoute   string

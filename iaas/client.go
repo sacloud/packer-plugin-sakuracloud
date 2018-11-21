@@ -30,7 +30,7 @@ func NewClient(token, secret, zone string, apiWaitTimeout time.Duration) *Client
 	client.DefaultTimeoutDuration = apiWaitTimeout
 
 	return &Client{
-		Builder:  &builderImpl{client: client},
+		Builder:  &Builder{APIClient: builder.NewAPIClient(client)},
 		Server:   client.Server,
 		Archive:  client.Archive,
 		Disk:     client.Disk,
@@ -39,32 +39,40 @@ func NewClient(token, secret, zone string, apiWaitTimeout time.Duration) *Client
 	}
 }
 
-type builderImpl struct {
-	client *api.Client
+// Builder represents SakuraCloud Server Builder API Client
+type Builder struct {
+	// APIClient is actual SakuraCloud API Client
+	APIClient builder.APIClient
 }
 
-func (b *builderImpl) FromBlankDisk(name string) builder.BlankDiskServerBuilder {
-	return builder.ServerBlankDisk(builder.NewAPIClient(b.client), name)
+// FromBlankDisk returns new builder to build server having blank disk
+func (b *Builder) FromBlankDisk(name string) builder.BlankDiskServerBuilder {
+	return builder.ServerBlankDisk(b.APIClient, name)
 }
 
-func (b *builderImpl) FromArchive(name string, sourceArchiveID int64) builder.CommonServerBuilder {
-	return builder.ServerFromArchive(builder.NewAPIClient(b.client), name, sourceArchiveID)
+// FromArchive returns new builder to build server from a archive
+func (b *Builder) FromArchive(name string, sourceArchiveID int64) builder.CommonServerBuilder {
+	return builder.ServerFromArchive(b.APIClient, name, sourceArchiveID)
 }
 
-func (b *builderImpl) FromDisk(name string, sourceDiskID int64) builder.CommonServerBuilder {
-	return builder.ServerFromDisk(builder.NewAPIClient(b.client), name, sourceDiskID)
+// FromDisk returns new builder to build server from existing disk
+func (b *Builder) FromDisk(name string, sourceDiskID int64) builder.CommonServerBuilder {
+	return builder.ServerFromDisk(b.APIClient, name, sourceDiskID)
 }
 
-func (b *builderImpl) FromPublicArchiveWindows(os ostype.ArchiveOSTypes, name string) builder.PublicArchiveWindowsServerBuilder {
-	return builder.ServerPublicArchiveWindows(builder.NewAPIClient(b.client), os, name)
+// FromPublicArchiveWindows returns new builder to build server from windows public archive
+func (b *Builder) FromPublicArchiveWindows(os ostype.ArchiveOSTypes, name string) builder.PublicArchiveWindowsServerBuilder {
+	return builder.ServerPublicArchiveWindows(b.APIClient, os, name)
 }
 
-func (b *builderImpl) FromPublicArchiveFixedUnix(os ostype.ArchiveOSTypes, name string) builder.FixedUnixArchiveServerBuilder {
-	return builder.ServerPublicArchiveFixedUnix(builder.NewAPIClient(b.client), os, name)
+// FromPublicArchiveFixedUnix returns new builder to build server having fixed disk from archive
+func (b *Builder) FromPublicArchiveFixedUnix(os ostype.ArchiveOSTypes, name string) builder.FixedUnixArchiveServerBuilder {
+	return builder.ServerPublicArchiveFixedUnix(b.APIClient, os, name)
 }
 
-func (b *builderImpl) FromPublicArchiveUnix(os ostype.ArchiveOSTypes, name string, password string) builder.PublicArchiveUnixServerBuilder {
-	return builder.ServerPublicArchiveUnix(builder.NewAPIClient(b.client), os, name, password)
+// FromPublicArchiveUnix returns new builder to build server from public unix archive
+func (b *Builder) FromPublicArchiveUnix(os ostype.ArchiveOSTypes, name string, password string) builder.PublicArchiveUnixServerBuilder {
+	return builder.ServerPublicArchiveUnix(b.APIClient, os, name, password)
 }
 
 // BasicClient is responsible for basic functions of API client

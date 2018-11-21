@@ -7,8 +7,6 @@ import (
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
 	"github.com/sacloud/libsacloud/builder"
-	"github.com/sacloud/libsacloud/sacloud"
-	"github.com/sacloud/libsacloud/sacloud/ostype"
 	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 )
 
@@ -31,7 +29,8 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	// create Server
 	ui.Say("\tCreating server...")
 
-	b := s.createServerBuilder(state)
+	factory := state.Get("builderFactory").(serverBuilderFactory)
+	b := factory.createServerBuilder(state)
 	createResult, err := b.Build()
 
 	if err != nil {
@@ -91,151 +90,8 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 	}
 }
 
-func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverBuilder {
-
-	builderClient := state.Get("builder").(iaas.ServerBuilder)
-	c := state.Get("config").(Config)
-
-	serverName := "packer-builder-sakuracloud"
-
-	switch c.OSType {
-	case "iso":
-		var b builder.BlankDiskServerBuilder
-		b = builderClient.FromBlankDisk(serverName)
-		if c.ISOImageID > 0 {
-			b.SetISOImageID(c.ISOImageID)
-		}
-		if c.UseUSKeyboard {
-			b.SetTags(append(b.GetTags(), sacloud.TagKeyboardUS))
-		}
-		b.SetCore(c.Core)
-		b.SetMemory(c.MemorySize)
-		if c.DisableVirtIONetPCI {
-			b.SetInterfaceDriver(sacloud.InterfaceDriverE1000)
-		}
-		b.AddPublicNWConnectedNIC()
-		b.SetDiskSize(c.DiskSize)
-		b.SetDiskConnection(s.getDiskConnection(c))
-		b.SetDiskPlanID(s.getDiskPlanID(c))
-		return b
-	default:
-
-		os := s.getOSTypeFromString(c.OSType)
-		switch {
-		case os == ostype.Custom:
-			var b builder.CommonServerBuilder
-			if c.SourceArchive > 0 {
-				b = builderClient.FromArchive(serverName, c.SourceArchive)
-			} else {
-				b = builderClient.FromDisk(serverName, c.SourceDisk)
-			}
-			if c.ISOImageID > 0 {
-				b.SetISOImageID(c.ISOImageID)
-			}
-			if c.UseUSKeyboard {
-				b.SetTags(append(b.GetTags(), sacloud.TagKeyboardUS))
-			}
-
-			b.SetCore(c.Core)
-			b.SetMemory(c.MemorySize)
-			if c.DisableVirtIONetPCI {
-				b.SetInterfaceDriver(sacloud.InterfaceDriverE1000)
-			}
-			b.AddPublicNWConnectedNIC()
-			b.SetDiskSize(c.DiskSize)
-			b.SetDiskConnection(s.getDiskConnection(c))
-			b.SetDiskPlanID(s.getDiskPlanID(c))
-			b.AddSSHKey(state.Get("ssh_public_key").(string))
-			b.SetHostName(serverName)
-			return b
-		case os.IsWindows():
-			b := builderClient.FromPublicArchiveWindows(os, serverName)
-			b.SetCore(c.Core)
-			b.SetMemory(c.MemorySize)
-			if c.DisableVirtIONetPCI {
-				b.SetInterfaceDriver(sacloud.InterfaceDriverE1000)
-			}
-			b.AddPublicNWConnectedNIC()
-			b.SetDiskSize(c.DiskSize)
-			b.SetDiskConnection(s.getDiskConnection(c))
-			b.SetDiskPlanID(s.getDiskPlanID(c))
-			if c.ISOImageID > 0 {
-				b.SetISOImageID(c.ISOImageID)
-			}
-			if c.UseUSKeyboard {
-				b.SetTags(append(b.GetTags(), sacloud.TagKeyboardUS))
-			}
-			return b
-		case os == ostype.Netwiser, os == ostype.SophosUTM, os == ostype.OPNsense:
-			b := builderClient.FromPublicArchiveFixedUnix(os, serverName)
-			b.SetCore(c.Core)
-			b.SetMemory(c.MemorySize)
-			if c.DisableVirtIONetPCI {
-				b.SetInterfaceDriver(sacloud.InterfaceDriverE1000)
-			}
-			b.AddPublicNWConnectedNIC()
-			b.SetDiskSize(c.DiskSize)
-			b.SetDiskConnection(s.getDiskConnection(c))
-			b.SetDiskPlanID(s.getDiskPlanID(c))
-			if c.ISOImageID > 0 {
-				b.SetISOImageID(c.ISOImageID)
-			}
-			if c.UseUSKeyboard {
-				b.SetTags(append(b.GetTags(), sacloud.TagKeyboardUS))
-			}
-			return b
-		default:
-			b := builderClient.FromPublicArchiveUnix(os, serverName, c.Password)
-			b.SetCore(c.Core)
-			b.SetMemory(c.MemorySize)
-			if c.DisableVirtIONetPCI {
-				b.SetInterfaceDriver(sacloud.InterfaceDriverE1000)
-			}
-			b.AddPublicNWConnectedNIC()
-			b.SetDiskSize(c.DiskSize)
-			b.SetDiskConnection(s.getDiskConnection(c))
-			b.SetDiskPlanID(s.getDiskPlanID(c))
-			b.AddSSHKey(state.Get("ssh_public_key").(string))
-			b.SetHostName(serverName)
-			if c.ISOImageID > 0 {
-				b.SetISOImageID(c.ISOImageID)
-			}
-			if c.UseUSKeyboard {
-				b.SetTags(append(b.GetTags(), sacloud.TagKeyboardUS))
-			}
-			return b
-		}
-	}
-}
-
-func (s *stepCreateServer) getOSTypeFromString(os string) ostype.ArchiveOSTypes {
-	return ostype.StrToOSType(os)
-}
-
-func (s *stepCreateServer) getDiskConnection(config Config) sacloud.EDiskConnection {
-	switch config.DiskConnection {
-	case "ide":
-		return sacloud.DiskConnectionIDE
-	case "virtio":
-		return sacloud.DiskConnectionVirtio
-	}
-
-	panic(fmt.Errorf("invalid config: disk_connection[%s]", config.DiskConnection))
-}
-
-func (s *stepCreateServer) getDiskPlanID(config Config) sacloud.DiskPlanID {
-	switch config.DiskPlan {
-	case "ssd":
-		return sacloud.DiskPlanSSDID
-	case "hdd":
-		return sacloud.DiskPlanHDDID
-	}
-
-	panic(fmt.Errorf("invalid config: disk_plan[%s]", config.DiskPlan))
-}
-
 func (s *stepCreateServer) getDiskIDs(buildResult *builder.ServerBuildResult) []int64 {
-	res := []int64{}
+	var res []int64
 	for _, disk := range buildResult.Disks {
 		res = append(res, disk.Disk.ID)
 	}

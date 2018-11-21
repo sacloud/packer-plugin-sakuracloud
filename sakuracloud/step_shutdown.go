@@ -31,7 +31,11 @@ func (s *stepShutdown) Run(ctx context.Context, state multistep.StateBag) multis
 		return multistep.ActionHalt
 	}
 
-	serverClient.SleepUntilDown(serverID, 1*time.Minute)
+	// if occur timeout, it be force shutdown by step_power_off.
+	// so ignore any errors to fallback early.
+	if err := serverClient.SleepUntilDown(serverID, 1*time.Minute); err != nil {
+		ui.Message("Graceful shutdown is timed out")
+	}
 
 	stepEndMsg(ui, s.Debug, "Shutdown Server")
 	return multistep.ActionContinue

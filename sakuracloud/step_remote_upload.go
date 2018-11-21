@@ -9,8 +9,8 @@ import (
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/ftps"
 	"github.com/sacloud/packer-builder-sakuracloud/iaas"
+	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 )
 
 type stepRemoteUpload struct {
@@ -24,7 +24,7 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	stepStartMsg(ui, s.Debug, "ISO-Image Upload")
 
 	filepath, ok := state.Get("iso_path").(string)
-	if !ok {
+	if !ok || filepath == "" {
 		return multistep.ActionContinue
 	}
 
@@ -56,7 +56,7 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	req.Name = config.ISOImageName
 	req.SizeMB = config.ISOImageSizeGB * 1024
 	req.Description = strings.Join(config.ISOConfig.ISOUrls, "\n")
-	req.AppendTag("packer-for-sakuracloud")
+	req.AppendTag(constants.UploadedFromPackerMarkerTag)
 
 	isoImage, ftp, err := isoImageClient.Create(req)
 	if err != nil {
@@ -67,8 +67,7 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	// upload iso by FTPS
-	ftpsClient := &ftps.FTPS{}
-	ftpsClient.TLSConfig.InsecureSkipVerify = true
+	ftpsClient := state.Get("ftpsClient").(iaas.FTPSClient)
 
 	err = ftpsClient.Connect(ftp.HostName, 21)
 	if err != nil {

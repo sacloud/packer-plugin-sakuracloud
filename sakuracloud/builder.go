@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/packer/helper/communicator"
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
+	"github.com/sacloud/ftps"
 	"github.com/sacloud/libsacloud/sacloud/ostype"
 	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
@@ -58,6 +59,11 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 	state.Put("serverClient", client.Server)
 	state.Put("isoImageClient", client.ISOImage)
 	state.Put("builder", client.Builder)
+	state.Put("builderFactory", &defaultServerBuilderFactory{})
+
+	ftpsClient := &ftps.FTPS{}
+	ftpsClient.TLSConfig.InsecureSkipVerify = true
+	state.Put("ftpsClient", iaas.FTPSClient(ftpsClient))
 
 	state.Put("hook", hook)
 	state.Put("ui", ui)
