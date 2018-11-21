@@ -18,7 +18,7 @@ import (
 	"github.com/sacloud/libsacloud/sacloud"
 )
 
-const KeyLeftShift uint32 = 0xFFE1
+const keyLeftShift uint32 = 0xFFE1
 
 type bootCommandTemplateData struct {
 	ServerIP       string
@@ -447,7 +447,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 		}
 
 		if keyShift {
-			c.KeyEvent(KeyLeftShift, true)
+			c.KeyEvent(keyLeftShift, true)
 		}
 
 		c.KeyEvent(keyCode, true)
@@ -456,7 +456,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 		time.Sleep(time.Second / 10)
 
 		if keyShift {
-			c.KeyEvent(KeyLeftShift, false)
+			c.KeyEvent(keyLeftShift, false)
 		}
 
 		// qemu is picky, so no matter what, wait a small period

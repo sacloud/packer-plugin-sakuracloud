@@ -47,7 +47,7 @@ vet: fmt
 	fi
 
 golint: fmt
-	go list ./... | xargs -L1 golint
+	test -z "$$(go list ./... | xargs -L1 golint | fgrep -v 'should be BuilderID'  | fgrep -v 'should be ID' | tee /dev/stderr )"
 
 fmt:
 	gofmt -s -l -w $(GOFMT_FILES)

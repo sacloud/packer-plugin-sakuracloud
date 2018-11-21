@@ -35,7 +35,7 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 		return multistep.ActionHalt
 	}
 
-	priv_blk := pem.Block{
+	privBlk := pem.Block{
 		Type:    "RSA PRIVATE KEY",
 		Headers: nil,
 		Bytes:   x509.MarshalPKCS1PrivateKey(priv),
@@ -52,7 +52,7 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 	// upload temporary ssh key
 	strSSHPublicKey := string(ssh.MarshalAuthorizedKey(pub))
 
-	state.Put("ssh_private_key", string(pem.EncodeToMemory(&priv_blk)))
+	state.Put("ssh_private_key", string(pem.EncodeToMemory(&privBlk)))
 	state.Put("ssh_public_key", strSSHPublicKey)
 
 	if s.Debug {
@@ -64,7 +64,7 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 		}
 
 		// Write out the key
-		err = pem.Encode(f, &priv_blk)
+		err = pem.Encode(f, &privBlk)
 		f.Close()
 		if err != nil {
 			state.Put("error", fmt.Errorf("Error saving debug key: %s", err))
