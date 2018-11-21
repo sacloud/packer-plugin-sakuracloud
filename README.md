@@ -1,6 +1,9 @@
 packer-builder-sakuracloud
 ===
 
+[![Build Status](https://travis-ci.org/sacloud/packer-builder-sakuracloud.svg?branch=master)](https://travis-ci.org/sacloud/packer-builder-sakuracloud)
+[![Slack](https://slack.usacloud.jp/badge.svg)](https://slack.usacloud.jp/)  
+
 A builder plugin of packer for SakuraCloud
 
 さくらのクラウド用Packerプラグイン

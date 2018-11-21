@@ -13,14 +13,18 @@ import (
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 )
 
-// The unique id for the builder
+// BuilderId is the unique id for the builder
 const BuilderId = "packer.sakuracloud"
 
+// Builder implememts packer.Builder interface for
+// handling actions for SakuraCloud
 type Builder struct {
 	config Config
 	runner multistep.Runner
 }
 
+// Prepare is responsible for configuring the builder and validating
+// that configuration.
 func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 	c, warnings, errs := NewConfig(raws...)
 	if errs != nil {
@@ -31,6 +35,7 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 	return nil, nil
 }
 
+// Cancel cancels a possibly running Builder.
 func (b *Builder) Cancel() {
 	if b.runner != nil {
 		log.Println("Cancelling the step runner...")
@@ -38,6 +43,7 @@ func (b *Builder) Cancel() {
 	}
 }
 
+// Run is where the actual build should take place.
 func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packer.Artifact, error) {
 
 	client := api.NewClient(b.config.AccessToken, b.config.AccessTokenSecret, b.config.Zone)

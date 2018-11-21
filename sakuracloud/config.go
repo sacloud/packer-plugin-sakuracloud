@@ -15,6 +15,7 @@ import (
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 )
 
+// Config represents SakuraCloud builder config
 type Config struct {
 	common.PackerConfig `mapstructure:",squash"`
 	Comm                communicator.Config `mapstructure:",squash"`
@@ -62,6 +63,7 @@ type Config struct {
 	ctx interpolate.Context
 }
 
+// NewConfig returns new *Config
 func NewConfig(raws ...interface{}) (*Config, []string, error) {
 	c := &Config{}
 
