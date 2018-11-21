@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/sacloud/libsacloud/api"
+	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 )
 
 // Artifact is the result of a build and is the metadata that documents
@@ -20,7 +20,7 @@ type Artifact struct {
 	zone string
 
 	// client is the SakuraCloud API client
-	client *api.Client
+	client iaas.ArchiveClient
 }
 
 // BuilderId returns the ID of the builder that was used to create this artifact.
@@ -54,6 +54,6 @@ func (a *Artifact) State(name string) interface{} {
 // Destroy deletes the artifact.
 func (a *Artifact) Destroy() error {
 	log.Printf("Destroying image: %d (%s)", a.archiveID, a.archiveName)
-	_, err := a.client.Archive.Delete(a.archiveID)
+	_, err := a.client.Delete(a.archiveID)
 	return err
 }

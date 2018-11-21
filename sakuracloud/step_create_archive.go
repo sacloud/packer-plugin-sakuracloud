@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/libsacloud/api"
+	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 )
 
 type stepCreateArchive struct {
@@ -14,7 +14,10 @@ type stepCreateArchive struct {
 }
 
 func (s *stepCreateArchive) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	client := state.Get("client").(*api.Client)
+	archiveClient := state.Get("archiveClient").(iaas.ArchiveClient)
+	diskClient := state.Get("diskClient").(iaas.DiskClient)
+	basicClient := state.Get("basicClient").(iaas.BasicClient)
+
 	ui := state.Get("ui").(packer.Ui)
 	c := state.Get("config").(Config)
 	diskID := state.Get("disk_id").(int64)
@@ -23,7 +26,7 @@ func (s *stepCreateArchive) Run(ctx context.Context, state multistep.StateBag) m
 
 	ui.Say(fmt.Sprintf("\tCreating archive: %v", c.ArchiveName))
 
-	archiveReq := client.Archive.New()
+	archiveReq := archiveClient.New()
 	archiveReq.Name = c.ArchiveName
 	archiveReq.SetSourceDisk(diskID)
 
@@ -34,9 +37,9 @@ func (s *stepCreateArchive) Run(ctx context.Context, state multistep.StateBag) m
 			}
 		}
 	} else {
-		publicArchiveID, found := client.Disk.GetPublicArchiveIDFromAncestors(diskID)
+		publicArchiveID, found := diskClient.GetPublicArchiveIDFromAncestors(diskID)
 		if found {
-			sourceArchive, err := client.Archive.Read(publicArchiveID)
+			sourceArchive, err := archiveClient.Read(publicArchiveID)
 			if sourceArchive != nil && err == nil {
 				for _, tag := range sourceArchive.Tags {
 					if !archiveReq.HasTag(tag) {
@@ -49,7 +52,7 @@ func (s *stepCreateArchive) Run(ctx context.Context, state multistep.StateBag) m
 
 	archiveReq.Description = c.ArchiveDescription
 
-	archive, err := client.Archive.Create(archiveReq)
+	archive, err := archiveClient.Create(archiveReq)
 	if err != nil {
 		err := fmt.Errorf("Error creating archive: %s", err)
 		state.Put("error", err)
@@ -57,7 +60,7 @@ func (s *stepCreateArchive) Run(ctx context.Context, state multistep.StateBag) m
 		return multistep.ActionHalt
 	}
 
-	if err := client.Archive.SleepWhileCopying(archive.ID, c.APIClientTimeout); err != nil {
+	if err := archiveClient.SleepWhileCopying(archive.ID, c.APIClientTimeout); err != nil {
 		err := fmt.Errorf("Error copying archive: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
@@ -66,7 +69,7 @@ func (s *stepCreateArchive) Run(ctx context.Context, state multistep.StateBag) m
 
 	state.Put("archive_id", archive.ID)
 	state.Put("archive_name", archive.Name)
-	state.Put("zone", client.Zone)
+	state.Put("zone", basicClient.Zone())
 	stepEndMsg(ui, s.Debug, "BootWait")
 	return multistep.ActionContinue
 }

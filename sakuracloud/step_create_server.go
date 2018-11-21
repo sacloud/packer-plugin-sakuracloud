@@ -6,10 +6,10 @@ import (
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/libsacloud/api"
 	"github.com/sacloud/libsacloud/builder"
 	"github.com/sacloud/libsacloud/sacloud"
 	"github.com/sacloud/libsacloud/sacloud/ostype"
+	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 )
 
 type serverBuilder interface {
@@ -59,7 +59,7 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 		return
 	}
 
-	client := state.Get("client").(*api.Client)
+	serverClient := state.Get("serverClient").(iaas.ServerClient)
 	ui := state.Get("ui").(packer.Ui)
 	c := state.Get("config").(Config)
 
@@ -67,13 +67,13 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 	ui.Say("\tDestroying server...")
 
 	// force shutdown
-	_, err := client.Server.Stop(s.serverID)
+	_, err := serverClient.Stop(s.serverID)
 	if err != nil {
 		ui.Error(fmt.Sprintf("Error destroying server. Please destroy it manually: %s", err))
 		return
 	}
 	// wait for down
-	err = client.Server.SleepUntilDown(s.serverID, c.APIClientTimeout)
+	err = serverClient.SleepUntilDown(s.serverID, c.APIClientTimeout)
 	if err != nil {
 		ui.Error(fmt.Sprintf("Error destroying server. Please destroy it manually: %s", err))
 		return
@@ -81,9 +81,9 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 
 	// delete server with disks
 	if len(s.diskIDs) == 0 {
-		_, err = client.Server.Delete(s.serverID)
+		_, err = serverClient.Delete(s.serverID)
 	} else {
-		_, err = client.Server.DeleteWithDisk(s.serverID, s.diskIDs)
+		_, err = serverClient.DeleteWithDisk(s.serverID, s.diskIDs)
 	}
 	if err != nil {
 		ui.Error(fmt.Sprintf(
@@ -93,7 +93,7 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 
 func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverBuilder {
 
-	client := state.Get("client").(*api.Client)
+	builderClient := state.Get("builder").(iaas.ServerBuilder)
 	c := state.Get("config").(Config)
 
 	serverName := "packer-builder-sakuracloud"
@@ -101,7 +101,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 	switch c.OSType {
 	case "iso":
 		var b builder.BlankDiskServerBuilder
-		b = builder.ServerBlankDisk(client, serverName)
+		b = builderClient.FromBlankDisk(serverName)
 		if c.ISOImageID > 0 {
 			b.SetISOImageID(c.ISOImageID)
 		}
@@ -125,9 +125,9 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 		case os == ostype.Custom:
 			var b builder.CommonServerBuilder
 			if c.SourceArchive > 0 {
-				b = builder.ServerFromArchive(client, serverName, c.SourceArchive)
+				b = builderClient.FromArchive(serverName, c.SourceArchive)
 			} else {
-				b = builder.ServerFromDisk(client, serverName, c.SourceDisk)
+				b = builderClient.FromDisk(serverName, c.SourceDisk)
 			}
 			if c.ISOImageID > 0 {
 				b.SetISOImageID(c.ISOImageID)
@@ -149,7 +149,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 			b.SetHostName(serverName)
 			return b
 		case os.IsWindows():
-			b := builder.ServerPublicArchiveWindows(client, os, serverName)
+			b := builderClient.FromPublicArchiveWindows(os, serverName)
 			b.SetCore(c.Core)
 			b.SetMemory(c.MemorySize)
 			if c.DisableVirtIONetPCI {
@@ -167,7 +167,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 			}
 			return b
 		case os == ostype.Netwiser, os == ostype.SophosUTM, os == ostype.OPNsense:
-			b := builder.ServerPublicArchiveFixedUnix(client, os, serverName)
+			b := builderClient.FromPublicArchiveFixedUnix(os, serverName)
 			b.SetCore(c.Core)
 			b.SetMemory(c.MemorySize)
 			if c.DisableVirtIONetPCI {
@@ -185,7 +185,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) serverB
 			}
 			return b
 		default:
-			b := builder.ServerPublicArchiveUnix(client, os, serverName, c.Password)
+			b := builderClient.FromPublicArchiveUnix(os, serverName, c.Password)
 			b.SetCore(c.Core)
 			b.SetMemory(c.MemorySize)
 			if c.DisableVirtIONetPCI {

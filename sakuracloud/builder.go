@@ -8,10 +8,9 @@ import (
 	"github.com/hashicorp/packer/helper/communicator"
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/libsacloud/api"
 	"github.com/sacloud/libsacloud/sacloud/ostype"
+	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
-	"github.com/sacloud/packer-builder-sakuracloud/version"
 )
 
 // BuilderId is the unique id for the builder
@@ -47,14 +46,19 @@ func (b *Builder) Cancel() {
 // Run is where the actual build should take place.
 func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packer.Artifact, error) {
 
-	client := api.NewClient(b.config.AccessToken, b.config.AccessTokenSecret, b.config.Zone)
-	client.UserAgent = fmt.Sprintf("packer_for_sakuracloud:v%s", version.Version)
-	client.DefaultTimeoutDuration = b.config.APIClientTimeout
+	client := iaas.NewClient(b.config.AccessToken, b.config.AccessTokenSecret, b.config.Zone, b.config.APIClientTimeout)
 
 	// Set up the state
 	state := new(multistep.BasicStateBag)
 	state.Put("config", b.config)
-	state.Put("client", client)
+
+	state.Put("basicClient", client.Basic)
+	state.Put("archiveClient", client.Archive)
+	state.Put("diskClient", client.Disk)
+	state.Put("serverClient", client.Server)
+	state.Put("isoImageClient", client.ISOImage)
+	state.Put("builder", client.Builder)
+
 	state.Put("hook", hook)
 	state.Put("ui", ui)
 	state.Put("cache", cache)
@@ -171,7 +175,7 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 		archiveID:   state.Get("archive_id").(int64),
 		archiveName: state.Get("archive_name").(string),
 		zone:        state.Get("zone").(string),
-		client:      client,
+		client:      client.Archive,
 	}
 
 	return artifact, nil

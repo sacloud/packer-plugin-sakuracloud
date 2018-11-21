@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/libsacloud/api"
+	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 )
 
 type stepPrepareISO struct {
@@ -14,7 +14,7 @@ type stepPrepareISO struct {
 }
 
 func (s *stepPrepareISO) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	client := state.Get("client").(*api.Client)
+	isoImageClient := state.Get("isoImageClient").(iaas.ISOImageClient)
 	config := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
 
@@ -27,7 +27,7 @@ func (s *stepPrepareISO) Run(ctx context.Context, state multistep.StateBag) mult
 
 	config.ISOImageID = isoID
 
-	iso, err := client.CDROM.Read(isoID)
+	iso, err := isoImageClient.Read(isoID)
 	if err != nil {
 		err := fmt.Errorf("Error invalid ISO image ID: %s", err)
 		state.Put("error", err)
