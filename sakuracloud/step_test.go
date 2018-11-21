@@ -5,6 +5,13 @@ import (
 	"github.com/hashicorp/packer/packer"
 )
 
+var testMinimumConfigValues = map[string]interface{}{
+	"access_token":        "aaaa",
+	"access_token_secret": "bbbb",
+	"zone":                "is1a",
+	"os_type":             "centos",
+}
+
 func testUI() packer.Ui {
 	return new(packer.NoopUi)
 }
@@ -14,13 +21,6 @@ func testStateBag() multistep.StateBag {
 }
 
 func testConfig() Config {
-	values := map[string]interface{}{
-		"access_token":        "aaaa",
-		"access_token_secret": "bbbb",
-		"zone":                "is1a",
-		"os_type":             "centos",
-	}
-
-	conf, _, _ := NewConfig(values)
+	conf, _, _ := NewConfig(testMinimumConfigValues)
 	return *conf
 }

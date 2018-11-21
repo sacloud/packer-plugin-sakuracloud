@@ -29,14 +29,8 @@ func TestBuilder_Prepare(t *testing.T) {
 	}
 
 	t.Run("with minimum config", func(t *testing.T) {
-		conf := map[string]interface{}{
-			"access_token":        "aaaa",
-			"access_token_secret": "bbbb",
-			"zone":                "is1a",
-			"os_type":             "centos",
-		}
 		builder := &Builder{}
-		warns, errs := builder.Prepare(conf)
+		warns, errs := builder.Prepare(testMinimumConfigValues)
 
 		assert.Nil(t, warns)
 		assert.Nil(t, errs)
