@@ -1,7 +1,7 @@
 TEST?=$$(go list ./... | grep -v vendor)
 VETARGS?=-all
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
-CURRENT_VERSION = $(gobump show -r sakuracloud/)
+CURRENT_VERSION = $(gobump show -r version/)
 export GO111MODULE=on
 
 default: test vet
@@ -75,15 +75,15 @@ prepare-homebrew:
 
 .PHONY: version bump-patch bump-minor bump-major
 version:
-	gobump show -r sakuracloud/
+	gobump show -r version/
 
 bump-patch:
-	gobump patch -w sakuracloud/
+	gobump patch -w version/
 
 bump-minor:
-	gobump minor -w sakuracloud/
+	gobump minor -w version/
 
 bump-major:
-	gobump major -w sakuracloud/
+	gobump major -w version/
 
 .PHONY: default

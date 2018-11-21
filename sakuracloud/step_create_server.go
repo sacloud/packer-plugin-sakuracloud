@@ -60,7 +60,6 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 	}
 
 	client := state.Get("client").(*api.Client)
-	client.TraceMode = true
 	ui := state.Get("ui").(packer.Ui)
 	c := state.Get("config").(Config)
 

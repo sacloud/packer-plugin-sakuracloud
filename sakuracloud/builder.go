@@ -11,6 +11,7 @@ import (
 	"github.com/sacloud/libsacloud/api"
 	"github.com/sacloud/libsacloud/sacloud/ostype"
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
+	"github.com/sacloud/packer-builder-sakuracloud/version"
 )
 
 // BuilderId is the unique id for the builder
@@ -47,7 +48,7 @@ func (b *Builder) Cancel() {
 func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packer.Artifact, error) {
 
 	client := api.NewClient(b.config.AccessToken, b.config.AccessTokenSecret, b.config.Zone)
-	client.UserAgent = fmt.Sprintf("packer_for_sakuracloud:v%s", Version)
+	client.UserAgent = fmt.Sprintf("packer_for_sakuracloud:v%s", version.Version)
 	client.DefaultTimeoutDuration = b.config.APIClientTimeout
 
 	// Set up the state
