@@ -44,27 +44,27 @@ type builderImpl struct {
 }
 
 func (b *builderImpl) FromBlankDisk(name string) builder.BlankDiskServerBuilder {
-	return builder.ServerBlankDisk(b.client, name)
+	return builder.ServerBlankDisk(builder.NewAPIClient(b.client), name)
 }
 
 func (b *builderImpl) FromArchive(name string, sourceArchiveID int64) builder.CommonServerBuilder {
-	return builder.ServerFromArchive(b.client, name, sourceArchiveID)
+	return builder.ServerFromArchive(builder.NewAPIClient(b.client), name, sourceArchiveID)
 }
 
 func (b *builderImpl) FromDisk(name string, sourceDiskID int64) builder.CommonServerBuilder {
-	return builder.ServerFromDisk(b.client, name, sourceDiskID)
+	return builder.ServerFromDisk(builder.NewAPIClient(b.client), name, sourceDiskID)
 }
 
 func (b *builderImpl) FromPublicArchiveWindows(os ostype.ArchiveOSTypes, name string) builder.PublicArchiveWindowsServerBuilder {
-	return builder.ServerPublicArchiveWindows(b.client, os, name)
+	return builder.ServerPublicArchiveWindows(builder.NewAPIClient(b.client), os, name)
 }
 
 func (b *builderImpl) FromPublicArchiveFixedUnix(os ostype.ArchiveOSTypes, name string) builder.FixedUnixArchiveServerBuilder {
-	return builder.ServerPublicArchiveFixedUnix(b.client, os, name)
+	return builder.ServerPublicArchiveFixedUnix(builder.NewAPIClient(b.client), os, name)
 }
 
 func (b *builderImpl) FromPublicArchiveUnix(os ostype.ArchiveOSTypes, name string, password string) builder.PublicArchiveUnixServerBuilder {
-	return builder.ServerPublicArchiveUnix(b.client, os, name, password)
+	return builder.ServerPublicArchiveUnix(builder.NewAPIClient(b.client), os, name, password)
 }
 
 // BasicClient is responsible for basic functions of API client
