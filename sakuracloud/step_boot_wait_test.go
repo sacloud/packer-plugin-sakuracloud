@@ -13,12 +13,10 @@ func TestStepBootWait(t *testing.T) {
 
 	ctx := context.Background()
 	step := &stepBootWait{}
-	conf := testConfig()
+	conf := dummyConfig()
 	conf.BootWait = 10 * time.Millisecond
 
-	state := testStateBag()
-	state.Put("ui", testUI())
-	state.Put("config", conf)
+	state := dummyMinimumStateBag(&conf)
 
 	// run
 	start := time.Now()

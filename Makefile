@@ -1,7 +1,7 @@
 TEST?=$$(go list ./... | grep -v vendor)
 VETARGS?=-all
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
-CURRENT_VERSION = $(gobump show -r sakuracloud/)
+CURRENT_VERSION = $(gobump show -r version/)
 export GO111MODULE=on
 
 default: test vet
@@ -36,7 +36,9 @@ testacc:
 	@echo "WARN: Acceptance tests will take a long time to run and may cost money. Ctrl-C if you want to cancel."
 	PACKER_ACC=1 go test -v $(TEST) $(TESTARGS) -timeout=45m
 
-.PHONY: vet fmt golint goimports
+.PHONY: lint vet fmt golint goimports
+lint: vet fmt golint goimports
+
 vet: fmt
 	@echo "go tool vet $(VETARGS) ."
 	@go tool vet $(VETARGS) $$(ls -d */ | grep -v vendor) ; if [ $$? -eq 1 ]; then \
@@ -75,15 +77,15 @@ prepare-homebrew:
 
 .PHONY: version bump-patch bump-minor bump-major
 version:
-	gobump show -r sakuracloud/
+	gobump show -r version/
 
 bump-patch:
-	gobump patch -w sakuracloud/
+	gobump patch -w version/
 
 bump-minor:
-	gobump minor -w sakuracloud/
+	gobump minor -w version/
 
 bump-major:
-	gobump major -w sakuracloud/
+	gobump major -w version/
 
 .PHONY: default

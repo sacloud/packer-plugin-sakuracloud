@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/libsacloud/api"
+	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 )
 
 type stepPowerOff struct {
@@ -14,14 +14,14 @@ type stepPowerOff struct {
 }
 
 func (s *stepPowerOff) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	client := state.Get("client").(*api.Client)
+	serverClient := state.Get("serverClient").(iaas.ServerClient)
 	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
 	serverID := state.Get("server_id").(int64)
 
 	stepStartMsg(ui, s.Debug, "PowerOff")
 
-	server, err := client.Server.Read(serverID)
+	server, err := serverClient.Read(serverID)
 	if err != nil {
 		err := fmt.Errorf("Error checking server state: %s", err)
 		state.Put("error", err)
@@ -37,7 +37,7 @@ func (s *stepPowerOff) Run(ctx context.Context, state multistep.StateBag) multis
 
 	// Pull the plug on the Droplet
 	ui.Say("\tForcefully shutting down Droplet...")
-	_, err = client.Server.Stop(serverID)
+	_, err = serverClient.Stop(serverID)
 	if err != nil {
 		err := fmt.Errorf("Error powering off server: %s", err)
 		state.Put("error", err)
@@ -45,7 +45,7 @@ func (s *stepPowerOff) Run(ctx context.Context, state multistep.StateBag) multis
 		return multistep.ActionHalt
 	}
 
-	err = client.Server.SleepUntilDown(serverID, c.APIClientTimeout)
+	err = serverClient.SleepUntilDown(serverID, c.APIClientTimeout)
 	if err != nil {
 		state.Put("error", err)
 		ui.Error(err.Error())

@@ -15,6 +15,20 @@ import (
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 )
 
+const (
+	defaultDiskConnection = "virtio"
+	defaultDiskPlan       = "ssd"
+	defaultDiskSize       = 20
+	defaultCore           = 1
+	defaultMemory         = 1
+	defaultISOIMageSize   = 5
+	defaultSSHUser        = "root"
+	defaultWinRMUser      = "Administrator"
+	defaultHostName       = "packer-builder-sakuracloud"
+	defaultAPITimeout     = 20 * time.Minute
+	defaultWinRMTimeout   = 10 * time.Minute
+)
+
 // Config represents SakuraCloud builder config
 type Config struct {
 	common.PackerConfig `mapstructure:",squash"`
@@ -84,7 +98,7 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 
 	setDefaultConfig(c)
 
-	var errs *packer.MultiError
+	var errs = &packer.MultiError{}
 	warnings := make([]string, 0)
 	if es := c.Comm.Prepare(&c.ctx); len(es) > 0 {
 		errs = packer.MultiErrorAppend(errs, es...)
@@ -117,19 +131,19 @@ func setDefaultConfig(c *Config) {
 	}
 
 	if c.DiskConnection == "" {
-		c.DiskConnection = "virtio"
+		c.DiskConnection = defaultDiskConnection
 	}
 	if c.DiskPlan == "" {
-		c.DiskPlan = "ssd"
+		c.DiskPlan = defaultDiskPlan
 	}
 	if c.DiskSize == 0 {
-		c.DiskSize = 20
+		c.DiskSize = defaultDiskSize
 	}
 	if c.Core == 0 {
-		c.Core = 1
+		c.Core = defaultCore
 	}
 	if c.MemorySize == 0 {
-		c.MemorySize = 1
+		c.MemorySize = defaultMemory
 	}
 
 	if c.ArchiveName == "" {
@@ -147,7 +161,7 @@ func setDefaultConfig(c *Config) {
 		// SourceImage has a different user account then the SakuraCloud default
 		c.Comm.SSHUsername = c.UserName
 		if c.Comm.SSHUsername == "" {
-			c.Comm.SSHUsername = "root"
+			c.Comm.SSHUsername = defaultSSHUser
 		}
 	}
 
@@ -157,10 +171,10 @@ func setDefaultConfig(c *Config) {
 			c.Comm.WinRMUser = c.UserName
 		}
 		if c.Comm.WinRMUser == "" {
-			c.Comm.WinRMUser = "Administrator"
+			c.Comm.WinRMUser = defaultWinRMUser
 		}
 		c.Comm.WinRMPassword = c.Password
-		c.Comm.WinRMTimeout = 10 * time.Minute
+		c.Comm.WinRMTimeout = defaultWinRMTimeout
 		if c.Comm.WinRMPort == 0 {
 			if c.Comm.WinRMUseSSL {
 				c.Comm.WinRMPort = 5986
@@ -173,11 +187,11 @@ func setDefaultConfig(c *Config) {
 	if c.APIClientTimeout == 0 {
 		// Default to 20 minute timeouts waiting for
 		// desired state. i.e waiting for droplet to become active
-		c.APIClientTimeout = 20 * time.Minute
+		c.APIClientTimeout = defaultAPITimeout
 	}
 
 	if c.ISOImageSizeGB == 0 {
-		c.ISOImageSizeGB = 5
+		c.ISOImageSizeGB = defaultISOIMageSize
 	}
 	if c.ISOImageName == "" {
 		def, err := interpolate.Render("packer-{{timestamp}}", nil)
@@ -192,10 +206,6 @@ func setDefaultConfig(c *Config) {
 			c.ISOImageName = c.ISOChecksum
 		}
 	}
-
-	//if c.BootWait == 0 {
-	//	//c.BootWait = 10 * time.Second
-	//}
 }
 
 func validateConfig(c *Config, errs *packer.MultiError) *packer.MultiError {
@@ -225,12 +235,10 @@ func validateConfig(c *Config, errs *packer.MultiError) *packer.MultiError {
 	}
 
 	os := ostype.StrToOSType(c.OSType)
-	if c.OSType != constants.TargetOSISO {
-		if os == ostype.Custom {
-			if c.SourceArchive == 0 && c.SourceDisk == 0 {
-				errs = packer.MultiErrorAppend(
-					errs, errors.New("source_archive or source_disk is required when os_type is custom"))
-			}
+	if c.OSType != constants.TargetOSISO && os == ostype.Custom {
+		if c.SourceArchive == 0 && c.SourceDisk == 0 {
+			errs = packer.MultiErrorAppend(
+				errs, errors.New("source_archive or source_disk is required when os_type is custom"))
 		}
 	}
 

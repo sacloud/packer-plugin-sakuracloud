@@ -1,18 +1,16 @@
 package sakuracloud
 
 import (
-	"bufio"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/libsacloud/api"
-	"github.com/webguerilla/ftps"
+	"github.com/sacloud/packer-builder-sakuracloud/iaas"
+	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 )
 
 type stepRemoteUpload struct {
@@ -20,13 +18,13 @@ type stepRemoteUpload struct {
 }
 
 func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	client := state.Get("client").(*api.Client)
+	isoImageClient := state.Get("isoImageClient").(iaas.ISOImageClient)
 	ui := state.Get("ui").(packer.Ui)
 
 	stepStartMsg(ui, s.Debug, "ISO-Image Upload")
 
 	filepath, ok := state.Get("iso_path").(string)
-	if !ok {
+	if !ok || filepath == "" {
 		return multistep.ActionContinue
 	}
 
@@ -35,7 +33,9 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 
 	if checksum != "" {
 		//search ISO from SakuraCloud
-		res, err := client.CDROM.Reset().WithNameLike(checksum).Find()
+		isoImageClient.SetEmpty()
+		isoImageClient.SetNameLike(checksum)
+		res, err := isoImageClient.Find()
 		if err != nil {
 			err := fmt.Errorf("Error finding ISO image: %s", err)
 			state.Put("error", err)
@@ -52,13 +52,13 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	ui.Say("\tUploading ISO to SakuraCloud...")
 	log.Printf("Remote uploading: %s", filepath)
 
-	req := client.CDROM.New()
+	req := isoImageClient.New()
 	req.Name = config.ISOImageName
 	req.SizeMB = config.ISOImageSizeGB * 1024
 	req.Description = strings.Join(config.ISOConfig.ISOUrls, "\n")
-	req.AppendTag("packer-for-sakuracloud")
+	req.AppendTag(constants.UploadedFromPackerMarkerTag)
 
-	isoImage, ftp, err := client.CDROM.Create(req)
+	isoImage, ftp, err := isoImageClient.Create(req)
 	if err != nil {
 		err := fmt.Errorf("Error creating ISO image: %s", err)
 		state.Put("error", err)
@@ -67,8 +67,7 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	// upload iso by FTPS
-	ftpsClient := &ftps.FTPS{}
-	ftpsClient.TLSConfig.InsecureSkipVerify = true
+	ftpsClient := state.Get("ftpsClient").(iaas.FTPSClient)
 
 	err = ftpsClient.Connect(ftp.HostName, 21)
 	if err != nil {
@@ -96,10 +95,7 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 	defer fs.Close()
 
-	reader := bufio.NewReader(fs)
-	fileBytes, _ := ioutil.ReadAll(reader)
-
-	err = ftpsClient.StoreFile("packer-for-sakuracloud.iso", fileBytes)
+	err = ftpsClient.StoreFile("packer-for-sakuracloud.iso", fs)
 	if err != nil {
 		err := fmt.Errorf("Error store file on FTPS server: %s", err)
 		state.Put("error", err)
@@ -109,7 +105,7 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	ftpsClient.Quit()
 
 	// close image FTP after upload
-	_, err = client.CDROM.CloseFTP(isoImage.ID)
+	_, err = isoImageClient.CloseFTP(isoImage.ID)
 	if err != nil {
 		err := fmt.Errorf("Error Closing FTPS connection: %s", err)
 		state.Put("error", err)

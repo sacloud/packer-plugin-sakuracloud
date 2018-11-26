@@ -42,10 +42,10 @@ require (
 	github.com/pkg/errors v0.8.0
 	github.com/pkg/sftp v0.0.0-20160930220758-4d0e916071f6
 	github.com/ryanuber/go-glob v0.0.0-20170128012129-256dc444b735
-	github.com/sacloud/libsacloud v1.1.0
+	github.com/sacloud/ftps v0.0.0-20171205062625-42fc0f9886fe
+	github.com/sacloud/libsacloud v1.2.0
 	github.com/stretchr/testify v1.2.2
 	github.com/ugorji/go v0.0.0-20151218193438-646ae4a518c1
-	github.com/webguerilla/ftps v0.0.0-20140812211633-166035d47579
 	golang.org/x/crypto v0.0.0-20181015023909-0c41d7ab0a0e
 	golang.org/x/net v0.0.0-20181017193950-04a2e542c03f
 	golang.org/x/sys v0.0.0-20181011152604-fa43e7bc11ba

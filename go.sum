@@ -89,8 +89,12 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/ryanuber/go-glob v0.0.0-20170128012129-256dc444b735 h1:7YvPJVmEeFHR1Tj9sZEYsmarJEQfMVYpd/Vyy/A8dqE=
 github.com/ryanuber/go-glob v0.0.0-20170128012129-256dc444b735/go.mod h1:807d1WSdnB0XRJzKNil9Om6lcp/3a0v4qIHxIXzX/Yc=
+github.com/sacloud/ftps v0.0.0-20171205062625-42fc0f9886fe h1:JSZLn4B8X9V1ynSEht3QdNJ13Stey0hR6asicabuEqU=
+github.com/sacloud/ftps v0.0.0-20171205062625-42fc0f9886fe/go.mod h1:sdVeG85LaUt1f+0meZqSf6hSQYlwdgFLI8tJqLZ58VM=
 github.com/sacloud/libsacloud v1.1.0 h1:x2BYjQwU3CqhKrqbQmOSezBFo4L12YdxQLrc2BituD8=
 github.com/sacloud/libsacloud v1.1.0/go.mod h1:js4lAYJrwAUoE6xR+xw+yFtwCBII98zgFGsT6gwXd8I=
+github.com/sacloud/libsacloud v1.2.0 h1:liVoXJKXScDbOUf7Sle7WOneslvvVhjmRx8V1Y4i3LQ=
+github.com/sacloud/libsacloud v1.2.0/go.mod h1:js4lAYJrwAUoE6xR+xw+yFtwCBII98zgFGsT6gwXd8I=
 github.com/skratchdot/open-golang v0.0.0-20160302144031-75fb7ed4208c/go.mod h1:sUM3LWHvSMaG192sy56D9F7CNvL7jUJVXoqM1QKLnog=
 github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=

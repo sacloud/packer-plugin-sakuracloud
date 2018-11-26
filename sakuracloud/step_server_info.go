@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/libsacloud/api"
+	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 )
 
 type stepServerInfo struct {
@@ -14,7 +14,7 @@ type stepServerInfo struct {
 }
 
 func (s *stepServerInfo) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	client := state.Get("client").(*api.Client)
+	serverClient := state.Get("serverClient").(iaas.ServerClient)
 	ui := state.Get("ui").(packer.Ui)
 	serverID := state.Get("server_id").(int64)
 
@@ -23,7 +23,7 @@ func (s *stepServerInfo) Run(ctx context.Context, state multistep.StateBag) mult
 	ui.Say("\tWaiting for server to become active...")
 
 	// Set the Network informations on the state for later
-	server, err := client.Server.Read(serverID)
+	server, err := serverClient.Read(serverID)
 	if err != nil {
 		err := fmt.Errorf("Error retrieving server: %s", err)
 		state.Put("error", err)
@@ -50,7 +50,7 @@ func (s *stepServerInfo) Run(ctx context.Context, state multistep.StateBag) mult
 	}
 
 	// Set the VNC proxy on the state for later
-	vnc, err := client.Server.GetVNCProxy(serverID)
+	vnc, err := serverClient.GetVNCProxy(serverID)
 	if err != nil {
 		err := fmt.Errorf("Error vnc proxy info: %s", err)
 		state.Put("error", err)

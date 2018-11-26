@@ -39,15 +39,15 @@ func TestBuilder_Prepare(t *testing.T) {
 	// TODO add more unit tests after refactoring Builder/Config
 }
 
-type testBuildRunner struct {
+type dummyBuildRunner struct {
 	cancelCalled bool
 }
 
-func (t *testBuildRunner) Run(bag multistep.StateBag) {}
-func (t *testBuildRunner) Cancel()                    { t.cancelCalled = true }
+func (t *dummyBuildRunner) Run(bag multistep.StateBag) {}
+func (t *dummyBuildRunner) Cancel()                    { t.cancelCalled = true }
 
 func TestBuilder_Cancel(t *testing.T) {
-	runner := &testBuildRunner{}
+	runner := &dummyBuildRunner{}
 	builder := &Builder{
 		runner: runner,
 	}
