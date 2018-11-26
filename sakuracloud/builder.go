@@ -83,7 +83,7 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 	if os.IsWindows() {
 		communicateStep = &communicator.StepConnectWinRM{
 			Config: &b.config.Comm,
-			Host:  getHostIPFunc,
+			Host:   getHostIPFunc,
 			WinRMConfig: func(multistep.StateBag) (*communicator.WinRMConfig, error) {
 				return &communicator.WinRMConfig{
 					Username: b.config.UserName,

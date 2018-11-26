@@ -53,7 +53,7 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 	strSSHPublicKey := string(ssh.MarshalAuthorizedKey(pub))
 
 	state.Put("privateKey", string(pem.EncodeToMemory(&privBlk)))
-	state.Put("ssh_public_key", strSSHPublicKey)
+	state.Put("publicKey", strSSHPublicKey)
 
 	if s.Debug {
 		ui.Message(fmt.Sprintf("Saving key for debug purposes: %s", s.DebugKeyPath))

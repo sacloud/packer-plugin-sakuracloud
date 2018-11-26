@@ -68,7 +68,7 @@ func (s *defaultServerBuilderFactory) createServerBuilder(state multistep.StateB
 	}
 	if bu.HasDiskEditProperty() {
 		b := b.(builder.DiskEditProperty)
-		b.AddSSHKey(state.Get("ssh_public_key").(string))
+		b.AddSSHKey(state.Get("publicKey").(string))
 		b.SetHostName(serverName)
 	}
 

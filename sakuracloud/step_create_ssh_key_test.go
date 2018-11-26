@@ -20,7 +20,7 @@ func TestStepCreateSSHKey(t *testing.T) {
 	action := step.Run(ctx, state)
 
 	privateKey := state.Get("privateKey").(string)
-	publicKey := state.Get("ssh_public_key").(string)
+	publicKey := state.Get("publicKey").(string)
 
 	assert.Equal(t, multistep.ActionContinue, action)
 	assert.NotEmpty(t, privateKey)

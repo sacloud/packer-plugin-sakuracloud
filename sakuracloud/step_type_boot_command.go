@@ -62,7 +62,7 @@ func (s *stepTypeBootCommand) Run(ctx context.Context, state multistep.StateBag)
 	maskLen := state.Get("network_mask_len").(int)
 	dns1 := state.Get("dns1").(string)
 	dns2 := state.Get("dns2").(string)
-	publicKey := state.Get("ssh_public_key").(string)
+	publicKey := state.Get("publicKey").(string)
 	privateKey := state.Get("privateKey").(string)
 
 	// Connect to VNC
