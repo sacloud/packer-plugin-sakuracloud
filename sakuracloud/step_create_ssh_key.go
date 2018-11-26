@@ -52,7 +52,7 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 	// upload temporary ssh key
 	strSSHPublicKey := string(ssh.MarshalAuthorizedKey(pub))
 
-	state.Put("ssh_private_key", string(pem.EncodeToMemory(&privBlk)))
+	state.Put("privateKey", string(pem.EncodeToMemory(&privBlk)))
 	state.Put("ssh_public_key", strSSHPublicKey)
 
 	if s.Debug {
