@@ -71,6 +71,8 @@ type Config struct {
 	ArchiveDescription string        `mapstructure:"archive_description"`
 	APIClientTimeout   time.Duration `mapstructure:"api_client_timeout"`
 
+	DisableGeneratePublicKey bool `mapstructure:"disable_generate_public_key"`
+
 	BootWait    time.Duration `mapstructure:"boot_wait"`
 	BootCommand []string      `mapstructure:"boot_command"`
 

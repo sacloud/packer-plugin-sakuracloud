@@ -302,7 +302,7 @@ type createServerBuilderExpects struct {
 
 func initCreateServerBuilderState(config *Config) multistep.StateBag {
 	state := dummyMinimumStateBag(config)
-	state.Put("publicKey", dummySSHKeyBody)
+	state.Put("publicKeys", []string{dummySSHKeyBody})
 
 	state.Put("builder", dummyTestBuilder)
 

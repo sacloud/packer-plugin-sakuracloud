@@ -15,6 +15,22 @@ func TestBuilderAcc_basic(t *testing.T) {
 	})
 }
 
+func TestBuilderAcc_withSSHKeyFile(t *testing.T) {
+	var deferFunc func()
+	builderT.Test(t, builderT.TestCase{
+		PreCheck: func() {
+			deferFunc = prepareTestPrivateKeyFile()
+			testAccPreCheck(t)
+		},
+		Builder:  &Builder{},
+		Template: testBuilderAccWithSSHPrivateKeyFile(dummyPrivateKeyFile),
+		Teardown: func() error {
+			deferFunc()
+			return nil
+		},
+	})
+}
+
 func testAccPreCheck(t *testing.T) {
 	requiredEnvs := []string{"SAKURACLOUD_ACCESS_TOKEN", "SAKURACLOUD_ACCESS_TOKEN_SECRET"}
 
@@ -41,3 +57,23 @@ const testBuilderAccBasic = `
     }]
 }
 `
+
+func testBuilderAccWithSSHPrivateKeyFile(keyPath string) string {
+	return `
+{
+    "builders": [{
+        "type": "test",
+        "zone": "is1a",
+        "os_type": "centos",
+        "password": "TestUserPassword01",
+        "disk_size": 20,
+        "disk_plan": "ssd",
+        "core" : 2,
+        "memory_size": 4,
+		"ssh_private_key_file": "` + keyPath + `",
+        "archive_name": "packer-example-centos",
+        "archive_description": "description of archive"
+    }]
+}
+`
+}

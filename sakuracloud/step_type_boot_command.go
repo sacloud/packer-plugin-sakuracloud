@@ -29,6 +29,7 @@ type bootCommandTemplateData struct {
 	NetworkMaskLen string
 	DNS1           string
 	DNS2           string
+	PublicKeys     []string
 	PublicKey      string
 	PrivateKey     string
 }
@@ -62,8 +63,15 @@ func (s *stepTypeBootCommand) Run(ctx context.Context, state multistep.StateBag)
 	maskLen := state.Get("network_mask_len").(int)
 	dns1 := state.Get("dns1").(string)
 	dns2 := state.Get("dns2").(string)
-	publicKey := state.Get("publicKey").(string)
-	privateKey := state.Get("privateKey").(string)
+	publicKeys := state.Get("publicKeys").([]string)
+	publicKey := ""
+	if len(publicKeys) > 0 {
+		publicKey = publicKeys[0]
+	}
+	privateKey := ""
+	if key, ok := state.GetOk("privateKey"); ok {
+		privateKey = key.(string)
+	}
 
 	// Connect to VNC
 	ui.Say("\tConnecting to VM via VNC")
@@ -95,6 +103,7 @@ func (s *stepTypeBootCommand) Run(ctx context.Context, state multistep.StateBag)
 		NetworkMaskLen: fmt.Sprintf("%d", maskLen),
 		DNS1:           dns1,
 		DNS2:           dns2,
+		PublicKeys:     publicKeys,
 		PublicKey:      publicKey,
 		PrivateKey:     privateKey,
 	}
