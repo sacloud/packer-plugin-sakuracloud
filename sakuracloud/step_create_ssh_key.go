@@ -7,7 +7,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
-	"os"
+	"io/ioutil"
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
@@ -23,52 +23,68 @@ type stepCreateSSHKey struct {
 
 func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packer.Ui)
+	c := state.Get("config").(Config)
 
 	stepStartMsg(ui, s.Debug, "CreateSSHKey")
 
-	ui.Say("\tCreating temporary SSH key for instance...")
-	priv, err := rsa.GenerateKey(rand.Reader, 2048)
-	if err != nil {
-		err := fmt.Errorf("Error creating temporary ssh key: %s", err)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
-	}
+	var privateKeys []string
 
-	privBlk := pem.Block{
-		Type:    "RSA PRIVATE KEY",
-		Headers: nil,
-		Bytes:   x509.MarshalPKCS1PrivateKey(priv),
-	}
-
-	pub, err := ssh.NewPublicKey(&priv.PublicKey)
-	if err != nil {
-		err := fmt.Errorf("Error creating temporary ssh key: %s", err)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
-	}
-
-	// upload temporary ssh key
-	strSSHPublicKey := string(ssh.MarshalAuthorizedKey(pub))
-
-	state.Put("ssh_private_key", string(pem.EncodeToMemory(&privBlk)))
-	state.Put("ssh_public_key", strSSHPublicKey)
-
-	if s.Debug {
-		ui.Message(fmt.Sprintf("Saving key for debug purposes: %s", s.DebugKeyPath))
-		f, err := os.Create(s.DebugKeyPath)
+	if c.Comm.SSHPrivateKeyFile != "" {
+		bytes, err := ioutil.ReadFile(c.Comm.SSHPrivateKeyFile)
 		if err != nil {
-			state.Put("error", fmt.Errorf("Error saving debug key: %s", err))
+			err := fmt.Errorf("Error reading ssh key file: %s", err)
+			state.Put("error", err)
+			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
+		privateKeys = append(privateKeys, string(bytes))
+	}
 
-		// Write out the key
-		err = pem.Encode(f, &privBlk)
-		f.Close()
+	if len(c.Comm.SSHPrivateKey) > 0 {
+		privateKeys = append(privateKeys, string(c.Comm.SSHPrivateKey))
+	}
+
+	if c.Comm.SSHPrivateKeyFile == "" && len(c.Comm.SSHPrivateKey) == 0 {
+		ui.Say("\tCreating temporary SSH key for instance...")
+		pkey, err := s.generatePrivateKey()
 		if err != nil {
-			state.Put("error", fmt.Errorf("Error saving debug key: %s", err))
+			err := fmt.Errorf("Error creating temporary ssh key: %s", err)
+			state.Put("error", err)
+			ui.Error(err.Error())
 			return multistep.ActionHalt
+		}
+		privateKeys = append(privateKeys, pkey)
+		state.Put("privateKey", pkey)
+	}
+
+	if !c.DisableGeneratePublicKey {
+		// generate public keys for SakuraCloud Disk Edit API
+		var publicKeys []string
+		if len(c.Comm.SSHPublicKey) > 0 {
+			publicKeys = append(publicKeys, string(c.Comm.SSHPublicKey))
+		}
+		for _, privateKey := range privateKeys {
+			signer, err := ssh.ParsePrivateKey([]byte(privateKey))
+			if err != nil {
+				err := fmt.Errorf("Error creating ssh public key: %s", err)
+				state.Put("error", err)
+				ui.Error(err.Error())
+				return multistep.ActionHalt
+			}
+			pubKey := string(ssh.MarshalAuthorizedKey(signer.PublicKey()))
+			publicKeys = append(publicKeys, pubKey)
+		}
+		state.Put("publicKeys", publicKeys)
+	}
+
+	if s.Debug {
+		pkey, ok := state.GetOk("privateKey")
+		if ok {
+			ui.Message(fmt.Sprintf("Saving key for debug purposes: %s", s.DebugKeyPath))
+			if err := ioutil.WriteFile(s.DebugKeyPath, []byte(pkey.(string)), 0600); err != nil {
+				state.Put("error", fmt.Errorf("Error saving debug key: %s", err))
+				return multistep.ActionHalt
+			}
 		}
 	}
 
@@ -78,4 +94,18 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 
 func (s *stepCreateSSHKey) Cleanup(state multistep.StateBag) {
 	// no cleanup
+}
+
+func (s *stepCreateSSHKey) generatePrivateKey() (string, error) {
+	priv, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		return "", err
+	}
+
+	privBlk := pem.Block{
+		Type:    "RSA PRIVATE KEY",
+		Headers: nil,
+		Bytes:   x509.MarshalPKCS1PrivateKey(priv),
+	}
+	return string(pem.EncodeToMemory(&privBlk)), nil
 }

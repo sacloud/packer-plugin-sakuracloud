@@ -1,6 +1,11 @@
 package sakuracloud
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
+	"io/ioutil"
 	"os"
 	"time"
 
@@ -9,6 +14,7 @@ import (
 	"github.com/sacloud/libsacloud/builder"
 	"github.com/sacloud/libsacloud/sacloud"
 	"github.com/sacloud/libsacloud/sacloud/ostype"
+	"golang.org/x/crypto/ssh"
 )
 
 var (
@@ -32,6 +38,7 @@ var (
 	dummyDiskSize           = 20
 	dummyDNSServers         = []string{"ns1.example.com", "ns2.example.com"}
 	dummySSHKeyBody         = "ssh-rsa AAAA..."
+	dummyPrivateKeyFile     = "packer-test-private-key"
 
 	testMinimumConfigValues = map[string]interface{}{
 		"access_token":        "aaaa",
@@ -40,6 +47,39 @@ var (
 		"os_type":             "centos",
 	}
 )
+
+func prepareTestPrivateKeyFile() func() {
+	priv, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		panic(err)
+	}
+	privBlk := pem.Block{
+		Type:    "RSA PRIVATE KEY",
+		Headers: nil,
+		Bytes:   x509.MarshalPKCS1PrivateKey(priv),
+	}
+	deferFunc := func() {
+		if err := os.Remove(dummyPrivateKeyFile); err != nil {
+			panic(err)
+		}
+	}
+	if err := ioutil.WriteFile(dummyPrivateKeyFile, pem.EncodeToMemory(&privBlk), 0600); err != nil {
+		defer deferFunc()
+	}
+	return deferFunc
+}
+
+func readTestKeyPair() (string, string, error) {
+	bytes, err := ioutil.ReadFile(dummyPrivateKeyFile)
+	if err != nil {
+		return "", "", err
+	}
+	signer, err := ssh.ParsePrivateKey(bytes)
+	if err != nil {
+		return "", "", err
+	}
+	return string(bytes), string(ssh.MarshalAuthorizedKey(signer.PublicKey())), nil
+}
 
 func dummyUI() packer.Ui {
 	return new(packer.NoopUi)

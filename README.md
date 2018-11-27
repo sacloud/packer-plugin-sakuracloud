@@ -202,6 +202,18 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 - `api_client_timeout`(duration): ディスクのコピーやアーカイブ作成待ちなどの、さくらのクラウドAPI呼び出しで利用するタイムアウト時間。`10s`、`1m`のように指定する。デフォルト値:`20m`
 
+- SSH関連オプション: SSHキー関連の挙動を指定します。
+
+  - `disable_generate_public_key`: trueの場合、秘密鍵に対応する公開鍵の生成/さくらのクラウドAPIを通じての公開鍵アップロードを行いません。
+  - `ssh_private_key_file`: 秘密鍵ファイルのパス
+
+Note: `ssh_private_key_file`が未指定の場合、`packer build`実行時に秘密鍵/公開鍵が生成されます。  
+`ssh_private_key_file`を指定した場合、指定された秘密鍵から公開鍵を生成します。
+
+生成されたSSH公開鍵は作成するサーバが[ディスクの修正 API](https://manual.sakura.ad.jp/cloud/storage/modifydisk/about.html)に対応している場合はディスクの修正APIを通じてサーバに登録されます。  
+この挙動は`disable_generate_public_key`オプションで制御可能です。	
+
+
 ### ISOイメージ関連項目の指定について
 
 ISOイメージからの構築を行う場合、以下の項目を指定してください。

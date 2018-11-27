@@ -74,10 +74,16 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 
 	var communicateStep multistep.Step
 	os := ostype.StrToOSType(b.config.OSType)
+
+	getHostIPFunc := func(state multistep.StateBag) (string, error) {
+		ipAddress := state.Get("server_ip").(string)
+		return ipAddress, nil
+	}
+
 	if os.IsWindows() {
 		communicateStep = &communicator.StepConnectWinRM{
 			Config: &b.config.Comm,
-			Host:   commHost,
+			Host:   getHostIPFunc,
 			WinRMConfig: func(multistep.StateBag) (*communicator.WinRMConfig, error) {
 				return &communicator.WinRMConfig{
 					Username: b.config.UserName,
@@ -88,8 +94,8 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 	} else {
 		communicateStep = &communicator.StepConnectSSH{
 			Config:    &b.config.Comm,
-			Host:      commHost,
-			SSHConfig: sshConfig,
+			Host:      getHostIPFunc,
+			SSHConfig: b.config.Comm.SSHConfigFunc(),
 		}
 	}
 
