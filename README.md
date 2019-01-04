@@ -326,7 +326,7 @@ PackerがISOイメージのダウンロードを行い、さくらのクラウ�
 
 ## License
 
-  `packer-builder-sakuracloud` Copyright (C) 2016 Kazumichi Yamamoto.
+  `packer-builder-sakuracloud` Copyright (C) 2016-2019 Kazumichi Yamamoto.
 
   This project is published under [MPL-2.0](LICENSE).
   
