@@ -1,0 +1,53 @@
+{
+  "variables": {
+    "ssh_private_key_path": "/your/ssh/key/path",
+    "github_username": "your-github-account-name",
+    "sakuracloud_zone": "is1b"
+  },
+  "builders": [{
+    "type": "sakuracloud",
+    "zone": "{{user `sakuracloud_zone`}}",
+    "os_type": "iso",
+    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.2.0/k3os-amd64.iso",
+    "iso_checksum": "805e00151b42f0ba09c93f9939576f574480b2447d1779a210646ec8ac52434b",
+    "iso_checksum_type": "sha256",
+    "disk_size": 40,
+    "core" : 2,
+    "memory_size": 4,
+    "archive_name": "k3os",
+    "ssh_private_key_file": "{{user `ssh_private_key_path`}}",
+    "ssh_username": "rancher",
+    "boot_command": [
+      "rancher<enter>",
+      "<wait5>",
+
+      "sudo os-config<enter>",
+      "<wait5>",
+
+      "<enter>",
+      "<wait5>",
+
+      "<enter>",
+      "<wait5>",
+
+      "y<enter>",
+      "<wait5>",
+
+      "{{user `github_username`}}<enter>",
+      "<wait10s>",
+
+      "<enter>",
+      "<wait5>",
+
+      "<enter>",
+      "<wait5>",
+
+      "<enter>",
+      "<wait10s>",
+
+      "y<enter>",
+      "<wait5>"
+    ],
+    "boot_wait": "30s"
+  }]
+}
