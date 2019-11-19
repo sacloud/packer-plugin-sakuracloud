@@ -20,7 +20,7 @@ clean:
 install: build
 	cp -f $(CURDIR)/bin/packer-builder-sakuracloud $(GOPATH)/bin/packer-builder-sakuracloud
 
-build: clean vet
+build: clean 
 	go build -ldflags "-s -w" -o $(CURDIR)/bin/packer-builder-sakuracloud $(CURDIR)/main.go
 
 build-x: clean vet

@@ -120,14 +120,15 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 |値|説明                                          |
 |---------------------------|--------------------|
-| `centos`                  | CentOS 7|
-| `ubuntu`                  | Ubuntu 16.04|
+| `centos`                  | CentOS(最新安定板) |
+| `centos7`                  | CentOS 7.7|
+| `centos6`                  | CentOS 6.10|
+| `ubuntu`                  | Ubuntu 18.04|
 | `debian`                  | Debian |
-| `vyos`                    | VyOS|
 | `coreos`                  | CoreOS|
 | `rancheros`               | RancherOS|
+| `k3os`                    | k3OS |
 | `kusanagi`                | Kusanagi(CentOS7)|
-| `plesk`                   | Plesk(CentOS7)|
 | `freebsd`                 | FreeBSD|
 | `windows2012`             | Windows 2012|
 | `windows2012-rds`         | Windows 2012(RDS)|
