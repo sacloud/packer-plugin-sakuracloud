@@ -28,7 +28,7 @@
             "powershell C:\\tmp\\tmp.ps1<enter><wait10>",
             "rm C:\\tmp\\tmp.ps1<enter>"
         ],
-        "boot_wait": "100s"
+        "boot_wait": "240s"
     }],
     "provisioners":[
         {
