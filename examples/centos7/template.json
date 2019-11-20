@@ -2,7 +2,7 @@
     "builders": [{
         "type": "sakuracloud",
         "zone": "is1b",
-        "os_type": "centos",
+        "os_type": "centos7",
         "password": "TestUserPassword01",
         "disk_size": 20,
         "disk_plan": "ssd",
