@@ -18,6 +18,7 @@ for GOOS in $OS; do
         echo "Building $binary $arch"
         GOOS=$GOOS GOARCH=$GOARCH CGO_ENABLED=0 \
             go build \
+                -mod vendor \
                 -ldflags "-s -w" \
                 -o $binary \
                 main.go

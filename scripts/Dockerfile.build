@@ -1,7 +1,7 @@
-FROM golang:1.11-alpine
+FROM golang:1.13
 MAINTAINER Kazumichi Yamamoto <yamamoto.febc@gmail.com>
 
-RUN set -x && apk add --no-cache --virtual .build_deps bash git make zip 
+RUN set -x && apt update && apt install -y zip 
 
 ADD . /go/src/github.com/sacloud/packer-builder-sakuracloud
 

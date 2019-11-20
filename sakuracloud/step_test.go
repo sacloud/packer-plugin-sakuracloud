@@ -355,7 +355,8 @@ func (t *dummyBuilderAPIClient) ServerInsertCDROM(serverID int64, cdromID int64)
 	return false, nil
 }
 func (t *dummyBuilderAPIClient) ServerBoot(serverID int64) (bool, error) { return false, nil }
-func (t *dummyBuilderAPIClient) SSHKeyNew() *sacloud.SSHKey              { return nil }
+
+func (t *dummyBuilderAPIClient) SSHKeyNew() *sacloud.SSHKey { return nil }
 func (t *dummyBuilderAPIClient) SSHKeyCreate(value *sacloud.SSHKey) (*sacloud.SSHKey, error) {
 	return nil, nil
 }
@@ -363,13 +364,15 @@ func (t *dummyBuilderAPIClient) SSHKeyDelete(sshKeyID int64) (*sacloud.SSHKey, e
 func (t *dummyBuilderAPIClient) SSHKeyGenerate(name string, passPhrase string, desc string) (*sacloud.SSHKeyGenerated, error) {
 	return nil, nil
 }
+
 func (t *dummyBuilderAPIClient) NoteNew() *sacloud.Note { return nil }
 func (t *dummyBuilderAPIClient) NoteCreate(value *sacloud.Note) (*sacloud.Note, error) {
 	return nil, nil
 }
 func (t *dummyBuilderAPIClient) NoteDelete(noteID int64) (*sacloud.Note, error) { return nil, nil }
-func (t *dummyBuilderAPIClient) DiskNew() *sacloud.Disk                         { return nil }
-func (t *dummyBuilderAPIClient) DiskNewCondig() *sacloud.DiskEditValue          { return nil }
+
+func (t *dummyBuilderAPIClient) DiskNew() *sacloud.Disk                { return nil }
+func (t *dummyBuilderAPIClient) DiskNewCondig() *sacloud.DiskEditValue { return nil }
 func (t *dummyBuilderAPIClient) DiskCreate(value *sacloud.Disk) (*sacloud.Disk, error) {
 	return nil, nil
 }
@@ -382,6 +385,14 @@ func (t *dummyBuilderAPIClient) DiskSleepWhileCopying(id int64, timeout time.Dur
 func (t *dummyBuilderAPIClient) DiskConnectToServer(diskID int64, serverID int64) (bool, error) {
 	return false, nil
 }
+
+/*
+	ServerPlanGetBySpec(core, memGB int, gen sacloud.PlanGenerations, commitment sacloud.ECommitment) (*sacloud.ProductServer, error)
+
+	ArchiveFindByOSType(os ostype.ArchiveOSTypes) (*sacloud.Archive, error)
+
+	GetTimeoutDuration() time.Duration
+*/
 func (t *dummyBuilderAPIClient) InterfaceConnectToPacketFilter(interfaceID int64, packetFilterID int64) (bool, error) {
 	return false, nil
 }
@@ -390,7 +401,7 @@ func (t *dummyBuilderAPIClient) InterfaceSetDisplayIPAddress(interfaceID int64, 
 }
 func (t *dummyBuilderAPIClient) GetTimeoutDuration() time.Duration { return time.Hour }
 
-func (t *dummyBuilderAPIClient) ServerPlanGetBySpec(core int, memGB int, gen sacloud.PlanGenerations) (*sacloud.ProductServer, error) {
+func (t *dummyBuilderAPIClient) ServerPlanGetBySpec(core int, memGB int, gen sacloud.PlanGenerations, commitment sacloud.ECommitment) (*sacloud.ProductServer, error) {
 	if t.getBySpecFunc == nil {
 		return nil, nil
 	}

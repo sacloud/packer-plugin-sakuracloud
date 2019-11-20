@@ -20,8 +20,8 @@ clean:
 install: build
 	cp -f $(CURDIR)/bin/packer-builder-sakuracloud $(GOPATH)/bin/packer-builder-sakuracloud
 
-build: clean vet
-	go build -ldflags "-s -w" -o $(CURDIR)/bin/packer-builder-sakuracloud $(CURDIR)/main.go
+build: clean 
+	go build -mod vendor -ldflags "-s -w" -o $(CURDIR)/bin/packer-builder-sakuracloud $(CURDIR)/main.go
 
 build-x: clean vet
 	sh -c "'$(CURDIR)/scripts/build.sh'"
@@ -40,13 +40,7 @@ testacc:
 lint: vet fmt golint goimports
 
 vet: fmt
-	@echo "go tool vet $(VETARGS) ."
-	@go tool vet $(VETARGS) $$(ls -d */ | grep -v vendor) ; if [ $$? -eq 1 ]; then \
-		echo ""; \
-		echo "Vet found suspicious constructs. Please check the reported constructs"; \
-		echo "and fix them if necessary before submitting the code for review."; \
-		exit 1; \
-	fi
+	go vet ./...
 
 golint: fmt
 	test -z "$$(go list ./... | xargs -L1 golint | fgrep -v 'should be BuilderID'  | fgrep -v 'should be ID' | tee /dev/stderr )"
