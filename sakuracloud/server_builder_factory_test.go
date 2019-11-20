@@ -124,7 +124,7 @@ func TestCreateServerBuilder(t *testing.T) {
 				"access_token":        "aaaa",
 				"access_token_secret": "bbbb",
 				"zone":                "is1a",
-				"os_type":             "windows2012",
+				"os_type":             "windows2016",
 			},
 			builderExpects: createServerBuilderExpects{
 				hasNetworkInterfaceProp: true,
