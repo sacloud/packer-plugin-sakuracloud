@@ -1,6 +1,9 @@
 sudo: required
 language: go
 go: '1.13'
+env:
+  global:
+    secure: WG7x9YaLRbSJyFsVPra3XaSineQ7cql1zEkp5ADfUkvTIyZnN34VgiOQNV4NhGjRdBb6lX3WT/WETDX6bjC52+mDksUqG2rd8JP9bLjNUXxO0tDgcNmdYFkWFSfBtN7YhBH8DHhHeLcvCjTDxGNYXZQRR17pmBFkRXQ4A8iElV/K3DEnSHmUifqccR9KP6k0O0NNRFXDBUAaVw+U/9ubYI3oTiEk4824bMi76mlDpK5VCclyA3piNFgE4zNDSLJbuZjzxViHaYJhU3MR7dQDA9wN1/8awRPKbkSR5cut8FW5chAtN7nuvoAZr5K5JdCkx1Ln6aNaAq4gVrkKJgRBGtyf024orFp00lBEfjcMvgrLT4msvRS/Z8LAjoWRGdtLMPmDbgFzDhG6D3evz2+pnD7HpazxibNBpI1gLbmVIRu63nj1kuqm6BPEkdoTFleGGu5X4MKGKO7WfpL3gN3YHlATo6OCfWVMU02r+3jRrn7rAU70YNPxNNYM8HZ6f4ljIGR8ukPPANihw1RLDKPOJbw+ZqJbnNQSoxwdurcvRdeEeKb9ZH72UbCH3bvIrFOH4ZuJ2MvPIlPMMRgeCZ1zgVDHzQLKYmpnoGmZ+UT1IBJm19CJROnb+HxdxekI6ruRqB6ZxqFT6GB96XP2ppYrnotlxDB4+KYigRgsMLKjyYs=
 services:
 - docker
 install:
@@ -10,3 +13,12 @@ script:
 notifications:
   slack:
     secure: gcT0X7a9IU5lYlVlLmVJAIoDZfT6V81F0pLtNMeg2iHCN08Mcgw6xDePj9Yrxnpg/wEi9X+9cLeVBrXk5H/MB/CdtWBs94evwSyq62/v9F5BvU1/MYu7cPHzM1EnsPWXagePew+YnDGAqcXyOfhK0UMawW6lErJLcbsNZJw9VkZFF258HGpRXXWFvVRAbIN1KMfIMoRzbMNfvhBWUJv5wAUiZHElg7mnIJ0ZETsbferpCo7wzAztBy4EwUM+Tqhv7s0COz4fnIQyMPSv7bz9/lvVh7m+GlVnVDOoEiSOaVhg+U1UvyZSyx2N1mxlrgEFqrewXVz1c/L4E71yS3/JIdbdSmq4kEzgrjz61eYrwh2yqlewMLHB6FTctbplodXLWqZBEtuX2SvbPc8uhyBDW+egz2e1AZ9R65ChnG4HWaQ5ZI/hBi1YGgeENCdxlasJVHGYeSL+yeNOummkUdRa8GvRAEoJ8HdEeaAqO1do9F1645X5VfpD2bt8gIKi+B/RmgCTNwRSwI2q4yXcaFrT+yy0dd+Qcz/oOoyqQL+NbOm5gmQdSk8mE3l0uqM3CTQFo1xNp4yYl6byYlhOV3b+6xK3zFD0ogGZJ83Z8n0ecyZGUnDnJv6uJ4hCjV4kWNgvbtJ59QCJt3iGWbapgW53lwYD0H00DRmf4/tBVFIRLGE=
+deploy:
+  provider: releases
+  api_key: "$GITHUB_TOKEN"
+  file_glob: true
+  file: bin/*
+  skip_cleanup: true
+  name: "$TRAVIS_TAG"
+  on:
+    tags: true
