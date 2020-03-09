@@ -3,11 +3,12 @@ package sakuracloud
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/packer-builder-sakuracloud/iaas"
+	"github.com/sacloud/libsacloud/v2/sacloud"
+	"github.com/sacloud/libsacloud/v2/sacloud/types"
+	"github.com/sacloud/libsacloud/v2/utils/power"
 )
 
 type stepShutdown struct {
@@ -15,26 +16,22 @@ type stepShutdown struct {
 }
 
 func (s *stepShutdown) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	serverClient := state.Get("serverClient").(iaas.ServerClient)
+	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
-	serverID := state.Get("server_id").(int64)
+
+	caller := state.Get("sacloudAPICaller").(sacloud.APICaller)
+	serverOp := sacloud.NewServerOp(caller)
+	serverID := state.Get("server_id").(types.ID)
 
 	stepStartMsg(ui, s.Debug, "Shutdown Server")
 
 	ui.Say("\tGracefully shutting down server...")
 
-	_, err := serverClient.Shutdown(serverID)
-	if err != nil {
+	if err := power.ShutdownServer(ctx, serverOp, c.Zone, serverID, c.ForceShutdown); err != nil {
 		err := fmt.Errorf("Error shutting down server: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
-	}
-
-	// if occur timeout, it be force shutdown by step_power_off.
-	// so ignore any errors to fallback early.
-	if err := serverClient.SleepUntilDown(serverID, 1*time.Minute); err != nil {
-		ui.Message("Graceful shutdown is timed out")
 	}
 
 	stepEndMsg(ui, s.Debug, "Shutdown Server")

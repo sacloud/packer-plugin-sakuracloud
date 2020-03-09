@@ -17,8 +17,6 @@ import (
 type stepCreateSSHKey struct {
 	Debug        bool
 	DebugKeyPath string
-
-	keyID int64
 }
 
 func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {

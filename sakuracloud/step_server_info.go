@@ -6,7 +6,8 @@ import (
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/packer-builder-sakuracloud/iaas"
+	"github.com/sacloud/libsacloud/v2/sacloud"
+	"github.com/sacloud/libsacloud/v2/sacloud/types"
 )
 
 type stepServerInfo struct {
@@ -14,16 +15,18 @@ type stepServerInfo struct {
 }
 
 func (s *stepServerInfo) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	serverClient := state.Get("serverClient").(iaas.ServerClient)
+	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
-	serverID := state.Get("server_id").(int64)
+
+	caller := state.Get("sacloudAPICaller").(sacloud.APICaller)
+	serverOp := sacloud.NewServerOp(caller)
+	serverID := state.Get("server_id").(types.ID)
 
 	stepStartMsg(ui, s.Debug, "Read Server Info")
-
 	ui.Say("\tWaiting for server to become active...")
 
 	// Set the Network informations on the state for later
-	server, err := serverClient.Read(serverID)
+	server, err := serverOp.Read(ctx, c.Zone, serverID)
 	if err != nil {
 		err := fmt.Errorf("Error retrieving server: %s", err)
 		state.Put("error", err)
@@ -37,10 +40,11 @@ func (s *stepServerInfo) Run(ctx context.Context, state multistep.StateBag) mult
 	state.Put("dns1", "")
 	state.Put("dns2", "")
 
-	if len(server.Interfaces) > 0 && server.Interfaces[0].Switch != nil {
-		state.Put("server_ip", server.IPAddress())
-		state.Put("default_route", server.DefaultRoute())
-		state.Put("network_mask_len", server.NetworkMaskLen())
+	if len(server.Interfaces) > 0 && !server.Interfaces[0].SwitchID.IsEmpty() {
+		iface := server.Interfaces[0]
+		state.Put("server_ip", iface.IPAddress)
+		state.Put("default_route", iface.SubnetDefaultRoute)
+		state.Put("network_mask_len", iface.SubnetNetworkMaskLen)
 	}
 	if len(server.Zone.Region.NameServers) > 0 {
 		state.Put("dns1", server.Zone.Region.NameServers[0])
@@ -50,7 +54,7 @@ func (s *stepServerInfo) Run(ctx context.Context, state multistep.StateBag) mult
 	}
 
 	// Set the VNC proxy on the state for later
-	vnc, err := serverClient.GetVNCProxy(serverID)
+	vnc, err := serverOp.GetVNCProxy(ctx, c.Zone, serverID)
 	if err != nil {
 		err := fmt.Errorf("Error vnc proxy info: %s", err)
 		state.Put("error", err)

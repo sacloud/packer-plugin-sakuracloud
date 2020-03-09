@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/packer/packer"
 	"github.com/hashicorp/packer/template/interpolate"
 	"github.com/mitchellh/go-vnc"
-	"github.com/sacloud/libsacloud/sacloud"
+	"github.com/sacloud/libsacloud/v2/sacloud"
 )
 
 const keyLeftShift uint32 = 0xFFE1
@@ -56,7 +56,7 @@ func (s *stepTypeBootCommand) Run(ctx context.Context, state multistep.StateBag)
 
 	ui := state.Get("ui").(packer.Ui)
 	stepStartMsg(ui, s.Debug, "Type BootCommand")
-	vncCredentials := state.Get("vnc").(*sacloud.VNCProxyResponse)
+	vncCredentials := state.Get("vnc").(*sacloud.VNCProxyInfo)
 
 	serverIP := state.Get("server_ip").(string)
 	defaultRoute := state.Get("default_route").(string)
@@ -75,7 +75,11 @@ func (s *stepTypeBootCommand) Run(ctx context.Context, state multistep.StateBag)
 
 	// Connect to VNC
 	ui.Say("\tConnecting to VM via VNC")
-	host := vncCredentials.ActualHost()
+	host := vncCredentials.Host
+	if host == "localhost" {
+		host = vncCredentials.IOServerHost
+	}
+
 	nc, err := net.Dial("tcp", fmt.Sprintf("%s:%s", host, vncCredentials.Port))
 	if err != nil {
 		err := fmt.Errorf("Error connecting to VNC: %s", err)

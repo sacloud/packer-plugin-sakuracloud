@@ -6,7 +6,8 @@ import (
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/packer-builder-sakuracloud/iaas"
+	"github.com/sacloud/libsacloud/v2/sacloud"
+	"github.com/sacloud/libsacloud/v2/sacloud/types"
 )
 
 type stepPrepareISO struct {
@@ -14,34 +15,34 @@ type stepPrepareISO struct {
 }
 
 func (s *stepPrepareISO) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	isoImageClient := state.Get("isoImageClient").(iaas.ISOImageClient)
-	config := state.Get("config").(Config)
+	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
+
+	caller := state.Get("sacloudAPICaller").(sacloud.APICaller)
+	isoImageOp := sacloud.NewCDROMOp(caller)
 
 	stepStartMsg(ui, s.Debug, "PrepareISO")
 
-	isoID := config.ISOImageID
-	if isoID == 0 {
-		isoID = state.Get("iso_id").(int64)
+	if c.ISOImageID.IsEmpty() {
+		c.ISOImageID = state.Get("iso_id").(types.ID)
 	}
 
-	config.ISOImageID = isoID
-
-	iso, err := isoImageClient.Read(isoID)
+	image, err := isoImageOp.Read(ctx, c.Zone, c.ISOImageID)
 	if err != nil {
 		err := fmt.Errorf("Error invalid ISO image ID: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	if !iso.IsAvailable() {
+
+	if !image.Availability.IsAvailable() {
 		err := fmt.Errorf("Error invalid ISO image Status: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
 
-	state.Put("config", config)
+	state.Put("config", c)
 	stepEndMsg(ui, s.Debug, "PrepareISO")
 	return multistep.ActionContinue
 }

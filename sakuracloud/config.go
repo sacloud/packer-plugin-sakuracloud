@@ -5,13 +5,15 @@ import (
 	"os"
 	"time"
 
+	"github.com/sacloud/libsacloud/v2/sacloud/types"
+
 	"github.com/hashicorp/packer/common"
 	"github.com/hashicorp/packer/helper/communicator"
 	"github.com/hashicorp/packer/helper/config"
 	"github.com/hashicorp/packer/packer"
 	"github.com/hashicorp/packer/template/interpolate"
 	"github.com/mitchellh/mapstructure"
-	"github.com/sacloud/libsacloud/sacloud/ostype"
+	"github.com/sacloud/libsacloud/v2/sacloud/ostype"
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 )
 
@@ -24,7 +26,6 @@ const (
 	defaultISOIMageSize   = 5
 	defaultSSHUser        = "root"
 	defaultWinRMUser      = "Administrator"
-	defaultHostName       = "packer-builder-sakuracloud"
 	defaultAPITimeout     = 20 * time.Minute
 	defaultWinRMTimeout   = 10 * time.Minute
 )
@@ -53,14 +54,15 @@ type Config struct {
 	Core                int  `mapstructure:"core"`
 	MemorySize          int  `mapstructure:"memory_size"`
 	DisableVirtIONetPCI bool `mapstructure:"disable_virtio_net"`
+	ForceShutdown       bool `mapstructure:"force_shutdown"`
 
 	// for Source
-	OSType        string `mapstructure:"os_type"`
-	SourceArchive int64  `mapstructure:"source_archive"`
-	SourceDisk    int64  `mapstructure:"source_disk"`
+	OSType        string   `mapstructure:"os_type"`
+	SourceArchive types.ID `mapstructure:"source_archive"`
+	SourceDisk    types.ID `mapstructure:"source_disk"`
 
 	// for ISO
-	ISOImageID       int64 `mapstructure:"iso_id"`
+	ISOImageID       types.ID `mapstructure:"iso_id"`
 	common.ISOConfig `mapstructure:",squash"`
 	ISOImageSizeGB   int    `mapstructure:"iso_size"`
 	ISOImageName     string `mapstructure:"iso_name"`
@@ -231,7 +233,7 @@ func validateConfig(c *Config, errs *packer.MultiError) *packer.MultiError {
 		errs = packer.MultiErrorAppend(
 			errs, errors.New("os_type is required"))
 	}
-	if !isInWord(c.OSType, listOSType()) {
+	if !isInWords(c.OSType, listOSType()) {
 		errs = packer.MultiErrorAppend(
 			errs, errors.New("os_type is invalid"))
 	}
@@ -245,11 +247,11 @@ func validateConfig(c *Config, errs *packer.MultiError) *packer.MultiError {
 	}
 
 	// Disk
-	if !isInWord(c.DiskConnection, listDiskConnection()) {
+	if !isInWords(c.DiskConnection, types.DiskConnectionStrings) {
 		errs = packer.MultiErrorAppend(
 			errs, errors.New("disk_connection is invalid"))
 	}
-	if !isInWord(c.DiskPlan, listDiskPlan()) {
+	if !isInWords(c.DiskPlan, types.DiskPlanStrings) {
 		errs = packer.MultiErrorAppend(
 			errs, errors.New("disk_plan is invalid"))
 	}
@@ -280,21 +282,7 @@ func listOSType() []string {
 	return append(ostype.OSTypeShortNames, constants.TargetOSCustom, constants.TargetOSISO)
 }
 
-func listDiskConnection() []string {
-	return []string{
-		"ide",
-		"virtio",
-	}
-}
-
-func listDiskPlan() []string {
-	return []string{
-		"ssd",
-		"hdd",
-	}
-}
-
-func isInWord(target string, list []string) bool {
+func isInWords(target string, list []string) bool {
 	if len(list) == 0 || target == "" {
 		return true
 	}

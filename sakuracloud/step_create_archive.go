@@ -6,7 +6,8 @@ import (
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/libsacloud/sacloud"
+	"github.com/sacloud/libsacloud/v2/sacloud"
+	"github.com/sacloud/libsacloud/v2/sacloud/types"
 	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 )
 
@@ -15,19 +16,11 @@ type stepCreateArchive struct {
 }
 
 func (s *stepCreateArchive) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	archiveClient := state.Get("archiveClient").(iaas.ArchiveClient)
-	basicClient := state.Get("basicClient").(iaas.BasicClient)
-
 	ui := state.Get("ui").(packer.Ui)
-	c := state.Get("config").(Config)
-
 	stepStartMsg(ui, s.Debug, "CreateArchive")
+	ui.Say("\tCreating archive...")
 
-	ui.Say(fmt.Sprintf("\tCreating archive: %v", c.ArchiveName))
-
-	archiveReq := s.createArchiveReq(state)
-
-	archive, err := archiveClient.Create(archiveReq)
+	archive, err := s.createArchive(ctx, state)
 	if err != nil {
 		err := fmt.Errorf("Error creating archive: %s", err)
 		state.Put("error", err)
@@ -35,53 +28,24 @@ func (s *stepCreateArchive) Run(ctx context.Context, state multistep.StateBag) m
 		return multistep.ActionHalt
 	}
 
-	if err := archiveClient.SleepWhileCopying(archive.ID, c.APIClientTimeout); err != nil {
-		err := fmt.Errorf("Error copying archive: %s", err)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
-	}
-
 	state.Put("archive_id", archive.ID)
 	state.Put("archive_name", archive.Name)
-	state.Put("zone", basicClient.Zone())
-	stepEndMsg(ui, s.Debug, "BootWait")
+	stepEndMsg(ui, s.Debug, "CreateArchive")
 	return multistep.ActionContinue
 }
 
-func (s *stepCreateArchive) createArchiveReq(state multistep.StateBag) *sacloud.Archive {
-	archiveClient := state.Get("archiveClient").(iaas.ArchiveClient)
-	diskClient := state.Get("diskClient").(iaas.DiskClient)
-
+func (s *stepCreateArchive) createArchive(ctx context.Context, state multistep.StateBag) (*sacloud.Archive, error) {
+	archiveClient := state.Get("archiveClient").(iaas.Archive)
 	c := state.Get("config").(Config)
-	diskID := state.Get("disk_id").(int64)
+	diskID := state.Get("disk_id").(types.ID)
 
-	archiveReq := archiveClient.New()
-	archiveReq.Name = c.ArchiveName
-	archiveReq.SetSourceDisk(diskID)
-
-	if len(c.ArchiveTags) > 0 {
-		for _, tag := range c.ArchiveTags {
-			if !archiveReq.HasTag(tag) {
-				archiveReq.AppendTag(tag)
-			}
-		}
-	} else {
-		publicArchiveID, found := diskClient.GetPublicArchiveIDFromAncestors(diskID)
-		if found {
-			sourceArchive, err := archiveClient.Read(publicArchiveID)
-			if sourceArchive != nil && err == nil {
-				for _, tag := range sourceArchive.Tags {
-					if !archiveReq.HasTag(tag) {
-						archiveReq.AppendTag(tag)
-					}
-				}
-			}
-		}
+	req := &iaas.CreateArchiveRequest{
+		DiskID:      diskID,
+		Name:        c.ArchiveName,
+		Tags:        c.ArchiveTags,
+		Description: c.ArchiveDescription,
 	}
-	archiveReq.Description = c.ArchiveDescription
-
-	return archiveReq
+	return archiveClient.Create(ctx, req)
 }
 
 func (s *stepCreateArchive) Cleanup(state multistep.StateBag) {
