@@ -1,4 +1,4 @@
-FROM golang:1.13
+FROM golang:1.14
 MAINTAINER Kazumichi Yamamoto <yamamoto.febc@gmail.com>
 
 RUN set -x && apt update && apt install -y zip 

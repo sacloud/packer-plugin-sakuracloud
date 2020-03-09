@@ -36,7 +36,7 @@ testacc:
 	PACKER_ACC=1 go test -v $(TEST) $(TESTARGS) -timeout=45m
 
 .PHONY: lint vet fmt golint goimports
-lint: fmt golangci-lint goimports
+lint: fmt goimports golangci-lint
 
 fmt:
 	find . -name '*.go' | grep -v vendor | xargs gofmt -s -w
@@ -64,4 +64,8 @@ docker-build: clean
 prepare-homebrew:
 	rm -rf homebrew-packer-builder-sakuracloud/; \
 	sh -c "'$(CURDIR)/scripts/update_homebrew_formula.sh' '$(CURRENT_VERSION)'"
+
+.PHONY: release
+release: build-envs
+	ghr v${CURRENT_VERSION} bin/
 
