@@ -9,7 +9,8 @@ import (
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
 	"github.com/sacloud/ftps"
-	"github.com/sacloud/libsacloud/sacloud/ostype"
+	"github.com/sacloud/libsacloud/v2/sacloud/ostype"
+	"github.com/sacloud/libsacloud/v2/sacloud/types"
 	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 )
@@ -47,19 +48,14 @@ func (b *Builder) Cancel() {
 // Run is where the actual build should take place.
 func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packer.Artifact, error) {
 
-	client := iaas.NewClient(b.config.AccessToken, b.config.AccessTokenSecret, b.config.Zone, b.config.APIClientTimeout)
+	client := iaas.NewClient(b.config.AccessToken, b.config.AccessTokenSecret, b.config.Zone)
 
 	// Set up the state
 	state := new(multistep.BasicStateBag)
 	state.Put("config", b.config)
 
-	state.Put("basicClient", client.Basic)
+	state.Put("sacloudAPICaller", client.Caller)
 	state.Put("archiveClient", client.Archive)
-	state.Put("diskClient", client.Disk)
-	state.Put("serverClient", client.Server)
-	state.Put("isoImageClient", client.ISOImage)
-	state.Put("builder", client.Builder)
-	state.Put("builderFactory", &defaultServerBuilderFactory{})
 
 	ftpsClient := &ftps.FTPS{}
 	ftpsClient.TLSConfig.InsecureSkipVerify = true
@@ -146,9 +142,6 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 		},
 		communicateStep, // ssh or winrm
 		new(common.StepProvision),
-		&stepShutdown{
-			Debug: b.config.PackerDebug,
-		},
 		&stepPowerOff{
 			Debug: b.config.PackerDebug,
 		},
@@ -184,9 +177,8 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 	}
 
 	artifact := &Artifact{
-		archiveID:   state.Get("archive_id").(int64),
+		archiveID:   state.Get("archive_id").(types.ID),
 		archiveName: state.Get("archive_name").(string),
-		zone:        state.Get("zone").(string),
 		client:      client.Archive,
 	}
 

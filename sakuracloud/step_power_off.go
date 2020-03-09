@@ -6,7 +6,9 @@ import (
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/packer-builder-sakuracloud/iaas"
+	"github.com/sacloud/libsacloud/v2/sacloud"
+	"github.com/sacloud/libsacloud/v2/sacloud/types"
+	"github.com/sacloud/libsacloud/v2/utils/power"
 )
 
 type stepPowerOff struct {
@@ -14,14 +16,16 @@ type stepPowerOff struct {
 }
 
 func (s *stepPowerOff) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	serverClient := state.Get("serverClient").(iaas.ServerClient)
 	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
-	serverID := state.Get("server_id").(int64)
+
+	caller := state.Get("sacloudAPICaller").(sacloud.APICaller)
+	serverOp := sacloud.NewServerOp(caller)
+	serverID := state.Get("server_id").(types.ID)
 
 	stepStartMsg(ui, s.Debug, "PowerOff")
 
-	server, err := serverClient.Read(serverID)
+	server, err := serverOp.Read(ctx, c.Zone, serverID)
 	if err != nil {
 		err := fmt.Errorf("Error checking server state: %s", err)
 		state.Put("error", err)
@@ -29,24 +33,16 @@ func (s *stepPowerOff) Run(ctx context.Context, state multistep.StateBag) multis
 		return multistep.ActionHalt
 	}
 
-	if server.Instance.IsDown() {
+	if server.InstanceStatus.IsDown() {
 		// Server is already off, don't do anything
 		stepEndMsg(ui, s.Debug, "PowerOff")
 		return multistep.ActionContinue
 	}
 
-	// Pull the plug on the Droplet
-	ui.Say("\tForcefully shutting down Droplet...")
-	_, err = serverClient.Stop(serverID)
-	if err != nil {
-		err := fmt.Errorf("Error powering off server: %s", err)
-		state.Put("error", err)
-		ui.Error(err.Error())
-		return multistep.ActionHalt
-	}
+	ui.Say("\tShutting down the server...")
 
-	err = serverClient.SleepUntilDown(serverID, c.APIClientTimeout)
-	if err != nil {
+	if err := power.ShutdownServer(ctx, serverOp, c.Zone, serverID, c.ForceShutdown); err != nil {
+		err := fmt.Errorf("Error powering off server: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

@@ -26,13 +26,13 @@ require (
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
 	github.com/packer-community/winrmcp v0.0.0-20180102160824-81144009af58 // indirect
-	github.com/pkg/errors v0.8.0
+	github.com/pkg/errors v0.8.0 // indirect
 	github.com/pkg/sftp v0.0.0-20160930220758-4d0e916071f6 // indirect
 	github.com/sacloud/ftps v0.0.0-20171205062625-42fc0f9886fe
-	github.com/sacloud/libsacloud v1.31.0
+	github.com/sacloud/libsacloud/v2 v2.1.8
 	github.com/stretchr/testify v1.3.0
 	github.com/ugorji/go v0.0.0-20151218193438-646ae4a518c1 // indirect
-	golang.org/x/crypto v0.0.0-20190325154230-a5d413f7728c
+	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 	golang.org/x/sys v0.0.0-20190801041406-cbf593c0f2f3 // indirect
 	gopkg.in/cheggaaa/pb.v1 v1.0.28 // indirect
 )

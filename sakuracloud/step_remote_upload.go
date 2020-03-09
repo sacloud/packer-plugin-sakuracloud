@@ -7,6 +7,11 @@ import (
 	"os"
 	"strings"
 
+	"github.com/sacloud/libsacloud/v2/pkg/size"
+	"github.com/sacloud/libsacloud/v2/sacloud"
+	"github.com/sacloud/libsacloud/v2/sacloud/search"
+	"github.com/sacloud/libsacloud/v2/sacloud/types"
+
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
 	"github.com/sacloud/packer-builder-sakuracloud/iaas"
@@ -18,8 +23,11 @@ type stepRemoteUpload struct {
 }
 
 func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
-	isoImageClient := state.Get("isoImageClient").(iaas.ISOImageClient)
+	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
+
+	caller := state.Get("sacloudAPICaller").(sacloud.APICaller)
+	isoImageOp := sacloud.NewCDROMOp(caller)
 
 	stepStartMsg(ui, s.Debug, "ISO-Image Upload")
 
@@ -28,22 +36,20 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 		return multistep.ActionContinue
 	}
 
-	config := state.Get("config").(Config)
-	checksum := config.ISOChecksum
-
-	if checksum != "" {
-		//search ISO from SakuraCloud
-		isoImageClient.SetEmpty()
-		isoImageClient.SetNameLike(checksum)
-		res, err := isoImageClient.Find()
+	if c.ISOChecksum != "" {
+		searched, err := isoImageOp.Find(ctx, c.Zone, &sacloud.FindCondition{
+			Filter: search.Filter{
+				search.Key("Name"): search.ExactMatch(c.ISOChecksum),
+			},
+		})
 		if err != nil {
 			err := fmt.Errorf("Error finding ISO image: %s", err)
 			state.Put("error", err)
 			ui.Error(err.Error())
 			return multistep.ActionHalt
 		}
-		if len(res.CDROMs) > 0 {
-			state.Put("iso_id", res.CDROMs[0].ID)
+		if len(searched.CDROMs) > 0 {
+			state.Put("iso_id", searched.CDROMs[0].ID)
 			stepEndMsg(ui, s.Debug, "ISO-Image Upload")
 			return multistep.ActionContinue
 		}
@@ -52,13 +58,12 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	ui.Say("\tUploading ISO to SakuraCloud...")
 	log.Printf("Remote uploading: %s", filepath)
 
-	req := isoImageClient.New()
-	req.Name = config.ISOImageName
-	req.SizeMB = config.ISOImageSizeGB * 1024
-	req.Description = strings.Join(config.ISOConfig.ISOUrls, "\n")
-	req.AppendTag(constants.UploadedFromPackerMarkerTag)
-
-	isoImage, ftp, err := isoImageClient.Create(req)
+	isoImage, ftp, err := isoImageOp.Create(ctx, c.Zone, &sacloud.CDROMCreateRequest{
+		SizeMB:      size.GiBToMiB(c.ISOImageSizeGB),
+		Name:        c.ISOImageName,
+		Description: strings.Join(c.ISOConfig.ISOUrls, "\n"),
+		Tags:        types.Tags{constants.UploadedFromPackerMarkerTag},
+	})
 	if err != nil {
 		err := fmt.Errorf("Error creating ISO image: %s", err)
 		state.Put("error", err)
@@ -105,8 +110,7 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	ftpsClient.Quit()
 
 	// close image FTP after upload
-	_, err = isoImageClient.CloseFTP(isoImage.ID)
-	if err != nil {
+	if err := isoImageOp.CloseFTP(ctx, c.Zone, isoImage.ID); err != nil {
 		err := fmt.Errorf("Error Closing FTPS connection: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())

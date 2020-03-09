@@ -4,24 +4,26 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
+
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/libsacloud/builder"
-	"github.com/sacloud/packer-builder-sakuracloud/iaas"
+	"github.com/sacloud/libsacloud/v2/sacloud"
+	"github.com/sacloud/libsacloud/v2/sacloud/ostype"
+	"github.com/sacloud/libsacloud/v2/sacloud/types"
+	diskBuilders "github.com/sacloud/libsacloud/v2/utils/builder/disk"
+	serverBuilders "github.com/sacloud/libsacloud/v2/utils/builder/server"
+	"github.com/sacloud/libsacloud/v2/utils/power"
 )
-
-type serverBuilder interface {
-	// 構築
-	Build() (*builder.ServerBuildResult, error)
-}
 
 type stepCreateServer struct {
 	Debug    bool
-	serverID int64
-	diskIDs  []int64
+	serverID types.ID
+	diskIDs  []types.ID
 }
 
 func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) multistep.StepAction {
+	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
 
 	stepStartMsg(ui, s.Debug, "CreateServer")
@@ -29,9 +31,8 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	// create Server
 	ui.Say("\tCreating server...")
 
-	factory := state.Get("builderFactory").(serverBuilderFactory)
-	b := factory.createServerBuilder(state)
-	createResult, err := b.Build()
+	builder := s.createServerBuilder(state)
+	created, err := builder.Build(ctx, c.Zone)
 
 	if err != nil {
 		err := fmt.Errorf("Error creating server: %s", err)
@@ -41,8 +42,8 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	// We use this in cleanup
-	s.serverID = createResult.Server.ID
-	s.diskIDs = s.getDiskIDs(createResult)
+	s.serverID = created.ServerID
+	s.diskIDs = created.DiskIDs
 
 	// Store the server and disk id for later
 	state.Put("server_id", s.serverID)
@@ -54,35 +55,31 @@ func (s *stepCreateServer) Run(ctx context.Context, state multistep.StateBag) mu
 
 func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 	// If the serverID isn't there, we probably never created it
-	if s.serverID == 0 && len(s.diskIDs) == 0 {
+	if s.serverID.IsEmpty() && len(s.diskIDs) == 0 {
 		return
 	}
 
-	serverClient := state.Get("serverClient").(iaas.ServerClient)
-	ui := state.Get("ui").(packer.Ui)
 	c := state.Get("config").(Config)
+	ui := state.Get("ui").(packer.Ui)
+	caller := state.Get("sacloudAPICaller").(sacloud.APICaller)
+	serverOp := sacloud.NewServerOp(caller)
+	ctx := context.Background()
 
 	// Destroy the server we just created
 	ui.Say("\tDestroying server...")
 
 	// force shutdown
-	_, err := serverClient.Stop(s.serverID)
-	if err != nil {
-		ui.Error(fmt.Sprintf("Error destroying server. Please destroy it manually: %s", err))
-		return
-	}
-	// wait for down
-	err = serverClient.SleepUntilDown(s.serverID, c.APIClientTimeout)
-	if err != nil {
+	if err := power.ShutdownServer(ctx, serverOp, c.Zone, s.serverID, true); err != nil {
 		ui.Error(fmt.Sprintf("Error destroying server. Please destroy it manually: %s", err))
 		return
 	}
 
 	// delete server with disks
+	var err error
 	if len(s.diskIDs) == 0 {
-		_, err = serverClient.Delete(s.serverID)
+		err = serverOp.Delete(ctx, c.Zone, s.serverID)
 	} else {
-		_, err = serverClient.DeleteWithDisk(s.serverID, s.diskIDs)
+		err = serverOp.DeleteWithDisks(ctx, c.Zone, s.serverID, &sacloud.ServerDeleteWithDisksRequest{IDs: s.diskIDs})
 	}
 	if err != nil {
 		ui.Error(fmt.Sprintf(
@@ -90,10 +87,55 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 	}
 }
 
-func (s *stepCreateServer) getDiskIDs(buildResult *builder.ServerBuildResult) []int64 {
-	var res []int64
-	for _, disk := range buildResult.Disks {
-		res = append(res, disk.Disk.ID)
+func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) *serverBuilders.Builder {
+	c := state.Get("config").(Config)
+	caller := state.Get("sacloudAPICaller").(sacloud.APICaller)
+
+	interfaceDriver := types.InterfaceDrivers.VirtIO
+	if c.DisableVirtIONetPCI {
+		interfaceDriver = types.InterfaceDrivers.E1000
 	}
-	return res
+
+	builder := &serverBuilders.Builder{
+		Name:            constants.ServerName,
+		CPU:             c.Core,
+		MemoryGB:        c.MemorySize,
+		Commitment:      types.Commitments.Standard, // TODO
+		Generation:      types.PlanGenerations.Default,
+		InterfaceDriver: interfaceDriver,
+		BootAfterCreate: true,
+		CDROMID:         c.ISOImageID,
+		NIC:             &serverBuilders.SharedNICSetting{}, // TODO 共有セグメントのみサポート
+		DiskBuilders:    s.createDiskBuilder(state),
+		Client:          serverBuilders.NewBuildersAPIClient(caller),
+		ForceShutdown:   false,
+	}
+	return builder
+}
+
+func (s *stepCreateServer) createDiskBuilder(state multistep.StateBag) []diskBuilders.Builder {
+	c := state.Get("config").(Config)
+	caller := state.Get("sacloudAPICaller").(sacloud.APICaller)
+
+	director := diskBuilders.Director{
+		OSType:          ostype.StrToOSType(c.OSType),
+		Name:            constants.ServerName,
+		SizeGB:          c.DiskSize,
+		DistantFrom:     nil,
+		PlanID:          types.DiskPlanIDMap[c.DiskPlan],
+		Connection:      types.DiskConnectionMap[c.DiskConnection],
+		SourceDiskID:    c.SourceDisk,
+		SourceArchiveID: c.SourceArchive,
+		EditParameter: &diskBuilders.EditRequest{
+			HostName: constants.ServerName,
+			Password: c.Password,
+		},
+		Client: diskBuilders.NewBuildersAPIClient(caller),
+	}
+
+	if keys, ok := state.GetOk("publicKeys"); ok {
+		director.EditParameter.SSHKeys = keys.([]string)
+	}
+
+	return []diskBuilders.Builder{director.Builder()}
 }
