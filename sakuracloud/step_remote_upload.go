@@ -80,7 +80,6 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
-
 	}
 
 	err = ftpsClient.Login(ftp.User, ftp.Password)
@@ -107,7 +106,12 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	ftpsClient.Quit()
+	if err := ftpsClient.Quit(); err != nil {
+		err := fmt.Errorf("Error quit on FTPS server: %s", err)
+		state.Put("error", err)
+		ui.Error(err.Error())
+		return multistep.ActionHalt
+	}
 
 	// close image FTP after upload
 	if err := isoImageOp.CloseFTP(ctx, c.Zone, isoImage.ID); err != nil {

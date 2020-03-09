@@ -15,27 +15,9 @@ import (
 )
 
 var (
-	dummyDiskID             = types.ID(111111111111)
-	dummyCreatedArchiveID   = types.ID(222222222222)
-	dummyReadArchiveID      = types.ID(333333333333)
-	dummyServerID           = types.ID(444444444444)
-	dummyISOImageID         = types.ID(555555555555)
-	dummyArchiveID          = types.ID(666666666666)
-	dummyISOPath            = "test.iso"
-	dummyArchiveName        = "testArchive"
-	dummyArchiveTags        = []string{"archive1", "archive2"}
-	dummyParentArchiveTags  = []string{"parent1", "parent2"}
-	dummyDescription        = "testArchiveDescription"
-	dummyServerCore         = 2
-	dummyServerMemory       = 4
-	dummyServerIP           = "192.2.0.11"
-	dummyServerDefaultRoute = "192.2.0.1"
-	dummyServerNwMaskLen    = 24
-	dummyServerPassword     = "p@ssw0rd"
-	dummyDiskSize           = 20
-	dummyDNSServers         = []string{"ns1.example.com", "ns2.example.com"}
-	dummySSHKeyBody         = "ssh-rsa AAAA..."
-	dummyPrivateKeyFile     = "packer-test-private-key"
+	dummyDiskID         = types.ID(111111111111)
+	dummyArchiveID      = types.ID(666666666666)
+	dummyPrivateKeyFile = "packer-test-private-key"
 
 	testMinimumConfigValues = map[string]interface{}{
 		"access_token":        "aaaa",
@@ -107,50 +89,4 @@ func dummyMinimumStateBag(config *Config) multistep.StateBag {
 		state.Put("config", *config)
 	}
 	return state
-}
-
-type dummyBasicClient struct {
-	zoneFunc func() string
-}
-
-func (t *dummyBasicClient) Zone() string {
-	if t.zoneFunc == nil {
-		return "is1a"
-	}
-	return t.zoneFunc()
-}
-
-type dummyFTPSClient struct {
-	connectFunc   func(string, int) error
-	loginFunc     func(string, string) error
-	storeFileFunc func(string, *os.File) error
-	quitFunc      func() error
-}
-
-func (t *dummyFTPSClient) Connect(host string, port int) error {
-	if t.connectFunc == nil {
-		return nil
-	}
-	return t.connectFunc(host, port)
-}
-
-func (t *dummyFTPSClient) Login(user, password string) error {
-	if t.loginFunc == nil {
-		return nil
-	}
-	return t.loginFunc(user, password)
-}
-
-func (t *dummyFTPSClient) StoreFile(remoteFilepath string, file *os.File) error {
-	if t.storeFileFunc == nil {
-		return nil
-	}
-	return t.storeFileFunc(remoteFilepath, file)
-}
-
-func (t *dummyFTPSClient) Quit() error {
-	if t.quitFunc == nil {
-		return nil
-	}
-	return t.quitFunc()
 }

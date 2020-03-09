@@ -87,7 +87,7 @@ func (s *stepTypeBootCommand) Run(ctx context.Context, state multistep.StateBag)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	defer nc.Close()
+	defer nc.Close() // nolint
 
 	auth := []vnc.ClientAuth{&vnc.PasswordAuth{Password: vncCredentials.Password}}
 	c, err := vnc.Client(nc, &vnc.ClientConfig{Auth: auth, Exclusive: false})
@@ -97,7 +97,7 @@ func (s *stepTypeBootCommand) Run(ctx context.Context, state multistep.StateBag)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	defer c.Close()
+	defer c.Close() // nolint
 
 	log.Printf("Connected to VNC desktop: %s", c.DesktopName)
 
@@ -192,7 +192,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<leftAltOn>"):]
 			log.Printf("Special code '<leftAltOn>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, true)
+			c.KeyEvent(keyCode, true) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -206,7 +206,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<leftCtrlOn>"):]
 			log.Printf("Special code '<leftCtrlOn>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, true)
+			c.KeyEvent(keyCode, true) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -220,7 +220,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<leftShiftOn>"):]
 			log.Printf("Special code '<leftShiftOn>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, true)
+			c.KeyEvent(keyCode, true) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -234,7 +234,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<leftAltOff>"):]
 			log.Printf("Special code '<leftAltOff>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, false)
+			c.KeyEvent(keyCode, false) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -248,7 +248,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<leftCtrlOff>"):]
 			log.Printf("Special code '<leftCtrlOff>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, false)
+			c.KeyEvent(keyCode, false) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -262,7 +262,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<leftShiftOff>"):]
 			log.Printf("Special code '<leftShiftOff>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, false)
+			c.KeyEvent(keyCode, false) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -276,7 +276,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<rightAltOn>"):]
 			log.Printf("Special code '<rightAltOn>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, true)
+			c.KeyEvent(keyCode, true) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -290,7 +290,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<rightCtrlOn>"):]
 			log.Printf("Special code '<rightCtrlOn>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, true)
+			c.KeyEvent(keyCode, true) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -304,7 +304,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<rightShiftOn>"):]
 			log.Printf("Special code '<rightShiftOn>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, true)
+			c.KeyEvent(keyCode, true) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -318,7 +318,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<rightAltOff>"):]
 			log.Printf("Special code '<rightAltOff>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, false)
+			c.KeyEvent(keyCode, false) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -332,7 +332,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<rightCtrlOff>"):]
 			log.Printf("Special code '<rightCtrlOff>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, false)
+			c.KeyEvent(keyCode, false) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -346,7 +346,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<rightShiftOff>"):]
 			log.Printf("Special code '<rightShiftOff>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, false)
+			c.KeyEvent(keyCode, false) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -360,7 +360,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<leftWinOn>"):]
 			log.Printf("Special code '<leftWinOn>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, true)
+			c.KeyEvent(keyCode, true) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -374,7 +374,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<leftWinOff>"):]
 			log.Printf("Special code '<leftWinOff>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, false)
+			c.KeyEvent(keyCode, false) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -387,7 +387,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<rightWinOn>"):]
 			log.Printf("Special code '<rightWinOn>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, true)
+			c.KeyEvent(keyCode, true) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -401,7 +401,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 			original = original[len("<rightWinOff>"):]
 			log.Printf("Special code '<rightWinOff>' found, replacing with: %d", keyCode)
 
-			c.KeyEvent(keyCode, false)
+			c.KeyEvent(keyCode, false) // nolint
 			time.Sleep(time.Second / 10)
 
 			// qemu is picky, so no matter what, wait a small period
@@ -463,16 +463,16 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 		}
 
 		if keyShift {
-			c.KeyEvent(keyLeftShift, true)
+			c.KeyEvent(keyLeftShift, true) // nolint
 		}
 
-		c.KeyEvent(keyCode, true)
+		c.KeyEvent(keyCode, true) // nolint
 		time.Sleep(time.Second / 10)
-		c.KeyEvent(keyCode, false)
+		c.KeyEvent(keyCode, false) // nolint
 		time.Sleep(time.Second / 10)
 
 		if keyShift {
-			c.KeyEvent(keyLeftShift, false)
+			c.KeyEvent(keyLeftShift, false) // nolint
 		}
 
 		// qemu is picky, so no matter what, wait a small period

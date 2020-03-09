@@ -2,15 +2,15 @@ TEST?=$$(go list ./... | grep -v vendor)
 VETARGS?=-all
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
 CURRENT_VERSION = $(gobump show -r version/)
-export GO111MODULE=on
 
 default: test vet
 
 .PHONY: tools
 tools:
-	GO111MODULE=off go get -u golang.org/x/tools/cmd/goimports
-	GO111MODULE=off go get -u github.com/motemen/gobump/cmd/gobump
-	GO111MODULE=off go get -u golang.org/x/lint/golint
+	GO111MODULE=off go get golang.org/x/tools/cmd/goimports
+	GO111MODULE=off go get github.com/tcnksm/ghr
+	GO111MODULE=off go get github.com/client9/misspell/cmd/misspell
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/v1.23.8/install.sh | sh -s -- -b $$(go env GOPATH)/bin v1.23.8
 
 .PHONY: clean
 clean:
@@ -26,7 +26,6 @@ build: clean
 build-x: clean vet
 	sh -c "'$(CURDIR)/scripts/build.sh'"
 
-
 .PHONY: test testacc
 test: vet
 	go test $(TEST) $(TESTARGS) -v -timeout=30m -parallel=4 ;
@@ -37,19 +36,16 @@ testacc:
 	PACKER_ACC=1 go test -v $(TEST) $(TESTARGS) -timeout=45m
 
 .PHONY: lint vet fmt golint goimports
-lint: vet fmt golint goimports
-
-vet: fmt
-	go vet ./...
-
-golint: fmt
-	test -z "$$(go list ./... | xargs -L1 golint | fgrep -v 'should be BuilderID'  | fgrep -v 'should be ID' | tee /dev/stderr )"
+lint: fmt golangci-lint goimports
 
 fmt:
-	gofmt -s -l -w $(GOFMT_FILES)
+	find . -name '*.go' | grep -v vendor | xargs gofmt -s -w
+
+golangci-lint: fmt
+	golangci-lint run ./...
 
 goimports:
-	goimports -w $(GOFMT_FILES)
+	find . -name '*.go' | grep -v vendor | xargs goimports -l -w
 
 .PHONY: docker-shell docker-test docker-testacc docker-build
 docker-shell:
@@ -69,17 +65,3 @@ prepare-homebrew:
 	rm -rf homebrew-packer-builder-sakuracloud/; \
 	sh -c "'$(CURDIR)/scripts/update_homebrew_formula.sh' '$(CURRENT_VERSION)'"
 
-.PHONY: version bump-patch bump-minor bump-major
-version:
-	gobump show -r version/
-
-bump-patch:
-	gobump patch -w version/
-
-bump-minor:
-	gobump minor -w version/
-
-bump-major:
-	gobump major -w version/
-
-.PHONY: default

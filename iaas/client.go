@@ -19,7 +19,6 @@ type Client struct {
 
 // NewClient returns new SakuraCloud API Client
 func NewClient(token, secret, zone string) *Client {
-
 	httpClient := http.DefaultClient
 	httpClient.Transport = &sacloud.RateLimitRoundTripper{RateLimitPerSec: 3, Transport: httpClient.Transport}
 

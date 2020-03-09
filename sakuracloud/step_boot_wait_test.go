@@ -10,7 +10,6 @@ import (
 )
 
 func TestStepBootWait(t *testing.T) {
-
 	ctx := context.Background()
 	step := &stepBootWait{}
 	conf := dummyConfig()

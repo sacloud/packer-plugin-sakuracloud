@@ -10,7 +10,6 @@ import (
 )
 
 func TestStepCreateSSHKey(t *testing.T) {
-
 	t.Run("without private key config", func(t *testing.T) {
 		ctx := context.Background()
 		step := &stepCreateSSHKey{}
