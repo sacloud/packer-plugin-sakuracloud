@@ -3,6 +3,7 @@ package sakuracloud
 import (
 	"context"
 	"fmt"
+
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 
 	"github.com/hashicorp/packer/helper/multistep"
@@ -107,7 +108,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) *server
 		NIC:             &serverBuilders.SharedNICSetting{}, // TODO 共有セグメントのみサポート
 		DiskBuilders:    s.createDiskBuilder(state),
 		Client:          serverBuilders.NewBuildersAPIClient(caller),
-		ForceShutdown:   c.ForceShutdown,
+		ForceShutdown:   false,
 	}
 	return builder
 }

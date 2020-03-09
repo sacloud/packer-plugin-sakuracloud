@@ -35,7 +35,7 @@ func NewClient(token, secret, zone string) *Client {
 	}
 	return &Client{
 		Caller:  caller,
-		Archive: NewArchiveClient(caller, zone),
+		Archive: newArchiveClient(caller, zone),
 		Zone:    zone,
 	}
 }

@@ -142,9 +142,6 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 		},
 		communicateStep, // ssh or winrm
 		new(common.StepProvision),
-		&stepShutdown{
-			Debug: b.config.PackerDebug,
-		},
 		&stepPowerOff{
 			Debug: b.config.PackerDebug,
 		},

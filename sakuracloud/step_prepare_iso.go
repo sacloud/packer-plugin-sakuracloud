@@ -36,7 +36,7 @@ func (s *stepPrepareISO) Run(ctx context.Context, state multistep.StateBag) mult
 	}
 
 	if !image.Availability.IsAvailable() {
-		err := fmt.Errorf("Error invalid ISO image Status: %s", err)
+		err := fmt.Errorf("Error invalid ISO image Status: %s", image.Availability)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt

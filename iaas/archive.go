@@ -18,10 +18,6 @@ type Archive interface {
 	Create(ctx context.Context, req *CreateArchiveRequest) (*sacloud.Archive, error)
 }
 
-func NewArchiveClient(caller sacloud.APICaller, zone string) Archive {
-	return newArchiveClient(caller, zone)
-}
-
 type archiveClient struct {
 	caller    sacloud.APICaller
 	archiveOp sacloud.ArchiveAPI
@@ -81,6 +77,7 @@ func (c *archiveClient) Create(ctx context.Context, req *CreateArchiveRequest) (
 	return res.(*sacloud.Archive), nil
 }
 
+// CreateArchiveRequest is a parameter of creating SakuraCloud Archive
 type CreateArchiveRequest struct {
 	DiskID      types.ID
 	Name        string
