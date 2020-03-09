@@ -47,7 +47,6 @@ func (b *Builder) Cancel() {
 
 // Run is where the actual build should take place.
 func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packer.Artifact, error) {
-
 	client := iaas.NewClient(b.config.AccessToken, b.config.AccessTokenSecret, b.config.Zone)
 
 	// Set up the state

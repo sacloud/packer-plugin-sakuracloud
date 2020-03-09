@@ -9,7 +9,6 @@ import (
 )
 
 func TestConfig_Defaults(t *testing.T) {
-
 	os.Setenv("SAKURACLOUD_ACCESS_TOKEN", "token")         // nolint
 	os.Setenv("SAKURACLOUD_ACCESS_TOKEN_SECRET", "secret") // nolint
 
@@ -42,7 +41,6 @@ func TestConfig_Defaults(t *testing.T) {
 }
 
 func TestConfig_Validate(t *testing.T) {
-
 	t.Run("valid config", func(t *testing.T) {
 		config := dummyValidConfig()
 		setDefaultConfig(&config)
@@ -54,7 +52,6 @@ func TestConfig_Validate(t *testing.T) {
 	})
 
 	t.Run("valid config", func(t *testing.T) {
-
 		clearEnvKeys := []string{
 			"SAKURACLOUD_ACCESS_TOKEN",
 			"SAKURACLOUD_ACCESS_TOKEN_SECRET",
@@ -171,7 +168,6 @@ func TestConfig_Validate(t *testing.T) {
 				"unexpected validate result: expect=%t target=%q errs=%s", expect.expect, expect.caseName, errs.Error())
 		}
 	})
-
 }
 
 func dummyValidConfig() Config {
