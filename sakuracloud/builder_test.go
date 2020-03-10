@@ -4,7 +4,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
 	"github.com/stretchr/testify/assert"
 )
@@ -28,7 +27,7 @@ func TestBuilder_Prepare(t *testing.T) {
 
 	t.Run("with minimum config", func(t *testing.T) {
 		builder := &Builder{}
-		warns, errs := builder.Prepare(testMinimumConfigValues)
+		_,warns, errs := builder.Prepare(testMinimumConfigValues)
 
 		assert.Nil(t, warns)
 		assert.Nil(t, errs)
@@ -37,19 +36,3 @@ func TestBuilder_Prepare(t *testing.T) {
 	// TODO add more unit tests after refactoring Builder/Config
 }
 
-type dummyBuildRunner struct {
-	cancelCalled bool
-}
-
-func (t *dummyBuildRunner) Run(bag multistep.StateBag) {}
-func (t *dummyBuildRunner) Cancel()                    { t.cancelCalled = true }
-
-func TestBuilder_Cancel(t *testing.T) {
-	runner := &dummyBuildRunner{}
-	builder := &Builder{
-		runner: runner,
-	}
-
-	builder.Cancel()
-	assert.True(t, runner.cancelCalled)
-}
