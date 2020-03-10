@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/hashicorp/vault/sdk/helper/consts"
+	"github.com/hashicorp/vault/helper/consts"
 
 	retryablehttp "github.com/hashicorp/go-retryablehttp"
 )

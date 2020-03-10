@@ -1,6 +1,7 @@
 package winrm
 
 import (
+	"context"
 	"encoding/base64"
 	"fmt"
 	"io"
@@ -74,7 +75,7 @@ func New(config *Config) (*Communicator, error) {
 }
 
 // Start implementation of communicator.Communicator interface
-func (c *Communicator) Start(rc *packer.RemoteCmd) error {
+func (c *Communicator) Start(ctx context.Context, rc *packer.RemoteCmd) error {
 	shell, err := c.client.CreateShell()
 	if err != nil {
 		return err
@@ -129,7 +130,11 @@ func (c *Communicator) Upload(path string, input io.Reader, fi *os.FileInfo) err
 	}
 	if strings.HasSuffix(path, `\`) {
 		// path is a directory
-		path += filepath.Base((*fi).Name())
+		if fi != nil {
+			path += filepath.Base((*fi).Name())
+		} else {
+			return fmt.Errorf("Was unable to infer file basename for upload.")
+		}
 	}
 	log.Printf("Uploading file to '%s'", path)
 	return wcp.Write(path, input)
