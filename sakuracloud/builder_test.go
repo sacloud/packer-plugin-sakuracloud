@@ -27,7 +27,7 @@ func TestBuilder_Prepare(t *testing.T) {
 
 	t.Run("with minimum config", func(t *testing.T) {
 		builder := &Builder{}
-		_,warns, errs := builder.Prepare(testMinimumConfigValues)
+		_, warns, errs := builder.Prepare(testMinimumConfigValues)
 
 		assert.Nil(t, warns)
 		assert.Nil(t, errs)
@@ -35,4 +35,3 @@ func TestBuilder_Prepare(t *testing.T) {
 
 	// TODO add more unit tests after refactoring Builder/Config
 }
-
