@@ -7,13 +7,12 @@ import (
 	"os"
 	"strings"
 
+	"github.com/hashicorp/packer/helper/multistep"
+	"github.com/hashicorp/packer/packer"
 	"github.com/sacloud/libsacloud/v2/pkg/size"
 	"github.com/sacloud/libsacloud/v2/sacloud"
 	"github.com/sacloud/libsacloud/v2/sacloud/search"
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
-
-	"github.com/hashicorp/packer/helper/multistep"
-	"github.com/hashicorp/packer/packer"
 	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 )
@@ -26,7 +25,8 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
 
-	caller := state.Get("sacloudAPICaller").(sacloud.APICaller)
+	client := state.Get("iaasClient").(*iaas.Client)
+	caller := client.Caller
 	isoImageOp := sacloud.NewCDROMOp(caller)
 
 	stepStartMsg(ui, s.Debug, "ISO-Image Upload")
@@ -72,9 +72,7 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	// upload iso by FTPS
-	ftpsClient := state.Get("ftpsClient").(iaas.FTPSClient)
-
-	err = ftpsClient.Connect(ftp.HostName, 21)
+	err = client.FTPS.Connect(ftp.HostName, 21)
 	if err != nil {
 		err := fmt.Errorf("Error connecting FTPS server: %s", err)
 		state.Put("error", err)
@@ -82,7 +80,7 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 		return multistep.ActionHalt
 	}
 
-	err = ftpsClient.Login(ftp.User, ftp.Password)
+	err = client.FTPS.Login(ftp.User, ftp.Password)
 	if err != nil {
 		err := fmt.Errorf("Error login FTPS server: %s", err)
 		state.Put("error", err)
@@ -99,14 +97,14 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 	defer fs.Close()
 
-	err = ftpsClient.StoreFile("packer-for-sakuracloud.iso", fs)
+	err = client.FTPS.StoreFile("packer-for-sakuracloud.iso", fs)
 	if err != nil {
 		err := fmt.Errorf("Error store file on FTPS server: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	if err := ftpsClient.Quit(); err != nil {
+	if err := client.FTPS.Quit(); err != nil {
 		err := fmt.Errorf("Error quit on FTPS server: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())

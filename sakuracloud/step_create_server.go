@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
-
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
 	"github.com/sacloud/libsacloud/v2/sacloud"
@@ -14,6 +12,8 @@ import (
 	diskBuilders "github.com/sacloud/libsacloud/v2/utils/builder/disk"
 	serverBuilders "github.com/sacloud/libsacloud/v2/utils/builder/server"
 	"github.com/sacloud/libsacloud/v2/utils/power"
+	"github.com/sacloud/packer-builder-sakuracloud/iaas"
+	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 )
 
 type stepCreateServer struct {
@@ -61,7 +61,7 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 
 	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
-	caller := state.Get("sacloudAPICaller").(sacloud.APICaller)
+	caller := state.Get("iaasClient").(iaas.Client).Caller
 	serverOp := sacloud.NewServerOp(caller)
 	ctx := context.Background()
 
@@ -89,7 +89,7 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 
 func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) *serverBuilders.Builder {
 	c := state.Get("config").(Config)
-	caller := state.Get("sacloudAPICaller").(sacloud.APICaller)
+	caller := state.Get("iaasClient").(iaas.Client).Caller
 
 	interfaceDriver := types.InterfaceDrivers.VirtIO
 	if c.DisableVirtIONetPCI {
@@ -115,7 +115,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) *server
 
 func (s *stepCreateServer) createDiskBuilder(state multistep.StateBag) []diskBuilders.Builder {
 	c := state.Get("config").(Config)
-	caller := state.Get("sacloudAPICaller").(sacloud.APICaller)
+	caller := state.Get("iaasClient").(iaas.Client).Caller
 
 	director := diskBuilders.Director{
 		OSType:          ostype.StrToOSType(c.OSType),

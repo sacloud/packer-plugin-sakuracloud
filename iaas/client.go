@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/sacloud/ftps"
 	"github.com/sacloud/libsacloud/v2/sacloud"
 	"github.com/sacloud/libsacloud/v2/sacloud/trace"
 	"github.com/sacloud/packer-builder-sakuracloud/version"
@@ -14,6 +15,7 @@ import (
 type Client struct {
 	Caller  sacloud.APICaller
 	Archive Archive
+	FTPS    FTPSClient
 	Zone    string
 }
 
@@ -32,9 +34,13 @@ func NewClient(token, secret, zone string) *Client {
 		UserAgent:         fmt.Sprintf("packer_for_sakuracloud:v%s", version.Version),
 		HTTPClient:        httpClient,
 	}
+	ftpsClient := &ftps.FTPS{}
+	ftpsClient.TLSConfig.InsecureSkipVerify = true
+
 	return &Client{
 		Caller:  caller,
 		Archive: newArchiveClient(caller, zone),
+		FTPS:    FTPSClient(ftpsClient),
 		Zone:    zone,
 	}
 }
