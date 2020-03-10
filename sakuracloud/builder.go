@@ -1,9 +1,11 @@
 package sakuracloud
 
 import (
+	"context"
 	"fmt"
 	"log"
 
+	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer/common"
 	"github.com/hashicorp/packer/helper/communicator"
 	"github.com/hashicorp/packer/helper/multistep"
@@ -25,28 +27,24 @@ type Builder struct {
 	runner multistep.Runner
 }
 
+func (b *Builder) ConfigSpec() hcldec.ObjectSpec {
+	return b.config.FlatMapstructure().HCL2Spec()
+}
+
 // Prepare is responsible for configuring the builder and validating
 // that configuration.
-func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
+func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 	c, warnings, errs := NewConfig(raws...)
 	if errs != nil {
-		return warnings, errs
+		return nil, warnings, errs
 	}
 	b.config = *c
 
-	return nil, nil
-}
-
-// Cancel cancels a possibly running Builder.
-func (b *Builder) Cancel() {
-	if b.runner != nil {
-		log.Println("Cancelling the step runner...")
-		b.runner.Cancel()
-	}
+	return nil, nil, nil
 }
 
 // Run is where the actual build should take place.
-func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packer.Artifact, error) {
+func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (packer.Artifact, error) {
 	client := iaas.NewClient(b.config.AccessToken, b.config.AccessTokenSecret, b.config.Zone)
 
 	// Set up the state
@@ -62,7 +60,6 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 
 	state.Put("hook", hook)
 	state.Put("ui", ui)
-	state.Put("cache", cache)
 
 	// Build the steps
 	var steps []multistep.Step
@@ -163,7 +160,7 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 		b.runner = &multistep.BasicRunner{Steps: steps}
 	}
 
-	b.runner.Run(state)
+	b.runner.Run(ctx, state)
 
 	// If there was an error, return that
 	if rawErr, ok := state.GetOk("error"); ok {

@@ -11,6 +11,7 @@ tools:
 	GO111MODULE=off go get github.com/tcnksm/ghr
 	GO111MODULE=off go get github.com/client9/misspell/cmd/misspell
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/v1.23.8/install.sh | sh -s -- -b $$(go env GOPATH)/bin v1.23.8
+	go install github.com/hashicorp/packer/cmd/mapstructure-to-hcl2
 
 .PHONY: clean
 clean:
@@ -20,11 +21,15 @@ clean:
 install: build
 	cp -f $(CURDIR)/bin/packer-builder-sakuracloud $(GOPATH)/bin/packer-builder-sakuracloud
 
-build: clean 
+build: generate clean
 	go build -mod vendor -ldflags "-s -w" -o $(CURDIR)/bin/packer-builder-sakuracloud $(CURDIR)/main.go
 
 build-x: clean vet
 	sh -c "'$(CURDIR)/scripts/build.sh'"
+
+generate:
+	go generate ./...
+
 
 .PHONY: test testacc
 test: vet

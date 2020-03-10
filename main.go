@@ -10,6 +10,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	server.RegisterBuilder(new(sakuracloud.Builder))
+	if err := server.RegisterBuilder(new(sakuracloud.Builder)); err != nil {
+		panic(err)
+	}
 	server.Serve()
 }
