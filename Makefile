@@ -1,12 +1,13 @@
 TEST?=$$(go list ./... | grep -v vendor)
 VETARGS?=-all
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
-CURRENT_VERSION = $(gobump show -r version/)
+CURRENT_VERSION = $$(gobump show -r version/)
 
 default: test vet
 
 .PHONY: tools
 tools:
+	GO111MODULE=off go get github.com/x-motemen/gobump/cmd/gobump
 	GO111MODULE=off go get golang.org/x/tools/cmd/goimports
 	GO111MODULE=off go get github.com/tcnksm/ghr
 	GO111MODULE=off go get github.com/client9/misspell/cmd/misspell
@@ -71,6 +72,6 @@ prepare-homebrew:
 	sh -c "'$(CURDIR)/scripts/update_homebrew_formula.sh' '$(CURRENT_VERSION)'"
 
 .PHONY: release
-release: build-envs
+release:
 	ghr v${CURRENT_VERSION} bin/
 
