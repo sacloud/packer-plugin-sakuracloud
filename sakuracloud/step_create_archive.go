@@ -35,7 +35,7 @@ func (s *stepCreateArchive) Run(ctx context.Context, state multistep.StateBag) m
 }
 
 func (s *stepCreateArchive) createArchive(ctx context.Context, state multistep.StateBag) (*sacloud.Archive, error) {
-	archiveClient := state.Get("archiveClient").(iaas.Archive)
+	archiveClient := state.Get("iaasClient").(*iaas.Client).Archive
 	c := state.Get("config").(Config)
 	diskID := state.Get("disk_id").(types.ID)
 

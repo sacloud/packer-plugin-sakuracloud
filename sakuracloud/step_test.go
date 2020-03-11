@@ -10,7 +10,9 @@ import (
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
+	"github.com/sacloud/libsacloud/v2/sacloud/fake"
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
+	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -88,5 +90,38 @@ func dummyMinimumStateBag(config *Config) multistep.StateBag {
 	} else {
 		state.Put("config", *config)
 	}
+
+	// set fake API client
+	fake.SwitchFactoryFuncToFake()
+	iaasClient := iaas.NewClient("fake", "fake", "is1a")
+	iaasClient.FTPS = &fakeFTPSClient{}
+	state.Put("iaasClient", iaasClient)
 	return state
+}
+
+type fakeFTPSClient struct {
+	connectErr   error
+	loginErr     error
+	storeFileErr error
+	quitErr      error
+}
+
+// Connect .
+func (c *fakeFTPSClient) Connect(string, int) error {
+	return c.connectErr
+}
+
+// Login .
+func (c *fakeFTPSClient) Login(string, string) error {
+	return c.loginErr
+}
+
+// StoreFile .
+func (c *fakeFTPSClient) StoreFile(string, *os.File) error {
+	return c.storeFileErr
+}
+
+// Quit .
+func (c *fakeFTPSClient) Quit() error {
+	return c.quitErr
 }

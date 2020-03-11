@@ -81,6 +81,8 @@ github.com/davecgh/go-spew/spew
 github.com/dylanmei/iso8601
 # github.com/fatih/structs v1.1.0
 github.com/fatih/structs
+# github.com/fsnotify/fsnotify v1.4.7
+github.com/fsnotify/fsnotify
 # github.com/go-playground/locales v0.12.1
 github.com/go-playground/locales
 github.com/go-playground/locales/currency
@@ -250,6 +252,7 @@ github.com/sacloud/libsacloud/v2/pkg/mutexkv
 github.com/sacloud/libsacloud/v2/pkg/size
 github.com/sacloud/libsacloud/v2/sacloud
 github.com/sacloud/libsacloud/v2/sacloud/accessor
+github.com/sacloud/libsacloud/v2/sacloud/fake
 github.com/sacloud/libsacloud/v2/sacloud/naked
 github.com/sacloud/libsacloud/v2/sacloud/ostype
 github.com/sacloud/libsacloud/v2/sacloud/search

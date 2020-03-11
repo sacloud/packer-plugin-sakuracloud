@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/packer/packer"
 	"github.com/sacloud/libsacloud/v2/sacloud"
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
+	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 )
 
 type stepPrepareISO struct {
@@ -18,7 +19,7 @@ func (s *stepPrepareISO) Run(ctx context.Context, state multistep.StateBag) mult
 	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
 
-	caller := state.Get("sacloudAPICaller").(sacloud.APICaller)
+	caller := state.Get("iaasClient").(*iaas.Client).Caller
 	isoImageOp := sacloud.NewCDROMOp(caller)
 
 	stepStartMsg(ui, s.Debug, "PrepareISO")

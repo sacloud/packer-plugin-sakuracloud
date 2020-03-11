@@ -68,9 +68,9 @@ APIキーを環境変数に設定しておきます。
     $ export SAKURACLOUD_ACCESS_TOKEN=[APIトークン]
     $ export SAKURACLOUD_ACCESS_TOKEN_SECRET=[APIシークレット]
 
-#### アーカイブ定義ファイル(json)の作成
+#### テンプレートファイル(JSON)の作成
 
-Packerでのビルド用に以下のようなjsonファイルを作成します。
+Packerでのビルド用に以下のようなJSONファイルを作成します。
 以下の例は、石狩第2ゾーン(`is1b`)に、CentOSパブリックアーカイブをベースとしたアーカイブを作成します。
 プロビジョニングとして、`shell`にてdockerのインストールを行なっています。
 
@@ -81,7 +81,7 @@ $ cat <<EOF > example.json
     "builders": [{
         "type": "sakuracloud",
         "zone": "is1b",
-        "os_type": "centos",
+        "os_type": "centos7",
         "password": "TestUserPassword01"
     }],
     "provisioners":[
@@ -103,6 +103,42 @@ EOF
 
 さくらのクラウド上のパブリックアーカイブだけでなく、ISOイメージからの構築も可能です。
 詳細は[テンプレートのサンプル](#テンプレートサンプル)を参照してください。
+
+#### テンプレートファイル(HCL)の作成
+
+Packer 1.5以降で利用できるHCLテンプレートに対応しています。 
+以下の様なファイルを作成し拡張子を`.pkr.hcl`とすることで`packer build`が実行できます。
+
+```hcl
+source "sakuracloud" "example" {
+  zone = "is1b"
+
+  os_type   = "centos7"
+  password  = "TestUserPassword01"
+  disk_size = 20
+  disk_plan = "ssd"
+
+  core        = 2
+  memory_size = 4
+
+  archive_name        = "packer-example-centos"
+  archive_description = "description of archive"
+}
+
+build {
+  sources = [
+    "source.sakuracloud.example"
+  ]
+  provisioner "shell" {
+    inline = [
+      "yum update -y",
+      "curl -fsSL https://get.docker.com/ | sh",
+      "systemctl enable docker.service",
+    ]
+  }
+}
+```
+
 
 ## オプション一覧
 
@@ -330,7 +366,7 @@ PackerがISOイメージのダウンロードを行い、さくらのクラウ�
 
 ## License
 
-  `packer-builder-sakuracloud` Copyright (C) 2016-2019 Kazumichi Yamamoto.
+  `packer-builder-sakuracloud` Copyright (C) 2016-2020 Kazumichi Yamamoto.
 
   This project is published under [MPL-2.0](LICENSE).
   

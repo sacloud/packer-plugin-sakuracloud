@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/packer/helper/communicator"
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
-	"github.com/sacloud/ftps"
 	"github.com/sacloud/libsacloud/v2/sacloud/ostype"
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
 	"github.com/sacloud/packer-builder-sakuracloud/iaas"
@@ -51,12 +50,7 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 	state := new(multistep.BasicStateBag)
 	state.Put("config", b.config)
 
-	state.Put("sacloudAPICaller", client.Caller)
-	state.Put("archiveClient", client.Archive)
-
-	ftpsClient := &ftps.FTPS{}
-	ftpsClient.TLSConfig.InsecureSkipVerify = true
-	state.Put("ftpsClient", iaas.FTPSClient(ftpsClient))
+	state.Put("iaasClient", client)
 
 	state.Put("hook", hook)
 	state.Put("ui", ui)
