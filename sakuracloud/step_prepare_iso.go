@@ -19,7 +19,7 @@ func (s *stepPrepareISO) Run(ctx context.Context, state multistep.StateBag) mult
 	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
 
-	caller := state.Get("iaasClient").(iaas.Client).Caller
+	caller := state.Get("iaasClient").(*iaas.Client).Caller
 	isoImageOp := sacloud.NewCDROMOp(caller)
 
 	stepStartMsg(ui, s.Debug, "PrepareISO")

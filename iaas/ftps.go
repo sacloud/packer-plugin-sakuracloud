@@ -1,6 +1,8 @@
 package iaas
 
-import "os"
+import (
+	"os"
+)
 
 // FTPSClient represents SakuraCloud FTPS Client
 type FTPSClient interface {

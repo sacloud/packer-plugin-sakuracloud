@@ -7,8 +7,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/sacloud/libsacloud/v2/sacloud/types"
-
 	"github.com/hashicorp/packer/common"
 	"github.com/hashicorp/packer/helper/communicator"
 	"github.com/hashicorp/packer/helper/config"
@@ -16,6 +14,7 @@ import (
 	"github.com/hashicorp/packer/template/interpolate"
 	"github.com/mitchellh/mapstructure"
 	"github.com/sacloud/libsacloud/v2/sacloud/ostype"
+	"github.com/sacloud/libsacloud/v2/sacloud/types"
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 )
 

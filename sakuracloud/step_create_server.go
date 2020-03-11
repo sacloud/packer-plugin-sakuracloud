@@ -61,7 +61,7 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 
 	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
-	caller := state.Get("iaasClient").(iaas.Client).Caller
+	caller := state.Get("iaasClient").(*iaas.Client).Caller
 	serverOp := sacloud.NewServerOp(caller)
 	ctx := context.Background()
 
@@ -89,7 +89,7 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 
 func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) *serverBuilders.Builder {
 	c := state.Get("config").(Config)
-	caller := state.Get("iaasClient").(iaas.Client).Caller
+	caller := state.Get("iaasClient").(*iaas.Client).Caller
 
 	interfaceDriver := types.InterfaceDrivers.VirtIO
 	if c.DisableVirtIONetPCI {
@@ -100,7 +100,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) *server
 		Name:            constants.ServerName,
 		CPU:             c.Core,
 		MemoryGB:        c.MemorySize,
-		Commitment:      types.Commitments.Standard, // TODO
+		Commitment:      types.Commitments.Standard,
 		Generation:      types.PlanGenerations.Default,
 		InterfaceDriver: interfaceDriver,
 		BootAfterCreate: true,
@@ -115,7 +115,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) *server
 
 func (s *stepCreateServer) createDiskBuilder(state multistep.StateBag) []diskBuilders.Builder {
 	c := state.Get("config").(Config)
-	caller := state.Get("iaasClient").(iaas.Client).Caller
+	caller := state.Get("iaasClient").(*iaas.Client).Caller
 
 	director := diskBuilders.Director{
 		OSType:          ostype.StrToOSType(c.OSType),

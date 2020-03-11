@@ -20,7 +20,7 @@ func (s *stepPowerOff) Run(ctx context.Context, state multistep.StateBag) multis
 	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
 
-	caller := state.Get("iaasClient").(iaas.Client).Caller
+	caller := state.Get("iaasClient").(*iaas.Client).Caller
 	serverOp := sacloud.NewServerOp(caller)
 	serverID := state.Get("server_id").(types.ID)
 
