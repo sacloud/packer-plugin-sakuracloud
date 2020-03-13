@@ -60,6 +60,7 @@ type FlatConfig struct {
 	AccessToken               *string           `mapstructure:"access_token" cty:"access_token"`
 	AccessTokenSecret         *string           `mapstructure:"access_token_secret" cty:"access_token_secret"`
 	Zone                      *string           `mapstructure:"zone" cty:"zone"`
+	Zones                     []string          `mapstructure:"zones" cty:"zones"`
 	UserName                  *string           `mapstructure:"user_name" cty:"user_name"`
 	Password                  *string           `mapstructure:"password" cty:"password"`
 	UseUSKeyboard             *bool             `mapstructure:"us_keyboard" cty:"us_keyboard"`
@@ -154,6 +155,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"access_token":                 &hcldec.AttrSpec{Name: "access_token", Type: cty.String, Required: false},
 		"access_token_secret":          &hcldec.AttrSpec{Name: "access_token_secret", Type: cty.String, Required: false},
 		"zone":                         &hcldec.AttrSpec{Name: "zone", Type: cty.String, Required: false},
+		"zones":                        &hcldec.AttrSpec{Name: "zones", Type: cty.List(cty.String), Required: false},
 		"user_name":                    &hcldec.AttrSpec{Name: "user_name", Type: cty.String, Required: false},
 		"password":                     &hcldec.AttrSpec{Name: "password", Type: cty.String, Required: false},
 		"us_keyboard":                  &hcldec.AttrSpec{Name: "us_keyboard", Type: cty.Bool, Required: false},

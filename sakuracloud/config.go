@@ -37,9 +37,10 @@ type Config struct {
 	Comm                communicator.Config `mapstructure:",squash"`
 
 	// for API Auth
-	AccessToken       string `mapstructure:"access_token"`
-	AccessTokenSecret string `mapstructure:"access_token_secret"`
-	Zone              string `mapstructure:"zone"`
+	AccessToken       string   `mapstructure:"access_token"`
+	AccessTokenSecret string   `mapstructure:"access_token_secret"`
+	Zone              string   `mapstructure:"zone"`
+	Zones             []string `mapstructure:"zones"`
 
 	// for Communication
 	UserName      string `mapstructure:"user_name"`
@@ -133,6 +134,10 @@ func setDefaultConfig(c *Config) {
 	}
 	if c.AccessTokenSecret == "" {
 		c.AccessTokenSecret = os.Getenv("SAKURACLOUD_ACCESS_TOKEN_SECRET")
+	}
+
+	if len(c.Zones) == 0 {
+		c.Zones = []string{c.Zone}
 	}
 
 	if c.DiskConnection == "" {

@@ -260,6 +260,7 @@ github.com/sacloud/libsacloud/v2/sacloud/search/keys
 github.com/sacloud/libsacloud/v2/sacloud/trace
 github.com/sacloud/libsacloud/v2/sacloud/types
 github.com/sacloud/libsacloud/v2/utils/builder
+github.com/sacloud/libsacloud/v2/utils/builder/archive
 github.com/sacloud/libsacloud/v2/utils/builder/disk
 github.com/sacloud/libsacloud/v2/utils/builder/server
 github.com/sacloud/libsacloud/v2/utils/power
