@@ -138,6 +138,9 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 		&stepCreateArchive{
 			Debug: b.config.PackerDebug,
 		},
+		&stepTransferArchive{
+			Debug: b.config.PackerDebug,
+		},
 	}
 
 	if b.config.OSType == constants.TargetOSISO {
@@ -167,9 +170,11 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 	}
 
 	artifact := &Artifact{
-		archiveID:   state.Get("archive_id").(types.ID),
-		archiveName: state.Get("archive_name").(string),
-		client:      client.Archive,
+		archiveID:        state.Get("archive_id").(types.ID),
+		archiveName:      state.Get("archive_name").(string),
+		transferredIDs:   state.Get("transferred_ids").([]types.ID),
+		transferredZones: state.Get("transferred_zones").([]string),
+		client:           client.Archive,
 	}
 
 	return artifact, nil

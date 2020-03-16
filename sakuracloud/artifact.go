@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
 	"github.com/sacloud/packer-builder-sakuracloud/iaas"
@@ -17,6 +18,9 @@ type Artifact struct {
 
 	// archiveID is the ID of the image
 	archiveID types.ID
+
+	transferredIDs   []types.ID
+	transferredZones []string
 
 	// client is the SakuraCloud API client
 	client iaas.Archive
@@ -41,7 +45,15 @@ func (a *Artifact) Id() string {
 
 // String returns human-readable output that describes the artifact created.
 func (a *Artifact) String() string {
-	return fmt.Sprintf("A archive was created: %s (ID: %q)", a.archiveName, a.archiveID)
+	var transferred []string
+	for i := range a.transferredIDs {
+		transferred = append(transferred, fmt.Sprintf("%q in %s", a.transferredIDs[i], a.transferredZones[i]))
+	}
+	strTrans := ""
+	if len(transferred) > 0 {
+		strTrans = fmt.Sprintf("transferred: %s", strings.Join(transferred, ", "))
+	}
+	return fmt.Sprintf("A archive was created: %s (ID: %q) transferred: %s", a.archiveName, a.archiveID, strTrans)
 }
 
 // State allows the caller to ask for builder specific state information

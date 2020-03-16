@@ -112,6 +112,7 @@ Packer 1.5以降で利用できるHCLテンプレートに対応しています�
 ```hcl
 source "sakuracloud" "example" {
   zone = "is1b"
+  zones = ["is1a", "is1b", "tk1a", "tk1v"]
 
   os_type   = "centos7"
   password  = "TestUserPassword01"
@@ -157,7 +158,7 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 | 値                              | 説明                                                    |
 |-- -------------------------    | ------------------                                  --|
 | `centos`                       | CentOS(最新安定板)                                         |
-| `centos7`                      | CentOS 8                                              |
+| `centos8`                      | CentOS 8                                              |
 | `centos7`                      | CentOS 7                                              |
 | `centos6`                      | CentOS 6                                              |
 | `ubuntu`                       | Ubuntu(最新安定板)                                         |
@@ -192,6 +193,12 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 `iso`の場合の詳細は[ISOイメージ関連項目の指定について](#isoイメージ関連項目の指定について)を参照ください。
 
 ### オプション項目
+
+- `zones`: 作成したアーカイブを転送する宛先ゾーン名のリスト。以下のいずれかの値を指定(複数指定可)
+    - `is1a`: 石狩第1ゾーン
+    - `is1b`: 石狩第2ゾーン
+    - `tk1a`: 東京第1ゾーン
+    - `tk1v`: サンドボックス
 
 - `user_name`(string): SSH/WinRM接続時のユーザー名
 
