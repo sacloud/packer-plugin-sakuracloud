@@ -9,9 +9,9 @@ import (
 	"github.com/sacloud/libsacloud/v2/sacloud"
 	"github.com/sacloud/libsacloud/v2/sacloud/ostype"
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	diskBuilders "github.com/sacloud/libsacloud/v2/utils/builder/disk"
-	serverBuilders "github.com/sacloud/libsacloud/v2/utils/builder/server"
-	"github.com/sacloud/libsacloud/v2/utils/power"
+	diskBuilders "github.com/sacloud/libsacloud/v2/helper/builder/disk"
+	serverBuilders "github.com/sacloud/libsacloud/v2/helper/builder/server"
+	"github.com/sacloud/libsacloud/v2/helper/power"
 	"github.com/sacloud/packer-builder-sakuracloud/iaas"
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
 )
