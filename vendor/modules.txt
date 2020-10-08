@@ -83,11 +83,13 @@ github.com/dylanmei/iso8601
 github.com/fatih/structs
 # github.com/fsnotify/fsnotify v1.4.7
 github.com/fsnotify/fsnotify
-# github.com/go-playground/locales v0.12.1
+# github.com/go-playground/locales v0.13.0
 github.com/go-playground/locales
 github.com/go-playground/locales/currency
-# github.com/go-playground/universal-translator v0.16.0
+# github.com/go-playground/universal-translator v0.17.0
 github.com/go-playground/universal-translator
+# github.com/go-playground/validator/v10 v10.2.0
+github.com/go-playground/validator/v10
 # github.com/gofrs/flock v0.7.1
 github.com/gofrs/flock
 # github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9
@@ -200,7 +202,7 @@ github.com/jstemmer/go-junit-report/formatter
 github.com/jstemmer/go-junit-report/parser
 # github.com/kr/fs v0.0.0-20131111012553-2788f0dbd169
 github.com/kr/fs
-# github.com/leodido/go-urn v1.1.0
+# github.com/leodido/go-urn v1.2.0
 github.com/leodido/go-urn
 # github.com/masterzen/azure-sdk-for-go v0.0.0-20161014135628-ee4f0065d00c
 github.com/masterzen/azure-sdk-for-go/core/http
@@ -225,7 +227,7 @@ github.com/mitchellh/go-vnc
 github.com/mitchellh/go-wordwrap
 # github.com/mitchellh/iochan v1.0.0
 github.com/mitchellh/iochan
-# github.com/mitchellh/mapstructure v1.1.2
+# github.com/mitchellh/mapstructure v1.3.2
 github.com/mitchellh/mapstructure
 # github.com/mitchellh/reflectwalk v1.0.0
 github.com/mitchellh/reflectwalk
@@ -242,10 +244,18 @@ github.com/pkg/sftp
 github.com/pmezard/go-difflib/difflib
 # github.com/ryanuber/go-glob v0.0.0-20170128012129-256dc444b735
 github.com/ryanuber/go-glob
-# github.com/sacloud/ftps v0.0.0-20171205062625-42fc0f9886fe
+# github.com/sacloud/ftps v1.1.0
 github.com/sacloud/ftps
-# github.com/sacloud/libsacloud/v2 v2.3.0
+# github.com/sacloud/libsacloud/v2 v2.8.2
 github.com/sacloud/libsacloud/v2
+github.com/sacloud/libsacloud/v2/helper/builder
+github.com/sacloud/libsacloud/v2/helper/builder/archive
+github.com/sacloud/libsacloud/v2/helper/builder/disk
+github.com/sacloud/libsacloud/v2/helper/builder/server
+github.com/sacloud/libsacloud/v2/helper/power
+github.com/sacloud/libsacloud/v2/helper/query
+github.com/sacloud/libsacloud/v2/helper/setup
+github.com/sacloud/libsacloud/v2/helper/validate
 github.com/sacloud/libsacloud/v2/pkg/cidr
 github.com/sacloud/libsacloud/v2/pkg/mapconv
 github.com/sacloud/libsacloud/v2/pkg/mutexkv
@@ -259,13 +269,6 @@ github.com/sacloud/libsacloud/v2/sacloud/search
 github.com/sacloud/libsacloud/v2/sacloud/search/keys
 github.com/sacloud/libsacloud/v2/sacloud/trace
 github.com/sacloud/libsacloud/v2/sacloud/types
-github.com/sacloud/libsacloud/v2/utils/builder
-github.com/sacloud/libsacloud/v2/utils/builder/archive
-github.com/sacloud/libsacloud/v2/utils/builder/disk
-github.com/sacloud/libsacloud/v2/utils/builder/server
-github.com/sacloud/libsacloud/v2/utils/power
-github.com/sacloud/libsacloud/v2/utils/query
-github.com/sacloud/libsacloud/v2/utils/setup
 # github.com/stretchr/testify v1.4.0
 github.com/stretchr/testify/assert
 # github.com/ugorji/go v0.0.0-20151218193438-646ae4a518c1
@@ -447,8 +450,6 @@ google.golang.org/grpc/serviceconfig
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
-# gopkg.in/go-playground/validator.v9 v9.29.0
-gopkg.in/go-playground/validator.v9
 # gopkg.in/yaml.v2 v2.2.7
 gopkg.in/yaml.v2
 # honnef.co/go/tools v0.0.1-2019.2.3

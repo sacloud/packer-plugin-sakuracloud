@@ -6,9 +6,9 @@ import (
 	"github.com/sacloud/libsacloud/v2/sacloud"
 	"github.com/sacloud/libsacloud/v2/sacloud/accessor"
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	archiveBuilder "github.com/sacloud/libsacloud/v2/utils/builder/archive"
-	"github.com/sacloud/libsacloud/v2/utils/query"
-	"github.com/sacloud/libsacloud/v2/utils/setup"
+	archiveBuilder "github.com/sacloud/libsacloud/v2/helper/builder/archive"
+	"github.com/sacloud/libsacloud/v2/helper/query"
+	"github.com/sacloud/libsacloud/v2/helper/setup"
 )
 
 // Archive is responsible for API calls of archive handling
