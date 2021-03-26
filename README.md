@@ -1,44 +1,62 @@
 packer-plugin-sakuracloud
 ===
 
-[![Build Status](https://travis-ci.org/sacloud/packer-plugin-sakuracloud.svg?branch=master)](https://travis-ci.org/sacloud/packer-plugin-sakuracloud)
-[![Slack](https://slack.usacloud.jp/badge.svg)](https://slack.usacloud.jp/)  
+![Test Status](https://github.com/sacloud/packer-plugin-sakuracloud/workflows/Tests/badge.svg)
+[![Slack](https://img.shields.io/badge/Slack-Sacloud%20Workspace-brightgreen)](https://join.slack.com/t/sacloud/shared_invite/zt-k8ovnmqq-4V4gsZhOsBdCiLz9KaqRkA)
+[![License](https://img.shields.io/github/license/sacloud/packer-plugin-sakuracloud)](LICENSE)
+[![Version](https://img.shields.io/github/v/tag/sacloud/packer-plugin-sakuracloud)](https://github.com/sacloud/packer-plugin-sakuracloud/releases/latest)
+![Downloads](https://img.shields.io/github/downloads/sacloud/packer-plugin-sakuracloud/total)
 
-A builder plugin of packer for SakuraCloud
-
-さくらのクラウド用Packerプラグイン
+A plugin of packer for SAKURA Cloud / さくらのクラウド用Packerプラグイン
 
 ## 概要
 
 `packer-plugin-sakuracloud`は[さくらのクラウド](http://cloud.sakura.ad.jp)での
 アーカイブ(構築済みOSのテンプレート)を[Packer](https://packer.io)で作成するためのPackerプラグインです。
 
-## 使い方(セットアップ)
+## 必要なもの
 
-`packer-plugin-sakuracloud`を実行するには、さくらのクラウドAPIキーが必要です。
+- `packer` v1.7+
+- さくらのクラウド APIキー
 
-あらかじめコントロールパネルからAPIキーを発行しておいてください。
+> :warning: `packer-plugin-sakuracloud` v0.7以降では`packer` v1.7以降が必要となります。  
+> 1.7以前の`packer`を利用したい場合はv0.7より古いバージョンをご利用ください。
 
-セットアップは以下のような方法があります。お好きな方をご利用ください。
+## 実行方法
 
- - ローカルマシンにインストール
- - Dockerを利用する
- - (macOS + Homebrew)`homebrew`でインストール
+以下の何かの方法でプラグインをインストールして`packer`コマンドを実行します。
 
-### ローカルマシンへのインストール
+- `packer init`を利用(HCLテンプレートのみ)
+- プラグインの手動インストール
+
+### `packer init`を利用
+
+HCLテンプレートでのみ利用可能です。  
+テンプレートに以下のような`required_plugin`ブロックを記載し`packer init`でプラグインをインストールします。
+
+```hcl
+packer {
+  required_plugins {
+    sakuracloud = {
+      version = ">= 0.7.0"
+      source = "github.com/sacloud/sakuracloud"
+    }
+  }
+}
+```
+
+### プラグインの手動インストール
 
 [リリースページ](https://github.com/sacloud/packer-plugin-sakuracloud/releases/latest)から各プラットフォーム用のバイナリをダウンロードし、
-以下の何れかのディレクトリへ展開、実行権を付与してください。
+以下のドキュメントに記載されている所定のディレクトリに配置します。
 
-- 1) `packer`コマンドが格納されているディレクトリ
-- 2) Unix系OSの場合 `~/.packer.d/plugins` , Windows系OSの場合`%APPDATA%/packer.d/plugins`
+https://www.packer.io/docs/plugins
 
-### Dockerを利用する場合
+## Dockerでの実行
 
-Dockerを利用する場合、`packer-plugin-sakuracloud`の事前のインストール作業は不要です。
-DockerHubでイメージを公開していますので、以下のように実行できます。
+Dockerで実行する場合、以下のように実行します。
 
-    docker run -it --rm sacloud/packer:latest [packerサブコマンド] [packerオプション]
+    docker run -it --rm ghcr.io/sacloud/packer:latest [packerサブコマンド] [packerオプション]
 
 APIキーを環境変数で指定する場合、`-e`オプションなどを適切に指定して実行してください。
 
@@ -47,16 +65,15 @@ APIキーを環境変数で指定する場合、`-e`オプションなどを適�
              -e SAKURACLOUD_ACCESS_TOKEN \
              -e SAKURACLOUD_ACCESS_TOKEN_SECRET \
              -v $PWD:/work \
-             sacloud/packer:latest build example.json
+             -w /work \
+             ghcr.io/sacloud/packer:latest build example.pkr.hcl
+
+> :bulb: `ghcr.io/sacloud/packer`にはプラグインが手動インストール済みです。このため`packer init`は不要です。  
 
 ### `homebrew`を利用する場合(macOSでHomebrewをご利用の場合)
 
-以下のコマンドでインストール可能です。
-
-    brew tap sacloud/homebrew-packer-plugin-sakuracloud; brew install packer-plugin-sakuracloud
-
-インストール後は画面に表示される指示にしたがってコマンドを実行し、`~/.packer.d/plugins`配下にシンボリックリンクを作成します。
-
+v0.7以降`homebrew`はサポートされなくなりました。  
+`packer init`、またはプラグインの手動インストールにてご利用ください。
 
 ## 使い方(アーカイブ作成)
 
@@ -68,10 +85,58 @@ APIキーを環境変数に設定しておきます。
     $ export SAKURACLOUD_ACCESS_TOKEN=[APIトークン]
     $ export SAKURACLOUD_ACCESS_TOKEN_SECRET=[APIシークレット]
 
-#### テンプレートファイル(JSON)の作成
+#### テンプレートファイルの作成(HCL)
 
-Packerでのビルド用に以下のようなJSONファイルを作成します。
-以下の例は、石狩第2ゾーン(`is1b`)に、CentOSパブリックアーカイブをベースとしたアーカイブを作成します。
+Packer 1.5以降で利用できるHCLテンプレートに対応しています。
+
+> :bulb: JSONテンプレートを利用したい場合は次節`テンプレートファイルの作成(JSON)`を参照してください。
+
+以下の様なファイルを作成し拡張子を`.pkr.hcl`とすることで`packer build`が実行できます。
+
+```hcl
+# Dockerから利用、またはプラグインの手動インストールを行う場合は以下のブロックをコメントアウトしてください。
+packer {
+  required_plugins {
+    sakuracloud = {
+      version = ">= 0.7.0"
+      source = "github.com/sacloud/sakuracloud"
+    }
+  }
+}
+
+source "sakuracloud" "example" {
+  zone = "is1b" # アーカイブを作成する対象ゾーン
+  zones = ["is1a", "is1b", "tk1a", "tk1v"] # 作成したアーカイブを転送する宛先ゾーン
+
+  os_type   = "centos7"
+  password  = "TestUserPassword01"
+  disk_size = 20
+  disk_plan = "ssd"
+
+  core        = 2
+  memory_size = 4
+
+  archive_name        = "packer-example-centos"
+  archive_description = "description of archive"
+}
+
+build {
+  sources = [
+    "source.sakuracloud.example"
+  ]
+  provisioner "shell" {
+    inline = [
+      "yum update -y",
+      "curl -fsSL https://get.docker.com/ | sh",
+      "systemctl enable docker.service",
+    ]
+  }
+}
+```
+
+#### テンプレートファイルの作成(JSON)
+
+以下の例は石狩第2ゾーン(`is1b`)に、CentOSパブリックアーカイブをベースとしたアーカイブを作成します。
 プロビジョニングとして、`shell`にてdockerのインストールを行なっています。
 
 #### packer用jsonファイルの例
@@ -104,41 +169,6 @@ EOF
 さくらのクラウド上のパブリックアーカイブだけでなく、ISOイメージからの構築も可能です。
 詳細は[テンプレートのサンプル](#テンプレートサンプル)を参照してください。
 
-#### テンプレートファイル(HCL)の作成
-
-Packer 1.5以降で利用できるHCLテンプレートに対応しています。 
-以下の様なファイルを作成し拡張子を`.pkr.hcl`とすることで`packer build`が実行できます。
-
-```hcl
-source "sakuracloud" "example" {
-  zone = "is1b"
-  zones = ["is1a", "is1b", "tk1a", "tk1v"]
-
-  os_type   = "centos7"
-  password  = "TestUserPassword01"
-  disk_size = 20
-  disk_plan = "ssd"
-
-  core        = 2
-  memory_size = 4
-
-  archive_name        = "packer-example-centos"
-  archive_description = "description of archive"
-}
-
-build {
-  sources = [
-    "source.sakuracloud.example"
-  ]
-  provisioner "shell" {
-    inline = [
-      "yum update -y",
-      "curl -fsSL https://get.docker.com/ | sh",
-      "systemctl enable docker.service",
-    ]
-  }
-}
-```
 
 
 ## オプション一覧
@@ -155,34 +185,33 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 - `os_type`(string): ベースとするアーカイブの種別。以下の値が指定可能です。
 
-| 値                              | 説明                                 |
-|-- -------------------------    | ------------------               --|
-| `centos`                       | CentOS(最新安定板)                      |
-| `centos8`                      | CentOS 8                           |
-| `centos7`                      | CentOS 7                           |
-| `centos6`                      | CentOS 6                           |
-| `ubuntu`                       | Ubuntu(最新安定板)                      |
-| `ubuntu2004`                   | Ubuntu 20.04                       |
-| `ubuntu1804`                   | Ubuntu 18.04                       |
-| `ubuntu1604`                   | Ubuntu 16.04                       |
-| `debian`                       | Debian(最新安定板)                      |
-| `debian10`                     | Debian10                           |
-| `debian9`                      | Debian9                            |
-| `coreos`                       | CoreOS                             |
-| `rancheros`                    | RancherOS                          |
-| `k3os`                         | k3OS                               |
-| `kusanagi`                     | Kusanagi(CentOS7)                  |
-| `freebsd`                      | FreeBSD                            |
-| `windows2016`                  | Windows 2016                       |
-| `windows2016-rds`              | Windows 2016(RDS)                  |
-| `windows2016-rds-office`       | Windows 2016(RDS + Office)         |
-| `windows2016-sql-web`          | Windows 2016 SQLServer(Web)        |
-| `windows2016-sql-standard`     | Windows 2016 SQLServer(Standard)   |
-| `windows2016-sql-standard-all` | Windows 2016 SQLServer(RDS+Office) |
-| `windows2019`                  | Windows 2019 Datacenter Edition    |
-| `custom`                       | 任意のアーカイブID/ディスクIDを指定する場合           |
+| 値                              | 説明                                                    |
+|--------------------------------|-------------------------------------------------------|
+| `centos`                       | CentOS(最新安定板)                                         |
+| `centos8`                      | CentOS 8                                              |
+| `centos7`                      | CentOS 7                                              |
+| `centos6`                      | CentOS 6                                              |
+| `ubuntu`                       | Ubuntu(最新安定板)                                         |
+| `ubuntu2004`                   | Ubuntu 20.04                                          |
+| `ubuntu1804`                   | Ubuntu 18.04                                          |
+| `ubuntu1604`                   | Ubuntu 16.04                                          |
+| `debian`                       | Debian(最新安定板)                                         |
+| `debian10`                     | Debian10                                              |
+| `debian9`                      | Debian9                                               |
+| `coreos`                       | CoreOS                                                |
+| `rancheros`                    | RancherOS                                             |
+| `k3os`                         | k3OS                                                  |
+| `kusanagi`                     | Kusanagi(CentOS7)                                     |
+| `freebsd`                      | FreeBSD                                               |
+| `windows2016`                  | Windows 2016                                          |
+| `windows2016-rds`              | Windows 2016(RDS)                                     |
+| `windows2016-rds-office`       | Windows 2016(RDS + Office)                            |
+| `windows2016-sql-web`          | Windows 2016 SQLServer(Web)                           |
+| `windows2016-sql-standard`     | Windows 2016 SQLServer(Standard)                      |
+| `windows2016-sql-standard-all` | Windows 2016 SQLServer(RDS+Office)                    |
+| `windows2019`                  | Windows 2019 Datacenter Edition                       |
+| `custom`                       | 任意のアーカイブID/ディスクIDを指定する場合                              |
 | `iso`                          | さくらのクラウド上のISOイメージ、<br />またはURLを指定してISOイメージをダウンロードする場合 |
-
 
 `os_type`が`custom`の場合、`source_archive` 又は `source_disk`の何れかの指定が必須です。
 
@@ -199,6 +228,7 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
     - `is1a`: 石狩第1ゾーン
     - `is1b`: 石狩第2ゾーン
     - `tk1a`: 東京第1ゾーン
+    - `tk1b`: 東京第2ゾーン
     - `tk1v`: サンドボックス
 
 - `user_name`(string): SSH/WinRM接続時のユーザー名
@@ -349,10 +379,6 @@ PackerがISOイメージのダウンロードを行い、さくらのクラウ�
  - [[CentOS]](examples/centos): CentOSパブリックアーカイブからの構築
  - [[CoreOS]](examples/coreos): CoreOSパブリックアーカイブからの構築
  - [[Ubuntu]](examples/ubuntu): Ubuntuパブリックアーカイブからの構築
- - [[VyOS]](examples/vyos): VyOSパブリックアーカイブから`boot_command`でSSHを有効にする構成
- 
-    VyOSパブリックアーカイブからサーバーを作成した場合、デフォルトの状態ではSSH接続ができないため、`boot_command`にてSSHを有効化しています。
-    
  - [[Windows]](examples/windows): Windows Server 2012パブリックアーカイブから、`boot_command`でWinRMを有効にする構成
  - [[Windows2016]](examples/windows2016): Windows Server 2016パブリックアーカイブから、`boot_command`でWinRMを有効にする構成
  
@@ -369,12 +395,10 @@ PackerがISOイメージのダウンロードを行い、さくらのクラウ�
  - [[CentOS]](examples/centos_iso): さくらのクラウド上のCentOS ISOイメージからの構築(ISOイメージをダウンロードするサンプルもあります)
  - [[Scientific Linux]](examples/scientific_linux): さくらのクラウド上のScienfitic Linux ISOイメージからの構築
  - [[Ubuntu]](examples/ubuntu_iso): さくらのクラウド上のUbuntu ISOイメージからの構築
- - [[VyOS]](examples/vyos_iso): VyOSISOイメージのダウンロード〜構築(参考元:https://github.com/higebu/packer-templates)
-
 
 ## License
 
-  `packer-plugin-sakuracloud` Copyright (C) 2016-2020 Kazumichi Yamamoto.
+  `packer-plugin-sakuracloud` Copyright (C) 2016-2021 Kazumichi Yamamoto.
 
   This project is published under [MPL-2.0](LICENSE).
   
