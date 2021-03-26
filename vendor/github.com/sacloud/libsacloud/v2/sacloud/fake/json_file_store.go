@@ -1,4 +1,4 @@
-// Copyright 2016-2020 The Libsacloud Authors
+// Copyright 2016-2021 The Libsacloud Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"reflect"
 	"sort"
@@ -26,7 +25,7 @@ import (
 	"sync"
 
 	"github.com/fatih/structs"
-
+	"github.com/mitchellh/go-homedir"
 	"github.com/sacloud/libsacloud/v2/sacloud"
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
 )
@@ -169,6 +168,14 @@ func (s *JSONFileStore) Init() error {
 	if s.Path == "" {
 		s.Path = defaultJSONFilePath
 	}
+
+	// expand filepath
+	path, err := homedir.Expand(s.Path)
+	if err != nil {
+		return err
+	}
+	s.Path = path
+
 	if stat, err := os.Stat(s.Path); err == nil {
 		if stat.IsDir() {
 			return fmt.Errorf("path %q is directory", s.Path)
@@ -259,6 +266,7 @@ var jsonResourceTypeMap = map[string]func() interface{}{
 	ResourceDisk:              func() interface{} { return &sacloud.Disk{} },
 	ResourceDiskPlan:          func() interface{} { return &sacloud.DiskPlan{} },
 	ResourceDNS:               func() interface{} { return &sacloud.DNS{} },
+	ResourceESME:              func() interface{} { return &sacloud.ESME{} },
 	ResourceGSLB:              func() interface{} { return &sacloud.GSLB{} },
 	ResourceIcon:              func() interface{} { return &sacloud.Icon{} },
 	ResourceInterface:         func() interface{} { return &sacloud.Interface{} },
@@ -270,6 +278,7 @@ var jsonResourceTypeMap = map[string]func() interface{}{
 	ResourceLicense:           func() interface{} { return &sacloud.License{} },
 	ResourceLicenseInfo:       func() interface{} { return &sacloud.LicenseInfo{} },
 	ResourceLoadBalancer:      func() interface{} { return &sacloud.LoadBalancer{} },
+	ResourceLocalRouter:       func() interface{} { return &sacloud.LocalRouter{} },
 	ResourceMobileGateway:     func() interface{} { return &sacloud.MobileGateway{} },
 	ResourceNFS:               func() interface{} { return &sacloud.NFS{} },
 	ResourceNote:              func() interface{} { return &sacloud.Note{} },
@@ -292,6 +301,10 @@ var jsonResourceTypeMap = map[string]func() interface{}{
 
 	valuePoolResourceKey:         func() interface{} { return &valuePool{} },
 	"BillDetails":                func() interface{} { return &[]*sacloud.BillDetail{} },
+	"ContainerRegistryUsers":     func() interface{} { return &[]*sacloud.ContainerRegistryUser{} },
+	"DatabaseParameter":          func() interface{} { return map[string]interface{}{} },
+	"ESMELogs":                   func() interface{} { return &[]*sacloud.ESMELogs{} },
+	"LocalRouterStatus":          func() interface{} { return &sacloud.LocalRouterHealth{} },
 	"MobileGatewayDNS":           func() interface{} { return &sacloud.MobileGatewayDNSSetting{} },
 	"MobileGatewaySIMRoutes":     func() interface{} { return &[]*sacloud.MobileGatewaySIMRoute{} },
 	"MobileGatewaySIMs":          func() interface{} { return &[]*sacloud.MobileGatewaySIMInfo{} },
@@ -317,14 +330,14 @@ func (s *JSONFileStore) store() error {
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(s.Path, data, 0600)
+	return os.WriteFile(s.Path, data, 0600)
 }
 
 func (s *JSONFileStore) load() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	data, err := ioutil.ReadFile(s.Path)
+	data, err := os.ReadFile(s.Path)
 	if err != nil {
 		return err
 	}

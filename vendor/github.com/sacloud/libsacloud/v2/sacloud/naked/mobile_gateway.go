@@ -1,4 +1,4 @@
-// Copyright 2016-2020 The Libsacloud Authors
+// Copyright 2016-2021 The Libsacloud Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,8 +62,11 @@ func (i *MobileGatewayInterfaces) UnmarshalJSON(b []byte) error {
 	}
 
 	var dest []*Interface
-	for _, v := range a {
+	for i, v := range a {
 		if v != nil {
+			if v.Index == 0 {
+				v.Index = i
+			}
 			dest = append(dest, v)
 		}
 	}

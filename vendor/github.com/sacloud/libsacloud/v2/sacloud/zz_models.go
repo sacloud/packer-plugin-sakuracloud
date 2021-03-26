@@ -1,4 +1,4 @@
-// Copyright 2016-2020 The Libsacloud Authors
+// Copyright 2016-2021 The Libsacloud Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ import (
 // Archive represents API parameter/response structure
 type Archive struct {
 	ID                        types.ID
-	Name                      string `validate:"required"`
-	Description               string `validate:"min=0,max=512"`
+	Name                      string
+	Description               string
 	Tags                      types.Tags
 	DisplayOrder              int64
 	Availability              types.EAvailability
@@ -65,8 +65,8 @@ func (o *Archive) Validate() error {
 func (o *Archive) setDefaults() interface{} {
 	return &struct {
 		ID                        types.ID
-		Name                      string `validate:"required"`
-		Description               string `validate:"min=0,max=512"`
+		Name                      string
+		Description               string
 		Tags                      types.Tags
 		DisplayOrder              int64
 		Availability              types.EAvailability
@@ -485,7 +485,7 @@ func (o *BundleInfo) SetServiceClass(v string) {
 // Storage represents API parameter/response structure
 type Storage struct {
 	ID         types.ID
-	Name       string `validate:"required"`
+	Name       string
 	Class      string `json:",omitempty" mapconv:",omitempty"`
 	Generation int    `json:",omitempty" mapconv:",omitempty"`
 }
@@ -499,7 +499,7 @@ func (o *Storage) Validate() error {
 func (o *Storage) setDefaults() interface{} {
 	return &struct {
 		ID         types.ID
-		Name       string `validate:"required"`
+		Name       string
 		Class      string `json:",omitempty" mapconv:",omitempty"`
 		Generation int    `json:",omitempty" mapconv:",omitempty"`
 	}{
@@ -753,8 +753,8 @@ func (o *FindCondition) SetExclude(v []string) {
 type ArchiveCreateRequest struct {
 	SourceDiskID    types.ID `mapconv:"SourceDisk.ID,omitempty"`
 	SourceArchiveID types.ID `mapconv:"SourceArchive.ID,omitempty"`
-	Name            string   `validate:"required"`
-	Description     string   `validate:"min=0,max=512"`
+	Name            string
+	Description     string
 	Tags            types.Tags
 	IconID          types.ID `mapconv:"Icon.ID"`
 }
@@ -769,8 +769,8 @@ func (o *ArchiveCreateRequest) setDefaults() interface{} {
 	return &struct {
 		SourceDiskID    types.ID `mapconv:"SourceDisk.ID,omitempty"`
 		SourceArchiveID types.ID `mapconv:"SourceArchive.ID,omitempty"`
-		Name            string   `validate:"required"`
-		Description     string   `validate:"min=0,max=512"`
+		Name            string
+		Description     string
 		Tags            types.Tags
 		IconID          types.ID `mapconv:"Icon.ID"`
 	}{
@@ -942,8 +942,8 @@ func (o *FTPServer) SetPassword(v string) {
 // ArchiveCreateBlankRequest represents API parameter/response structure
 type ArchiveCreateBlankRequest struct {
 	SizeMB      int
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
 }
@@ -957,8 +957,8 @@ func (o *ArchiveCreateBlankRequest) Validate() error {
 func (o *ArchiveCreateBlankRequest) setDefaults() interface{} {
 	return &struct {
 		SizeMB      int
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
 	}{
@@ -1056,8 +1056,8 @@ func (o *ArchiveCreateBlankRequest) SetIconID(v types.ID) {
 
 // ArchiveUpdateRequest represents API parameter/response structure
 type ArchiveUpdateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
 }
@@ -1070,8 +1070,8 @@ func (o *ArchiveUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *ArchiveUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
 	}{
@@ -1214,8 +1214,8 @@ func (o *ArchiveShareInfo) SetSharedKey(v types.ArchiveShareKey) {
 
 // ArchiveCreateRequestFromShared represents API parameter/response structure
 type ArchiveCreateRequestFromShared struct {
-	Name            string `validate:"required"`
-	Description     string `validate:"min=0,max=512"`
+	Name            string
+	Description     string
 	Tags            types.Tags
 	IconID          types.ID `mapconv:"Icon.ID"`
 	SourceSharedKey types.ArchiveShareKey
@@ -1229,8 +1229,8 @@ func (o *ArchiveCreateRequestFromShared) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *ArchiveCreateRequestFromShared) setDefaults() interface{} {
 	return &struct {
-		Name            string `validate:"required"`
-		Description     string `validate:"min=0,max=512"`
+		Name            string
+		Description     string
 		Tags            types.Tags
 		IconID          types.ID `mapconv:"Icon.ID"`
 		SourceSharedKey types.ArchiveShareKey
@@ -1320,8 +1320,8 @@ func (o *ArchiveCreateRequestFromShared) SetSourceSharedKey(v types.ArchiveShare
 // ArchiveTransferRequest represents API parameter/response structure
 type ArchiveTransferRequest struct {
 	SizeMB      int
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
 }
@@ -1335,8 +1335,8 @@ func (o *ArchiveTransferRequest) Validate() error {
 func (o *ArchiveTransferRequest) setDefaults() interface{} {
 	return &struct {
 		SizeMB      int
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
 	}{
@@ -1611,8 +1611,8 @@ func (o *AuthStatus) SetPermission(v types.EPermission) {
 // AutoBackup represents API parameter/response structure
 type AutoBackup struct {
 	ID                      types.ID
-	Name                    string `validate:"required"`
-	Description             string `validate:"min=0,max=512"`
+	Name                    string
+	Description             string
 	Tags                    types.Tags
 	Availability            types.EAvailability
 	IconID                  types.ID `mapconv:"Icon.ID"`
@@ -1636,8 +1636,8 @@ func (o *AutoBackup) Validate() error {
 func (o *AutoBackup) setDefaults() interface{} {
 	return &struct {
 		ID                      types.ID
-		Name                    string `validate:"required"`
-		Description             string `validate:"min=0,max=512"`
+		Name                    string
+		Description             string
 		Tags                    types.Tags
 		Availability            types.EAvailability
 		IconID                  types.ID `mapconv:"Icon.ID"`
@@ -1868,8 +1868,8 @@ type AutoBackupCreateRequest struct {
 	DiskID                  types.ID                   `mapconv:"Status.DiskID"`
 	BackupSpanWeekdays      []types.EBackupSpanWeekday `mapconv:"Settings.Autobackup.BackupSpanWeekdays"`
 	MaximumNumberOfArchives int                        `mapconv:"Settings.Autobackup.MaximumNumberOfArchives"`
-	Name                    string                     `validate:"required"`
-	Description             string                     `validate:"min=0,max=512"`
+	Name                    string
+	Description             string
 	Tags                    types.Tags
 	IconID                  types.ID `mapconv:"Icon.ID"`
 }
@@ -1885,8 +1885,8 @@ func (o *AutoBackupCreateRequest) setDefaults() interface{} {
 		DiskID                  types.ID                   `mapconv:"Status.DiskID"`
 		BackupSpanWeekdays      []types.EBackupSpanWeekday `mapconv:"Settings.Autobackup.BackupSpanWeekdays"`
 		MaximumNumberOfArchives int                        `mapconv:"Settings.Autobackup.MaximumNumberOfArchives"`
-		Name                    string                     `validate:"required"`
-		Description             string                     `validate:"min=0,max=512"`
+		Name                    string
+		Description             string
 		Tags                    types.Tags
 		IconID                  types.ID              `mapconv:"Icon.ID"`
 		Class                   string                `mapconv:"Provider.Class"`
@@ -2000,8 +2000,8 @@ func (o *AutoBackupCreateRequest) SetIconID(v types.ID) {
 
 // AutoBackupUpdateRequest represents API parameter/response structure
 type AutoBackupUpdateRequest struct {
-	Name                    string `validate:"required"`
-	Description             string `validate:"min=0,max=512"`
+	Name                    string
+	Description             string
 	Tags                    types.Tags
 	IconID                  types.ID                   `mapconv:"Icon.ID"`
 	BackupSpanWeekdays      []types.EBackupSpanWeekday `mapconv:"Settings.Autobackup.BackupSpanWeekdays"`
@@ -2017,8 +2017,8 @@ func (o *AutoBackupUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *AutoBackupUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name                    string `validate:"required"`
-		Description             string `validate:"min=0,max=512"`
+		Name                    string
+		Description             string
 		Tags                    types.Tags
 		IconID                  types.ID                   `mapconv:"Icon.ID"`
 		BackupSpanWeekdays      []types.EBackupSpanWeekday `mapconv:"Settings.Autobackup.BackupSpanWeekdays"`
@@ -2327,7 +2327,7 @@ func (o *Bill) SetPaymentClassID(v types.ID) {
 type BillDetail struct {
 	ID               types.ID
 	Amount           int64
-	Description      string `validate:"min=0,max=512"`
+	Description      string
 	ServiceClassID   types.ID
 	ServiceClassPath string
 	Usage            int64
@@ -2347,7 +2347,7 @@ func (o *BillDetail) setDefaults() interface{} {
 	return &struct {
 		ID               types.ID
 		Amount           int64
-		Description      string `validate:"min=0,max=512"`
+		Description      string
 		ServiceClassID   types.ID
 		ServiceClassPath string
 		Usage            int64
@@ -2594,8 +2594,8 @@ func (o *BillDetailCSV) SetBodyRows(v [][]string) {
 // Bridge represents API parameter/response structure
 type Bridge struct {
 	ID           types.ID
-	Name         string `validate:"required"`
-	Description  string `validate:"min=0,max=512"`
+	Name         string
+	Description  string
 	CreatedAt    time.Time
 	Region       *Region       `json:",omitempty"`
 	BridgeInfo   []*BridgeInfo `mapconv:"Info.[]Switches,recursive"`
@@ -2611,8 +2611,8 @@ func (o *Bridge) Validate() error {
 func (o *Bridge) setDefaults() interface{} {
 	return &struct {
 		ID           types.ID
-		Name         string `validate:"required"`
-		Description  string `validate:"min=0,max=512"`
+		Name         string
+		Description  string
 		CreatedAt    time.Time
 		Region       *Region       `json:",omitempty"`
 		BridgeInfo   []*BridgeInfo `mapconv:"Info.[]Switches,recursive"`
@@ -2725,8 +2725,8 @@ func (o *Bridge) SetSwitchInZone(v *BridgeSwitchInfo) {
 // Region represents API parameter/response structure
 type Region struct {
 	ID          types.ID
-	Name        string   `validate:"required"`
-	Description string   `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	NameServers []string `json:",omitempty" mapconv:",omitempty"`
 }
 
@@ -2739,8 +2739,8 @@ func (o *Region) Validate() error {
 func (o *Region) setDefaults() interface{} {
 	return &struct {
 		ID          types.ID
-		Name        string   `validate:"required"`
-		Description string   `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		NameServers []string `json:",omitempty" mapconv:",omitempty"`
 	}{
 		ID:          o.GetID(),
@@ -2817,7 +2817,7 @@ func (o *Region) SetNameServers(v []string) {
 // BridgeInfo represents API parameter/response structure
 type BridgeInfo struct {
 	ID       types.ID
-	Name     string   `validate:"required"`
+	Name     string
 	ZoneID   types.ID `mapconv:"Zone.ID"`
 	ZoneName string   `mapconv:"Zone.Name"`
 }
@@ -2831,7 +2831,7 @@ func (o *BridgeInfo) Validate() error {
 func (o *BridgeInfo) setDefaults() interface{} {
 	return &struct {
 		ID       types.ID
-		Name     string   `validate:"required"`
+		Name     string
 		ZoneID   types.ID `mapconv:"Zone.ID"`
 		ZoneName string   `mapconv:"Zone.Name"`
 	}{
@@ -2909,7 +2909,7 @@ func (o *BridgeInfo) SetZoneName(v string) {
 // BridgeSwitchInfo represents API parameter/response structure
 type BridgeSwitchInfo struct {
 	ID             types.ID
-	Name           string `validate:"required"`
+	Name           string
 	Scope          types.EScope
 	ServerCount    int
 	ApplianceCount int
@@ -2924,7 +2924,7 @@ func (o *BridgeSwitchInfo) Validate() error {
 func (o *BridgeSwitchInfo) setDefaults() interface{} {
 	return &struct {
 		ID             types.ID
-		Name           string `validate:"required"`
+		Name           string
 		Scope          types.EScope
 		ServerCount    int
 		ApplianceCount int
@@ -3013,8 +3013,8 @@ func (o *BridgeSwitchInfo) SetApplianceCount(v int) {
 
 // BridgeCreateRequest represents API parameter/response structure
 type BridgeCreateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 }
 
 // Validate validates by field tags
@@ -3025,8 +3025,8 @@ func (o *BridgeCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *BridgeCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 	}{
 		Name:        o.GetName(),
 		Description: o.GetDescription(),
@@ -3059,8 +3059,8 @@ func (o *BridgeCreateRequest) SetDescription(v string) {
 
 // BridgeUpdateRequest represents API parameter/response structure
 type BridgeUpdateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 }
 
 // Validate validates by field tags
@@ -3071,8 +3071,8 @@ func (o *BridgeUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *BridgeUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 	}{
 		Name:        o.GetName(),
 		Description: o.GetDescription(),
@@ -3106,8 +3106,8 @@ func (o *BridgeUpdateRequest) SetDescription(v string) {
 // CDROM represents API parameter/response structure
 type CDROM struct {
 	ID           types.ID
-	Name         string `validate:"required"`
-	Description  string `validate:"min=0,max=512"`
+	Name         string
+	Description  string
 	DisplayOrder int64
 	Tags         types.Tags
 	Availability types.EAvailability
@@ -3128,8 +3128,8 @@ func (o *CDROM) Validate() error {
 func (o *CDROM) setDefaults() interface{} {
 	return &struct {
 		ID           types.ID
-		Name         string `validate:"required"`
-		Description  string `validate:"min=0,max=512"`
+		Name         string
+		Description  string
 		DisplayOrder int64
 		Tags         types.Tags
 		Availability types.EAvailability
@@ -3332,8 +3332,8 @@ func (o *CDROM) SetModifiedAt(v time.Time) {
 // CDROMCreateRequest represents API parameter/response structure
 type CDROMCreateRequest struct {
 	SizeMB      int
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
 }
@@ -3347,8 +3347,8 @@ func (o *CDROMCreateRequest) Validate() error {
 func (o *CDROMCreateRequest) setDefaults() interface{} {
 	return &struct {
 		SizeMB      int
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
 	}{
@@ -3446,8 +3446,8 @@ func (o *CDROMCreateRequest) SetIconID(v types.ID) {
 
 // CDROMUpdateRequest represents API parameter/response structure
 type CDROMUpdateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
 }
@@ -3460,8 +3460,8 @@ func (o *CDROMUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *CDROMUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
 	}{
@@ -3539,8 +3539,8 @@ func (o *CDROMUpdateRequest) SetIconID(v types.ID) {
 // ContainerRegistry represents API parameter/response structure
 type ContainerRegistry struct {
 	ID             types.ID
-	Name           string `validate:"required"`
-	Description    string `validate:"min=0,max=512"`
+	Name           string
+	Description    string
 	Tags           types.Tags
 	Availability   types.EAvailability
 	IconID         types.ID `mapconv:"Icon.ID"`
@@ -3562,8 +3562,8 @@ func (o *ContainerRegistry) Validate() error {
 func (o *ContainerRegistry) setDefaults() interface{} {
 	return &struct {
 		ID             types.ID
-		Name           string `validate:"required"`
-		Description    string `validate:"min=0,max=512"`
+		Name           string
+		Description    string
 		Tags           types.Tags
 		Availability   types.EAvailability
 		IconID         types.ID `mapconv:"Icon.ID"`
@@ -3767,8 +3767,8 @@ func (o *ContainerRegistry) SetFQDN(v string) {
 
 // ContainerRegistryCreateRequest represents API parameter/response structure
 type ContainerRegistryCreateRequest struct {
-	Name           string `validate:"required"`
-	Description    string `validate:"min=0,max=512"`
+	Name           string
+	Description    string
 	Tags           types.Tags
 	IconID         types.ID                            `mapconv:"Icon.ID"`
 	AccessLevel    types.EContainerRegistryAccessLevel `mapconv:"Settings.ContainerRegistry.Public"`
@@ -3784,8 +3784,8 @@ func (o *ContainerRegistryCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *ContainerRegistryCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name           string `validate:"required"`
-		Description    string `validate:"min=0,max=512"`
+		Name           string
+		Description    string
 		Tags           types.Tags
 		IconID         types.ID                            `mapconv:"Icon.ID"`
 		AccessLevel    types.EContainerRegistryAccessLevel `mapconv:"Settings.ContainerRegistry.Public"`
@@ -3900,8 +3900,8 @@ func (o *ContainerRegistryCreateRequest) SetSubDomainLabel(v string) {
 
 // ContainerRegistryUpdateRequest represents API parameter/response structure
 type ContainerRegistryUpdateRequest struct {
-	Name          string `validate:"required"`
-	Description   string `validate:"min=0,max=512"`
+	Name          string
+	Description   string
 	Tags          types.Tags
 	IconID        types.ID                            `mapconv:"Icon.ID"`
 	AccessLevel   types.EContainerRegistryAccessLevel `mapconv:"Settings.ContainerRegistry.Public"`
@@ -3917,8 +3917,8 @@ func (o *ContainerRegistryUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *ContainerRegistryUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name          string `validate:"required"`
-		Description   string `validate:"min=0,max=512"`
+		Name          string
+		Description   string
 		Tags          types.Tags
 		IconID        types.ID                            `mapconv:"Icon.ID"`
 		AccessLevel   types.EContainerRegistryAccessLevel `mapconv:"Settings.ContainerRegistry.Public"`
@@ -4407,8 +4407,8 @@ func (o *Coupon) SetUntilAt(v time.Time) {
 type Database struct {
 	ID                      types.ID
 	Class                   string
-	Name                    string `validate:"required"`
-	Description             string `validate:"min=0,max=512"`
+	Name                    string
+	Description             string
 	Tags                    types.Tags
 	Availability            types.EAvailability
 	IconID                  types.ID `mapconv:"Icon.ID"`
@@ -4425,8 +4425,8 @@ type Database struct {
 	PlanID                  types.ID                    `mapconv:"Remark.Plan.ID/Plan.ID"`
 	SwitchID                types.ID                    `mapconv:"Remark.Switch.ID"`
 	Conf                    *DatabaseRemarkDBConfCommon `mapconv:"Remark.DBConf.Common,recursive"`
-	DefaultRoute            string                      `mapconv:"Remark.Network.DefaultRoute" validate:"ipv4"`
-	NetworkMaskLen          int                         `mapconv:"Remark.Network.NetworkMaskLen" validate:"min=1,max=32"`
+	DefaultRoute            string                      `mapconv:"Remark.Network.DefaultRoute"`
+	NetworkMaskLen          int                         `mapconv:"Remark.Network.NetworkMaskLen"`
 	IPAddresses             []string                    `mapconv:"Remark.[]Servers.IPAddress"`
 	ZoneID                  types.ID                    `mapconv:"Remark.Zone.ID"`
 	Interfaces              []*InterfaceView            `json:",omitempty" mapconv:"[]Interfaces,recursive,omitempty"`
@@ -4442,8 +4442,8 @@ func (o *Database) setDefaults() interface{} {
 	return &struct {
 		ID                      types.ID
 		Class                   string
-		Name                    string `validate:"required"`
-		Description             string `validate:"min=0,max=512"`
+		Name                    string
+		Description             string
 		Tags                    types.Tags
 		Availability            types.EAvailability
 		IconID                  types.ID `mapconv:"Icon.ID"`
@@ -4460,8 +4460,8 @@ func (o *Database) setDefaults() interface{} {
 		PlanID                  types.ID                    `mapconv:"Remark.Plan.ID/Plan.ID"`
 		SwitchID                types.ID                    `mapconv:"Remark.Switch.ID"`
 		Conf                    *DatabaseRemarkDBConfCommon `mapconv:"Remark.DBConf.Common,recursive"`
-		DefaultRoute            string                      `mapconv:"Remark.Network.DefaultRoute" validate:"ipv4"`
-		NetworkMaskLen          int                         `mapconv:"Remark.Network.NetworkMaskLen" validate:"min=1,max=32"`
+		DefaultRoute            string                      `mapconv:"Remark.Network.DefaultRoute"`
+		NetworkMaskLen          int                         `mapconv:"Remark.Network.NetworkMaskLen"`
 		IPAddresses             []string                    `mapconv:"Remark.[]Servers.IPAddress"`
 		ZoneID                  types.ID                    `mapconv:"Remark.Zone.ID"`
 		Interfaces              []*InterfaceView            `json:",omitempty" mapconv:"[]Interfaces,recursive,omitempty"`
@@ -5419,16 +5419,16 @@ func (o *InterfaceView) SetUpstreamType(v types.EUpstreamNetworkType) {
 type DatabaseCreateRequest struct {
 	PlanID             types.ID                    `mapconv:"Remark.Plan.ID/Plan.ID"`
 	SwitchID           types.ID                    `mapconv:"Remark.Switch.ID"`
-	IPAddresses        []string                    `mapconv:"Remark.[]Servers.IPAddress" validate:"min=1,max=2,dive,ipv4"`
-	NetworkMaskLen     int                         `mapconv:"Remark.Network.NetworkMaskLen" validate:"min=1,max=32"`
-	DefaultRoute       string                      `mapconv:"Remark.Network.DefaultRoute" validate:"ipv4"`
+	IPAddresses        []string                    `mapconv:"Remark.[]Servers.IPAddress"`
+	NetworkMaskLen     int                         `mapconv:"Remark.Network.NetworkMaskLen"`
+	DefaultRoute       string                      `mapconv:"Remark.Network.DefaultRoute"`
 	Conf               *DatabaseRemarkDBConfCommon `mapconv:"Remark.DBConf.Common,recursive"`
 	SourceID           types.ID                    `mapconv:"Remark.SourceAppliance.ID"`
 	CommonSetting      *DatabaseSettingCommon      `mapconv:"Settings.DBConf.Common,recursive"`
 	BackupSetting      *DatabaseSettingBackup      `mapconv:"Settings.DBConf.Backup,recursive"`
 	ReplicationSetting *DatabaseReplicationSetting `mapconv:"Settings.DBConf.Replication,recursive"`
-	Name               string                      `validate:"required"`
-	Description        string                      `validate:"min=0,max=512"`
+	Name               string
+	Description        string
 	Tags               types.Tags
 	IconID             types.ID `mapconv:"Icon.ID"`
 }
@@ -5443,16 +5443,16 @@ func (o *DatabaseCreateRequest) setDefaults() interface{} {
 	return &struct {
 		PlanID             types.ID                    `mapconv:"Remark.Plan.ID/Plan.ID"`
 		SwitchID           types.ID                    `mapconv:"Remark.Switch.ID"`
-		IPAddresses        []string                    `mapconv:"Remark.[]Servers.IPAddress" validate:"min=1,max=2,dive,ipv4"`
-		NetworkMaskLen     int                         `mapconv:"Remark.Network.NetworkMaskLen" validate:"min=1,max=32"`
-		DefaultRoute       string                      `mapconv:"Remark.Network.DefaultRoute" validate:"ipv4"`
+		IPAddresses        []string                    `mapconv:"Remark.[]Servers.IPAddress"`
+		NetworkMaskLen     int                         `mapconv:"Remark.Network.NetworkMaskLen"`
+		DefaultRoute       string                      `mapconv:"Remark.Network.DefaultRoute"`
 		Conf               *DatabaseRemarkDBConfCommon `mapconv:"Remark.DBConf.Common,recursive"`
 		SourceID           types.ID                    `mapconv:"Remark.SourceAppliance.ID"`
 		CommonSetting      *DatabaseSettingCommon      `mapconv:"Settings.DBConf.Common,recursive"`
 		BackupSetting      *DatabaseSettingBackup      `mapconv:"Settings.DBConf.Backup,recursive"`
 		ReplicationSetting *DatabaseReplicationSetting `mapconv:"Settings.DBConf.Replication,recursive"`
-		Name               string                      `validate:"required"`
-		Description        string                      `validate:"min=0,max=512"`
+		Name               string
+		Description        string
 		Tags               types.Tags
 		IconID             types.ID `mapconv:"Icon.ID"`
 		Class              string
@@ -5641,8 +5641,8 @@ func (o *DatabaseCreateRequest) SetIconID(v types.ID) {
 
 // DatabaseUpdateRequest represents API parameter/response structure
 type DatabaseUpdateRequest struct {
-	Name               string `validate:"required"`
-	Description        string `validate:"min=0,max=512"`
+	Name               string
+	Description        string
 	Tags               types.Tags
 	IconID             types.ID                    `mapconv:"Icon.ID"`
 	CommonSetting      *DatabaseSettingCommon      `mapconv:"Settings.DBConf.Common,recursive"`
@@ -5659,8 +5659,8 @@ func (o *DatabaseUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *DatabaseUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name               string `validate:"required"`
-		Description        string `validate:"min=0,max=512"`
+		Name               string
+		Description        string
 		Tags               types.Tags
 		IconID             types.ID                    `mapconv:"Icon.ID"`
 		CommonSetting      *DatabaseSettingCommon      `mapconv:"Settings.DBConf.Common,recursive"`
@@ -5923,8 +5923,8 @@ func (o *CPUTimeActivity) SetValues(v []*MonitorCPUTimeValue) {
 
 // MonitorCPUTimeValue represents API parameter/response structure
 type MonitorCPUTimeValue struct {
-	Time    time.Time `json:",omitempty" mapconv:",omitempty"`
-	CPUTime float64   `json:",omitempty" mapconv:",omitempty"`
+	Time    time.Time `mapconv:",omitempty"`
+	CPUTime float64   `mapconv:",omitempty"`
 }
 
 // Validate validates by field tags
@@ -5935,8 +5935,8 @@ func (o *MonitorCPUTimeValue) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *MonitorCPUTimeValue) setDefaults() interface{} {
 	return &struct {
-		Time    time.Time `json:",omitempty" mapconv:",omitempty"`
-		CPUTime float64   `json:",omitempty" mapconv:",omitempty"`
+		Time    time.Time `mapconv:",omitempty"`
+		CPUTime float64   `mapconv:",omitempty"`
 	}{
 		Time:    o.GetTime(),
 		CPUTime: o.GetCPUTime(),
@@ -6054,9 +6054,9 @@ func (o *DiskActivity) SetValues(v []*MonitorDiskValue) {
 
 // MonitorDiskValue represents API parameter/response structure
 type MonitorDiskValue struct {
-	Time  time.Time `json:",omitempty" mapconv:",omitempty"`
-	Read  float64   `json:",omitempty" mapconv:",omitempty"`
-	Write float64   `json:",omitempty" mapconv:",omitempty"`
+	Time  time.Time `mapconv:",omitempty"`
+	Read  float64   `mapconv:",omitempty"`
+	Write float64   `mapconv:",omitempty"`
 }
 
 // Validate validates by field tags
@@ -6067,9 +6067,9 @@ func (o *MonitorDiskValue) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *MonitorDiskValue) setDefaults() interface{} {
 	return &struct {
-		Time  time.Time `json:",omitempty" mapconv:",omitempty"`
-		Read  float64   `json:",omitempty" mapconv:",omitempty"`
-		Write float64   `json:",omitempty" mapconv:",omitempty"`
+		Time  time.Time `mapconv:",omitempty"`
+		Read  float64   `mapconv:",omitempty"`
+		Write float64   `mapconv:",omitempty"`
 	}{
 		Time:  o.GetTime(),
 		Read:  o.GetRead(),
@@ -6146,9 +6146,9 @@ func (o *InterfaceActivity) SetValues(v []*MonitorInterfaceValue) {
 
 // MonitorInterfaceValue represents API parameter/response structure
 type MonitorInterfaceValue struct {
-	Time    time.Time `json:",omitempty" mapconv:",omitempty"`
-	Receive float64   `json:",omitempty" mapconv:",omitempty"`
-	Send    float64   `json:",omitempty" mapconv:",omitempty"`
+	Time    time.Time `mapconv:",omitempty"`
+	Receive float64   `mapconv:",omitempty"`
+	Send    float64   `mapconv:",omitempty"`
 }
 
 // Validate validates by field tags
@@ -6159,9 +6159,9 @@ func (o *MonitorInterfaceValue) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *MonitorInterfaceValue) setDefaults() interface{} {
 	return &struct {
-		Time    time.Time `json:",omitempty" mapconv:",omitempty"`
-		Receive float64   `json:",omitempty" mapconv:",omitempty"`
-		Send    float64   `json:",omitempty" mapconv:",omitempty"`
+		Time    time.Time `mapconv:",omitempty"`
+		Receive float64   `mapconv:",omitempty"`
+		Send    float64   `mapconv:",omitempty"`
 	}{
 		Time:    o.GetTime(),
 		Receive: o.GetReceive(),
@@ -6238,15 +6238,15 @@ func (o *DatabaseActivity) SetValues(v []*MonitorDatabaseValue) {
 
 // MonitorDatabaseValue represents API parameter/response structure
 type MonitorDatabaseValue struct {
-	Time              time.Time `json:",omitempty" mapconv:",omitempty"`
-	TotalMemorySize   float64   `json:",omitempty" mapconv:",omitempty"`
-	UsedMemorySize    float64   `json:",omitempty" mapconv:",omitempty"`
-	TotalDisk1Size    float64   `json:",omitempty" mapconv:",omitempty"`
-	UsedDisk1Size     float64   `json:",omitempty" mapconv:",omitempty"`
-	TotalDisk2Size    float64   `json:",omitempty" mapconv:",omitempty"`
-	UsedDisk2Size     float64   `json:",omitempty" mapconv:",omitempty"`
-	BinlogUsedSizeKiB float64   `json:",omitempty" mapconv:",omitempty"`
-	DelayTimeSec      float64   `json:",omitempty" mapconv:",omitempty"`
+	Time              time.Time `mapconv:",omitempty"`
+	TotalMemorySize   float64   `mapconv:",omitempty"`
+	UsedMemorySize    float64   `mapconv:",omitempty"`
+	TotalDisk1Size    float64   `mapconv:",omitempty"`
+	UsedDisk1Size     float64   `mapconv:",omitempty"`
+	TotalDisk2Size    float64   `mapconv:",omitempty"`
+	UsedDisk2Size     float64   `mapconv:",omitempty"`
+	BinlogUsedSizeKiB float64   `mapconv:",omitempty"`
+	DelayTimeSec      float64   `mapconv:",omitempty"`
 }
 
 // Validate validates by field tags
@@ -6257,15 +6257,15 @@ func (o *MonitorDatabaseValue) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *MonitorDatabaseValue) setDefaults() interface{} {
 	return &struct {
-		Time              time.Time `json:",omitempty" mapconv:",omitempty"`
-		TotalMemorySize   float64   `json:",omitempty" mapconv:",omitempty"`
-		UsedMemorySize    float64   `json:",omitempty" mapconv:",omitempty"`
-		TotalDisk1Size    float64   `json:",omitempty" mapconv:",omitempty"`
-		UsedDisk1Size     float64   `json:",omitempty" mapconv:",omitempty"`
-		TotalDisk2Size    float64   `json:",omitempty" mapconv:",omitempty"`
-		UsedDisk2Size     float64   `json:",omitempty" mapconv:",omitempty"`
-		BinlogUsedSizeKiB float64   `json:",omitempty" mapconv:",omitempty"`
-		DelayTimeSec      float64   `json:",omitempty" mapconv:",omitempty"`
+		Time              time.Time `mapconv:",omitempty"`
+		TotalMemorySize   float64   `mapconv:",omitempty"`
+		UsedMemorySize    float64   `mapconv:",omitempty"`
+		TotalDisk1Size    float64   `mapconv:",omitempty"`
+		UsedDisk1Size     float64   `mapconv:",omitempty"`
+		TotalDisk2Size    float64   `mapconv:",omitempty"`
+		UsedDisk2Size     float64   `mapconv:",omitempty"`
+		BinlogUsedSizeKiB float64   `mapconv:",omitempty"`
+		DelayTimeSec      float64   `mapconv:",omitempty"`
 	}{
 		Time:              o.GetTime(),
 		TotalMemorySize:   o.GetTotalMemorySize(),
@@ -6697,14 +6697,197 @@ func (o *DatabaseBackupHistory) SetSize(v int64) {
 }
 
 /*************************************************
+* DatabaseParameter
+*************************************************/
+
+// DatabaseParameter represents API parameter/response structure
+type DatabaseParameter struct {
+	Settings map[string]interface{}   `mapconv:"Parameter.Attr"`
+	MetaInfo []*DatabaseParameterMeta `mapconv:"Remark.[]Form,recursive"`
+}
+
+// Validate validates by field tags
+func (o *DatabaseParameter) Validate() error {
+	return validate.Struct(o)
+}
+
+// setDefaults implements sacloud.argumentDefaulter
+func (o *DatabaseParameter) setDefaults() interface{} {
+	return &struct {
+		Settings map[string]interface{}   `mapconv:"Parameter.Attr"`
+		MetaInfo []*DatabaseParameterMeta `mapconv:"Remark.[]Form,recursive"`
+	}{
+		Settings: o.GetSettings(),
+		MetaInfo: o.GetMetaInfo(),
+	}
+}
+
+// GetSettings returns value of Settings
+func (o *DatabaseParameter) GetSettings() map[string]interface{} {
+	return o.Settings
+}
+
+// SetSettings sets value to Settings
+func (o *DatabaseParameter) SetSettings(v map[string]interface{}) {
+	o.Settings = v
+}
+
+// GetMetaInfo returns value of MetaInfo
+func (o *DatabaseParameter) GetMetaInfo() []*DatabaseParameterMeta {
+	return o.MetaInfo
+}
+
+// SetMetaInfo sets value to MetaInfo
+func (o *DatabaseParameter) SetMetaInfo(v []*DatabaseParameterMeta) {
+	o.MetaInfo = v
+}
+
+/*************************************************
+* DatabaseParameterMeta
+*************************************************/
+
+// DatabaseParameterMeta represents API parameter/response structure
+type DatabaseParameterMeta struct {
+	Type    string `mapconv:"Options.Type"`
+	Name    string
+	Label   string
+	Text    string  `mapconv:"Options.Text"`
+	Example string  `mapconv:"Options.Example"`
+	Min     float64 `mapconv:"Options.Min"`
+	Max     float64 `mapconv:"Options.Max"`
+	MaxLen  int     `mapconv:"Options.MaxLen"`
+	Reboot  string  `mapconv:"Options.Reboot"`
+}
+
+// Validate validates by field tags
+func (o *DatabaseParameterMeta) Validate() error {
+	return validate.Struct(o)
+}
+
+// setDefaults implements sacloud.argumentDefaulter
+func (o *DatabaseParameterMeta) setDefaults() interface{} {
+	return &struct {
+		Type    string `mapconv:"Options.Type"`
+		Name    string
+		Label   string
+		Text    string  `mapconv:"Options.Text"`
+		Example string  `mapconv:"Options.Example"`
+		Min     float64 `mapconv:"Options.Min"`
+		Max     float64 `mapconv:"Options.Max"`
+		MaxLen  int     `mapconv:"Options.MaxLen"`
+		Reboot  string  `mapconv:"Options.Reboot"`
+	}{
+		Type:    o.GetType(),
+		Name:    o.GetName(),
+		Label:   o.GetLabel(),
+		Text:    o.GetText(),
+		Example: o.GetExample(),
+		Min:     o.GetMin(),
+		Max:     o.GetMax(),
+		MaxLen:  o.GetMaxLen(),
+		Reboot:  o.GetReboot(),
+	}
+}
+
+// GetType returns value of Type
+func (o *DatabaseParameterMeta) GetType() string {
+	return o.Type
+}
+
+// SetType sets value to Type
+func (o *DatabaseParameterMeta) SetType(v string) {
+	o.Type = v
+}
+
+// GetName returns value of Name
+func (o *DatabaseParameterMeta) GetName() string {
+	return o.Name
+}
+
+// SetName sets value to Name
+func (o *DatabaseParameterMeta) SetName(v string) {
+	o.Name = v
+}
+
+// GetLabel returns value of Label
+func (o *DatabaseParameterMeta) GetLabel() string {
+	return o.Label
+}
+
+// SetLabel sets value to Label
+func (o *DatabaseParameterMeta) SetLabel(v string) {
+	o.Label = v
+}
+
+// GetText returns value of Text
+func (o *DatabaseParameterMeta) GetText() string {
+	return o.Text
+}
+
+// SetText sets value to Text
+func (o *DatabaseParameterMeta) SetText(v string) {
+	o.Text = v
+}
+
+// GetExample returns value of Example
+func (o *DatabaseParameterMeta) GetExample() string {
+	return o.Example
+}
+
+// SetExample sets value to Example
+func (o *DatabaseParameterMeta) SetExample(v string) {
+	o.Example = v
+}
+
+// GetMin returns value of Min
+func (o *DatabaseParameterMeta) GetMin() float64 {
+	return o.Min
+}
+
+// SetMin sets value to Min
+func (o *DatabaseParameterMeta) SetMin(v float64) {
+	o.Min = v
+}
+
+// GetMax returns value of Max
+func (o *DatabaseParameterMeta) GetMax() float64 {
+	return o.Max
+}
+
+// SetMax sets value to Max
+func (o *DatabaseParameterMeta) SetMax(v float64) {
+	o.Max = v
+}
+
+// GetMaxLen returns value of MaxLen
+func (o *DatabaseParameterMeta) GetMaxLen() int {
+	return o.MaxLen
+}
+
+// SetMaxLen sets value to MaxLen
+func (o *DatabaseParameterMeta) SetMaxLen(v int) {
+	o.MaxLen = v
+}
+
+// GetReboot returns value of Reboot
+func (o *DatabaseParameterMeta) GetReboot() string {
+	return o.Reboot
+}
+
+// SetReboot sets value to Reboot
+func (o *DatabaseParameterMeta) SetReboot(v string) {
+	o.Reboot = v
+}
+
+/*************************************************
 * Disk
 *************************************************/
 
 // Disk represents API parameter/response structure
 type Disk struct {
 	ID                        types.ID
-	Name                      string `validate:"required"`
-	Description               string `validate:"min=0,max=512"`
+	Name                      string
+	Description               string
 	Tags                      types.Tags
 	Availability              types.EAvailability
 	Connection                types.EDiskConnection `json:",omitempty" mapconv:",omitempty"`
@@ -6723,6 +6906,7 @@ type Disk struct {
 	BundleInfo                *BundleInfo         `json:",omitempty" mapconv:",omitempty,recursive"`
 	Storage                   *Storage            `json:",omitempty" mapconv:",omitempty,recursive"`
 	ServerID                  types.ID            `mapconv:"Server.ID,omitempty"`
+	ServerName                string              `mapconv:"Server.Name,omitempty"`
 	IconID                    types.ID            `mapconv:"Icon.ID"`
 	CreatedAt                 time.Time
 	ModifiedAt                time.Time
@@ -6737,8 +6921,8 @@ func (o *Disk) Validate() error {
 func (o *Disk) setDefaults() interface{} {
 	return &struct {
 		ID                        types.ID
-		Name                      string `validate:"required"`
-		Description               string `validate:"min=0,max=512"`
+		Name                      string
+		Description               string
 		Tags                      types.Tags
 		Availability              types.EAvailability
 		Connection                types.EDiskConnection `json:",omitempty" mapconv:",omitempty"`
@@ -6757,6 +6941,7 @@ func (o *Disk) setDefaults() interface{} {
 		BundleInfo                *BundleInfo         `json:",omitempty" mapconv:",omitempty,recursive"`
 		Storage                   *Storage            `json:",omitempty" mapconv:",omitempty,recursive"`
 		ServerID                  types.ID            `mapconv:"Server.ID,omitempty"`
+		ServerName                string              `mapconv:"Server.Name,omitempty"`
 		IconID                    types.ID            `mapconv:"Icon.ID"`
 		CreatedAt                 time.Time
 		ModifiedAt                time.Time
@@ -6782,6 +6967,7 @@ func (o *Disk) setDefaults() interface{} {
 		BundleInfo:                o.GetBundleInfo(),
 		Storage:                   o.GetStorage(),
 		ServerID:                  o.GetServerID(),
+		ServerName:                o.GetServerName(),
 		IconID:                    o.GetIconID(),
 		CreatedAt:                 o.GetCreatedAt(),
 		ModifiedAt:                o.GetModifiedAt(),
@@ -7053,6 +7239,16 @@ func (o *Disk) SetServerID(v types.ID) {
 	o.ServerID = v
 }
 
+// GetServerName returns value of ServerName
+func (o *Disk) GetServerName() string {
+	return o.ServerName
+}
+
+// SetServerName sets value to ServerName
+func (o *Disk) SetServerName(v string) {
+	o.ServerName = v
+}
+
 // GetIconID returns value of IconID
 func (o *Disk) GetIconID() types.ID {
 	return o.IconID
@@ -7200,8 +7396,8 @@ type DiskCreateRequest struct {
 	SourceArchiveID types.ID              `mapconv:"SourceArchive.ID,omitempty"`
 	ServerID        types.ID              `mapconv:"Server.ID,omitempty"`
 	SizeMB          int
-	Name            string `validate:"required"`
-	Description     string `validate:"min=0,max=512"`
+	Name            string
+	Description     string
 	Tags            types.Tags
 	IconID          types.ID `mapconv:"Icon.ID"`
 }
@@ -7220,8 +7416,8 @@ func (o *DiskCreateRequest) setDefaults() interface{} {
 		SourceArchiveID types.ID              `mapconv:"SourceArchive.ID,omitempty"`
 		ServerID        types.ID              `mapconv:"Server.ID,omitempty"`
 		SizeMB          int
-		Name            string `validate:"required"`
-		Description     string `validate:"min=0,max=512"`
+		Name            string
+		Description     string
 		Tags            types.Tags
 		IconID          types.ID `mapconv:"Icon.ID"`
 	}{
@@ -7643,7 +7839,7 @@ func (o *DiskEditNote) SetVariables(v map[string]interface{}) {
 // DiskEditUserSubnet represents API parameter/response structure
 type DiskEditUserSubnet struct {
 	DefaultRoute   string `json:",omitempty" mapconv:",omitempty"`
-	NetworkMaskLen int    `json:",omitempty" mapconv:",omitempty" validate:"min=0,max=32"`
+	NetworkMaskLen int    `json:",omitempty" mapconv:",omitempty"`
 }
 
 // Validate validates by field tags
@@ -7655,7 +7851,7 @@ func (o *DiskEditUserSubnet) Validate() error {
 func (o *DiskEditUserSubnet) setDefaults() interface{} {
 	return &struct {
 		DefaultRoute   string `json:",omitempty" mapconv:",omitempty"`
-		NetworkMaskLen int    `json:",omitempty" mapconv:",omitempty" validate:"min=0,max=32"`
+		NetworkMaskLen int    `json:",omitempty" mapconv:",omitempty"`
 	}{
 		DefaultRoute:   o.GetDefaultRoute(),
 		NetworkMaskLen: o.GetNetworkMaskLen(),
@@ -7716,82 +7912,13 @@ func (o *DiskResizePartitionRequest) SetBackground(v bool) {
 }
 
 /*************************************************
-* DiskInstallRequest
-*************************************************/
-
-// DiskInstallRequest represents API parameter/response structure
-type DiskInstallRequest struct {
-	SourceDiskID    types.ID `mapconv:"SourceDisk.ID,omitempty"`
-	SourceArchiveID types.ID `mapconv:"SourceArchive.ID,omitempty"`
-	SizeMB          int
-}
-
-// Validate validates by field tags
-func (o *DiskInstallRequest) Validate() error {
-	return validate.Struct(o)
-}
-
-// setDefaults implements sacloud.argumentDefaulter
-func (o *DiskInstallRequest) setDefaults() interface{} {
-	return &struct {
-		SourceDiskID    types.ID `mapconv:"SourceDisk.ID,omitempty"`
-		SourceArchiveID types.ID `mapconv:"SourceArchive.ID,omitempty"`
-		SizeMB          int
-	}{
-		SourceDiskID:    o.GetSourceDiskID(),
-		SourceArchiveID: o.GetSourceArchiveID(),
-		SizeMB:          o.GetSizeMB(),
-	}
-}
-
-// GetSourceDiskID returns value of SourceDiskID
-func (o *DiskInstallRequest) GetSourceDiskID() types.ID {
-	return o.SourceDiskID
-}
-
-// SetSourceDiskID sets value to SourceDiskID
-func (o *DiskInstallRequest) SetSourceDiskID(v types.ID) {
-	o.SourceDiskID = v
-}
-
-// GetSourceArchiveID returns value of SourceArchiveID
-func (o *DiskInstallRequest) GetSourceArchiveID() types.ID {
-	return o.SourceArchiveID
-}
-
-// SetSourceArchiveID sets value to SourceArchiveID
-func (o *DiskInstallRequest) SetSourceArchiveID(v types.ID) {
-	o.SourceArchiveID = v
-}
-
-// GetSizeMB returns value of SizeMB
-func (o *DiskInstallRequest) GetSizeMB() int {
-	return o.SizeMB
-}
-
-// SetSizeMB sets value to SizeMB
-func (o *DiskInstallRequest) SetSizeMB(v int) {
-	o.SizeMB = v
-}
-
-// GetSizeGB .
-func (o *DiskInstallRequest) GetSizeGB() int {
-	return accessor.GetSizeGB(o)
-}
-
-// SetSizeGB .
-func (o *DiskInstallRequest) SetSizeGB(size int) {
-	accessor.SetSizeGB(o, size)
-}
-
-/*************************************************
 * DiskUpdateRequest
 *************************************************/
 
 // DiskUpdateRequest represents API parameter/response structure
 type DiskUpdateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID              `mapconv:"Icon.ID"`
 	Connection  types.EDiskConnection `json:",omitempty" mapconv:",omitempty"`
@@ -7805,8 +7932,8 @@ func (o *DiskUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *DiskUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID              `mapconv:"Icon.ID"`
 		Connection  types.EDiskConnection `json:",omitempty" mapconv:",omitempty"`
@@ -7896,7 +8023,7 @@ func (o *DiskUpdateRequest) SetConnection(v types.EDiskConnection) {
 // DiskPlan represents API parameter/response structure
 type DiskPlan struct {
 	ID           types.ID
-	Name         string `validate:"required"`
+	Name         string
 	StorageClass string
 	Availability types.EAvailability
 	Size         []*DiskPlanSizeInfo `mapconv:"[]Size,recursive"`
@@ -7911,7 +8038,7 @@ func (o *DiskPlan) Validate() error {
 func (o *DiskPlan) setDefaults() interface{} {
 	return &struct {
 		ID           types.ID
-		Name         string `validate:"required"`
+		Name         string
 		StorageClass string
 		Availability types.EAvailability
 		Size         []*DiskPlanSizeInfo `mapconv:"[]Size,recursive"`
@@ -8083,14 +8210,14 @@ func (o *DiskPlanSizeInfo) SetSizeGB(size int) {
 // DNS represents API parameter/response structure
 type DNS struct {
 	ID             types.ID
-	Name           string `validate:"required"`
-	Description    string `validate:"min=0,max=512"`
+	Name           string
+	Description    string
 	Tags           types.Tags
 	Availability   types.EAvailability
 	IconID         types.ID `mapconv:"Icon.ID"`
 	CreatedAt      time.Time
 	ModifiedAt     time.Time
-	Records        DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive" validate:"min=0,max=1000"`
+	Records        DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive"`
 	SettingsHash   string     `json:",omitempty" mapconv:",omitempty"`
 	DNSZone        string     `mapconv:"Status.Zone"`
 	DNSNameServers []string   `mapconv:"Status.NS"`
@@ -8105,14 +8232,14 @@ func (o *DNS) Validate() error {
 func (o *DNS) setDefaults() interface{} {
 	return &struct {
 		ID             types.ID
-		Name           string `validate:"required"`
-		Description    string `validate:"min=0,max=512"`
+		Name           string
+		Description    string
 		Tags           types.Tags
 		Availability   types.EAvailability
 		IconID         types.ID `mapconv:"Icon.ID"`
 		CreatedAt      time.Time
 		ModifiedAt     time.Time
-		Records        DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive" validate:"min=0,max=1000"`
+		Records        DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive"`
 		SettingsHash   string     `json:",omitempty" mapconv:",omitempty"`
 		DNSZone        string     `mapconv:"Status.Zone"`
 		DNSNameServers []string   `mapconv:"Status.NS"`
@@ -8370,9 +8497,9 @@ func (o *DNSRecord) SetTTL(v int) {
 
 // DNSCreateRequest represents API parameter/response structure
 type DNSCreateRequest struct {
-	Name        string     `mapconv:"Name/Status.Zone" validate:"required"`
-	Records     DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive" validate:"min=0,max=1000"`
-	Description string     `validate:"min=0,max=512"`
+	Name        string     `mapconv:"Name/Status.Zone"`
+	Records     DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive"`
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
 }
@@ -8385,9 +8512,9 @@ func (o *DNSCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *DNSCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string     `mapconv:"Name/Status.Zone" validate:"required"`
-		Records     DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive" validate:"min=0,max=1000"`
-		Description string     `validate:"min=0,max=512"`
+		Name        string     `mapconv:"Name/Status.Zone"`
+		Records     DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive"`
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
 		Class       string   `mapconv:"Provider.Class"`
@@ -8477,10 +8604,10 @@ func (o *DNSCreateRequest) SetIconID(v types.ID) {
 
 // DNSUpdateRequest represents API parameter/response structure
 type DNSUpdateRequest struct {
-	Description  string `validate:"min=0,max=512"`
+	Description  string
 	Tags         types.Tags
 	IconID       types.ID   `mapconv:"Icon.ID"`
-	Records      DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive" validate:"min=0,max=1000"`
+	Records      DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive"`
 	SettingsHash string     `json:",omitempty" mapconv:",omitempty"`
 }
 
@@ -8492,10 +8619,10 @@ func (o *DNSUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *DNSUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Description  string `validate:"min=0,max=512"`
+		Description  string
 		Tags         types.Tags
 		IconID       types.ID   `mapconv:"Icon.ID"`
-		Records      DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive" validate:"min=0,max=1000"`
+		Records      DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive"`
 		SettingsHash string     `json:",omitempty" mapconv:",omitempty"`
 	}{
 		Description:  o.GetDescription(),
@@ -8582,7 +8709,7 @@ func (o *DNSUpdateRequest) SetSettingsHash(v string) {
 
 // DNSUpdateSettingsRequest represents API parameter/response structure
 type DNSUpdateSettingsRequest struct {
-	Records      DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive" validate:"min=0,max=1000"`
+	Records      DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive"`
 	SettingsHash string     `json:",omitempty" mapconv:",omitempty"`
 }
 
@@ -8594,7 +8721,7 @@ func (o *DNSUpdateSettingsRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *DNSUpdateSettingsRequest) setDefaults() interface{} {
 	return &struct {
-		Records      DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive" validate:"min=0,max=1000"`
+		Records      DNSRecords `mapconv:"Settings.DNS.[]ResourceRecordSets,recursive"`
 		SettingsHash string     `json:",omitempty" mapconv:",omitempty"`
 	}{
 		Records:      o.GetRecords(),
@@ -8629,8 +8756,8 @@ func (o *DNSUpdateSettingsRequest) SetSettingsHash(v string) {
 // ESME represents API parameter/response structure
 type ESME struct {
 	ID           types.ID
-	Name         string `validate:"required"`
-	Description  string `validate:"min=0,max=512"`
+	Name         string
+	Description  string
 	Tags         types.Tags
 	Availability types.EAvailability
 	IconID       types.ID `mapconv:"Icon.ID"`
@@ -8647,8 +8774,8 @@ func (o *ESME) Validate() error {
 func (o *ESME) setDefaults() interface{} {
 	return &struct {
 		ID           types.ID
-		Name         string `validate:"required"`
-		Description  string `validate:"min=0,max=512"`
+		Name         string
+		Description  string
 		Tags         types.Tags
 		Availability types.EAvailability
 		IconID       types.ID `mapconv:"Icon.ID"`
@@ -8792,8 +8919,8 @@ func (o *ESME) SetModifiedAt(v time.Time) {
 
 // ESMECreateRequest represents API parameter/response structure
 type ESMECreateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
 }
@@ -8806,8 +8933,8 @@ func (o *ESMECreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *ESMECreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
 		Class       string   `mapconv:"Provider.Class"`
@@ -8886,8 +9013,8 @@ func (o *ESMECreateRequest) SetIconID(v types.ID) {
 
 // ESMEUpdateRequest represents API parameter/response structure
 type ESMEUpdateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
 }
@@ -8900,8 +9027,8 @@ func (o *ESMEUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *ESMEUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
 	}{
@@ -9039,6 +9166,7 @@ func (o *ESMESendMessageResult) SetOTP(v string) {
 type ESMESendMessageWithGeneratedOTPRequest struct {
 	Destination string
 	Sender      string
+	DomainName  string
 }
 
 // Validate validates by field tags
@@ -9051,10 +9179,12 @@ func (o *ESMESendMessageWithGeneratedOTPRequest) setDefaults() interface{} {
 	return &struct {
 		Destination  string
 		Sender       string
+		DomainName   string
 		OTPOperation types.EOTPOperation
 	}{
 		Destination:  o.GetDestination(),
 		Sender:       o.GetSender(),
+		DomainName:   o.GetDomainName(),
 		OTPOperation: "generate",
 	}
 }
@@ -9079,6 +9209,16 @@ func (o *ESMESendMessageWithGeneratedOTPRequest) SetSender(v string) {
 	o.Sender = v
 }
 
+// GetDomainName returns value of DomainName
+func (o *ESMESendMessageWithGeneratedOTPRequest) GetDomainName() string {
+	return o.DomainName
+}
+
+// SetDomainName sets value to DomainName
+func (o *ESMESendMessageWithGeneratedOTPRequest) SetDomainName(v string) {
+	o.DomainName = v
+}
+
 /*************************************************
 * ESMESendMessageWithInputtedOTPRequest
 *************************************************/
@@ -9087,6 +9227,7 @@ func (o *ESMESendMessageWithGeneratedOTPRequest) SetSender(v string) {
 type ESMESendMessageWithInputtedOTPRequest struct {
 	Destination string
 	Sender      string
+	DomainName  string
 	OTP         string
 }
 
@@ -9100,11 +9241,13 @@ func (o *ESMESendMessageWithInputtedOTPRequest) setDefaults() interface{} {
 	return &struct {
 		Destination  string
 		Sender       string
+		DomainName   string
 		OTP          string
 		OTPOperation types.EOTPOperation
 	}{
 		Destination:  o.GetDestination(),
 		Sender:       o.GetSender(),
+		DomainName:   o.GetDomainName(),
 		OTP:          o.GetOTP(),
 		OTPOperation: "input",
 	}
@@ -9128,6 +9271,16 @@ func (o *ESMESendMessageWithInputtedOTPRequest) GetSender() string {
 // SetSender sets value to Sender
 func (o *ESMESendMessageWithInputtedOTPRequest) SetSender(v string) {
 	o.Sender = v
+}
+
+// GetDomainName returns value of DomainName
+func (o *ESMESendMessageWithInputtedOTPRequest) GetDomainName() string {
+	return o.DomainName
+}
+
+// SetDomainName sets value to DomainName
+func (o *ESMESendMessageWithInputtedOTPRequest) SetDomainName(v string) {
+	o.DomainName = v
 }
 
 // GetOTP returns value of OTP
@@ -9258,8 +9411,8 @@ func (o *ESMELogs) SetRetryCount(v int) {
 // GSLB represents API parameter/response structure
 type GSLB struct {
 	ID                 types.ID
-	Name               string `validate:"required"`
-	Description        string `validate:"min=0,max=512"`
+	Name               string
+	Description        string
 	Tags               types.Tags
 	Availability       types.EAvailability
 	IconID             types.ID `mapconv:"Icon.ID"`
@@ -9267,11 +9420,11 @@ type GSLB struct {
 	ModifiedAt         time.Time
 	SettingsHash       string           `json:",omitempty" mapconv:",omitempty"`
 	FQDN               string           `mapconv:"Status.FQDN"`
-	DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop" validate:"min=10,max=60"`
+	DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop"`
 	Weighted           types.StringFlag `mapconv:"Settings.GSLB.Weighted"`
 	HealthCheck        *GSLBHealthCheck `mapconv:"Settings.GSLB.HealthCheck,recursive"`
 	SorryServer        string           `mapconv:"Settings.GSLB.SorryServer"`
-	DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive" validate:"min=0,max=12"`
+	DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive"`
 }
 
 // Validate validates by field tags
@@ -9283,8 +9436,8 @@ func (o *GSLB) Validate() error {
 func (o *GSLB) setDefaults() interface{} {
 	return &struct {
 		ID                 types.ID
-		Name               string `validate:"required"`
-		Description        string `validate:"min=0,max=512"`
+		Name               string
+		Description        string
 		Tags               types.Tags
 		Availability       types.EAvailability
 		IconID             types.ID `mapconv:"Icon.ID"`
@@ -9292,11 +9445,11 @@ func (o *GSLB) setDefaults() interface{} {
 		ModifiedAt         time.Time
 		SettingsHash       string           `json:",omitempty" mapconv:",omitempty"`
 		FQDN               string           `mapconv:"Status.FQDN"`
-		DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop" validate:"min=10,max=60"`
+		DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop"`
 		Weighted           types.StringFlag `mapconv:"Settings.GSLB.Weighted"`
 		HealthCheck        *GSLBHealthCheck `mapconv:"Settings.GSLB.HealthCheck,recursive"`
 		SorryServer        string           `mapconv:"Settings.GSLB.SorryServer"`
-		DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive" validate:"min=0,max=12"`
+		DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive"`
 	}{
 		ID:                 o.GetID(),
 		Name:               o.GetName(),
@@ -9515,11 +9668,11 @@ func (o *GSLB) SetDestinationServers(v GSLBServers) {
 
 // GSLBHealthCheck represents API parameter/response structure
 type GSLBHealthCheck struct {
-	Protocol     types.EGSLBHealthCheckProtocol `validate:"oneof=http https ping tcp"`
-	HostHeader   string                         `mapconv:"Host"`
-	Path         string                         `mapconv:"Path"`
-	ResponseCode types.StringNumber             `mapconv:"Status"`
-	Port         types.StringNumber             `mapconv:"Port"`
+	Protocol     types.EGSLBHealthCheckProtocol
+	HostHeader   string             `mapconv:"Host"`
+	Path         string             `mapconv:"Path"`
+	ResponseCode types.StringNumber `mapconv:"Status"`
+	Port         types.StringNumber `mapconv:"Port"`
 }
 
 // Validate validates by field tags
@@ -9530,11 +9683,11 @@ func (o *GSLBHealthCheck) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *GSLBHealthCheck) setDefaults() interface{} {
 	return &struct {
-		Protocol     types.EGSLBHealthCheckProtocol `validate:"oneof=http https ping tcp"`
-		HostHeader   string                         `mapconv:"Host"`
-		Path         string                         `mapconv:"Path"`
-		ResponseCode types.StringNumber             `mapconv:"Status"`
-		Port         types.StringNumber             `mapconv:"Port"`
+		Protocol     types.EGSLBHealthCheckProtocol
+		HostHeader   string             `mapconv:"Host"`
+		Path         string             `mapconv:"Path"`
+		ResponseCode types.StringNumber `mapconv:"Status"`
+		Port         types.StringNumber `mapconv:"Port"`
 	}{
 		Protocol:     o.GetProtocol(),
 		HostHeader:   o.GetHostHeader(),
@@ -9600,7 +9753,7 @@ func (o *GSLBHealthCheck) SetPort(v types.StringNumber) {
 
 // GSLBServer represents API parameter/response structure
 type GSLBServer struct {
-	IPAddress string `validate:"ipv4"`
+	IPAddress string
 	Enabled   types.StringFlag
 	Weight    types.StringNumber
 }
@@ -9613,7 +9766,7 @@ func (o *GSLBServer) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *GSLBServer) setDefaults() interface{} {
 	return &struct {
-		IPAddress string `validate:"ipv4"`
+		IPAddress string
 		Enabled   types.StringFlag
 		Weight    types.StringNumber
 	}{
@@ -9660,12 +9813,12 @@ func (o *GSLBServer) SetWeight(v types.StringNumber) {
 // GSLBCreateRequest represents API parameter/response structure
 type GSLBCreateRequest struct {
 	HealthCheck        *GSLBHealthCheck `mapconv:"Settings.GSLB.HealthCheck,recursive"`
-	DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop" validate:"min=10,max=60"`
+	DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop"`
 	Weighted           types.StringFlag `mapconv:"Settings.GSLB.Weighted"`
 	SorryServer        string           `mapconv:"Settings.GSLB.SorryServer"`
-	DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive" validate:"min=0,max=12"`
-	Name               string           `validate:"required"`
-	Description        string           `validate:"min=0,max=512"`
+	DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive"`
+	Name               string
+	Description        string
 	Tags               types.Tags
 	IconID             types.ID `mapconv:"Icon.ID"`
 }
@@ -9679,12 +9832,12 @@ func (o *GSLBCreateRequest) Validate() error {
 func (o *GSLBCreateRequest) setDefaults() interface{} {
 	return &struct {
 		HealthCheck        *GSLBHealthCheck `mapconv:"Settings.GSLB.HealthCheck,recursive"`
-		DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop" validate:"min=10,max=60"`
+		DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop"`
 		Weighted           types.StringFlag `mapconv:"Settings.GSLB.Weighted"`
 		SorryServer        string           `mapconv:"Settings.GSLB.SorryServer"`
-		DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive" validate:"min=0,max=12"`
-		Name               string           `validate:"required"`
-		Description        string           `validate:"min=0,max=512"`
+		DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive"`
+		Name               string
+		Description        string
 		Tags               types.Tags
 		IconID             types.ID `mapconv:"Icon.ID"`
 		Class              string   `mapconv:"Provider.Class"`
@@ -9821,15 +9974,15 @@ func (o *GSLBCreateRequest) SetIconID(v types.ID) {
 
 // GSLBUpdateRequest represents API parameter/response structure
 type GSLBUpdateRequest struct {
-	Name               string `validate:"required"`
-	Description        string `validate:"min=0,max=512"`
+	Name               string
+	Description        string
 	Tags               types.Tags
 	IconID             types.ID         `mapconv:"Icon.ID"`
 	HealthCheck        *GSLBHealthCheck `mapconv:"Settings.GSLB.HealthCheck,recursive"`
-	DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop" validate:"min=10,max=60"`
+	DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop"`
 	Weighted           types.StringFlag `mapconv:"Settings.GSLB.Weighted"`
 	SorryServer        string           `mapconv:"Settings.GSLB.SorryServer"`
-	DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive" validate:"min=0,max=12"`
+	DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive"`
 	SettingsHash       string           `json:",omitempty" mapconv:",omitempty"`
 }
 
@@ -9841,15 +9994,15 @@ func (o *GSLBUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *GSLBUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name               string `validate:"required"`
-		Description        string `validate:"min=0,max=512"`
+		Name               string
+		Description        string
 		Tags               types.Tags
 		IconID             types.ID         `mapconv:"Icon.ID"`
 		HealthCheck        *GSLBHealthCheck `mapconv:"Settings.GSLB.HealthCheck,recursive"`
-		DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop" validate:"min=10,max=60"`
+		DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop"`
 		Weighted           types.StringFlag `mapconv:"Settings.GSLB.Weighted"`
 		SorryServer        string           `mapconv:"Settings.GSLB.SorryServer"`
-		DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive" validate:"min=0,max=12"`
+		DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive"`
 		SettingsHash       string           `json:",omitempty" mapconv:",omitempty"`
 	}{
 		Name:               o.GetName(),
@@ -9995,10 +10148,10 @@ func (o *GSLBUpdateRequest) SetSettingsHash(v string) {
 // GSLBUpdateSettingsRequest represents API parameter/response structure
 type GSLBUpdateSettingsRequest struct {
 	HealthCheck        *GSLBHealthCheck `mapconv:"Settings.GSLB.HealthCheck,recursive"`
-	DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop" validate:"min=10,max=60"`
+	DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop"`
 	Weighted           types.StringFlag `mapconv:"Settings.GSLB.Weighted"`
 	SorryServer        string           `mapconv:"Settings.GSLB.SorryServer"`
-	DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive" validate:"min=0,max=12"`
+	DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive"`
 	SettingsHash       string           `json:",omitempty" mapconv:",omitempty"`
 }
 
@@ -10011,10 +10164,10 @@ func (o *GSLBUpdateSettingsRequest) Validate() error {
 func (o *GSLBUpdateSettingsRequest) setDefaults() interface{} {
 	return &struct {
 		HealthCheck        *GSLBHealthCheck `mapconv:"Settings.GSLB.HealthCheck,recursive"`
-		DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop" validate:"min=10,max=60"`
+		DelayLoop          int              `mapconv:"Settings.GSLB.DelayLoop"`
 		Weighted           types.StringFlag `mapconv:"Settings.GSLB.Weighted"`
 		SorryServer        string           `mapconv:"Settings.GSLB.SorryServer"`
-		DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive" validate:"min=0,max=12"`
+		DestinationServers GSLBServers      `mapconv:"Settings.GSLB.[]Servers,recursive"`
 		SettingsHash       string           `json:",omitempty" mapconv:",omitempty"`
 	}{
 		HealthCheck:        o.GetHealthCheck(),
@@ -10096,7 +10249,7 @@ func (o *GSLBUpdateSettingsRequest) SetSettingsHash(v string) {
 // Icon represents API parameter/response structure
 type Icon struct {
 	ID           types.ID
-	Name         string `validate:"required"`
+	Name         string
 	Tags         types.Tags
 	Availability types.EAvailability
 	Scope        types.EScope
@@ -10114,7 +10267,7 @@ func (o *Icon) Validate() error {
 func (o *Icon) setDefaults() interface{} {
 	return &struct {
 		ID           types.ID
-		Name         string `validate:"required"`
+		Name         string
 		Tags         types.Tags
 		Availability types.EAvailability
 		Scope        types.EScope
@@ -10259,7 +10412,7 @@ func (o *Icon) SetModifiedAt(v time.Time) {
 
 // IconCreateRequest represents API parameter/response structure
 type IconCreateRequest struct {
-	Name  string `validate:"required"`
+	Name  string
 	Tags  types.Tags
 	Image string
 }
@@ -10272,7 +10425,7 @@ func (o *IconCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *IconCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name  string `validate:"required"`
+		Name  string
 		Tags  types.Tags
 		Image string
 	}{
@@ -10338,7 +10491,7 @@ func (o *IconCreateRequest) SetImage(v string) {
 
 // IconUpdateRequest represents API parameter/response structure
 type IconUpdateRequest struct {
-	Name string `validate:"required"`
+	Name string
 	Tags types.Tags
 }
 
@@ -10350,7 +10503,7 @@ func (o *IconUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *IconUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name string `validate:"required"`
+		Name string
 		Tags types.Tags
 	}{
 		Name: o.GetName(),
@@ -10641,13 +10794,13 @@ func (o *InterfaceUpdateRequest) SetUserIPAddress(v string) {
 // Internet represents API parameter/response structure
 type Internet struct {
 	ID             types.ID
-	Name           string `validate:"required"`
-	Description    string `validate:"min=0,max=512"`
+	Name           string
+	Description    string
 	Tags           types.Tags
 	IconID         types.ID `mapconv:"Icon.ID"`
 	CreatedAt      time.Time
 	BandWidthMbps  int
-	NetworkMaskLen int         `validate:"min=24,max=28"`
+	NetworkMaskLen int
 	Switch         *SwitchInfo `mapconv:",recursive"`
 }
 
@@ -10660,13 +10813,13 @@ func (o *Internet) Validate() error {
 func (o *Internet) setDefaults() interface{} {
 	return &struct {
 		ID             types.ID
-		Name           string `validate:"required"`
-		Description    string `validate:"min=0,max=512"`
+		Name           string
+		Description    string
 		Tags           types.Tags
 		IconID         types.ID `mapconv:"Icon.ID"`
 		CreatedAt      time.Time
 		BandWidthMbps  int
-		NetworkMaskLen int         `validate:"min=24,max=28"`
+		NetworkMaskLen int
 		Switch         *SwitchInfo `mapconv:",recursive"`
 	}{
 		ID:             o.GetID(),
@@ -10818,8 +10971,8 @@ func (o *Internet) SetSwitch(v *SwitchInfo) {
 // SwitchInfo represents API parameter/response structure
 type SwitchInfo struct {
 	ID          types.ID
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	Scope       types.EScope
 	Subnets     []*InternetSubnet `mapconv:"[]Subnets,recursive"`
@@ -10835,8 +10988,8 @@ func (o *SwitchInfo) Validate() error {
 func (o *SwitchInfo) setDefaults() interface{} {
 	return &struct {
 		ID          types.ID
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		Scope       types.EScope
 		Subnets     []*InternetSubnet `mapconv:"[]Subnets,recursive"`
@@ -10969,11 +11122,11 @@ func (o *SwitchInfo) SetIPv6Nets(v []*IPv6NetInfo) {
 // InternetSubnet represents API parameter/response structure
 type InternetSubnet struct {
 	ID             types.ID
-	DefaultRoute   string `validate:"ipv4"`
-	NextHop        string `validate:"ipv4"`
-	StaticRoute    string `validate:"ipv4"`
-	NetworkAddress string `validate:"ipv4"`
-	NetworkMaskLen int    `validate:"min=24,max=28"`
+	DefaultRoute   string
+	NextHop        string
+	StaticRoute    string
+	NetworkAddress string
+	NetworkMaskLen int
 }
 
 // Validate validates by field tags
@@ -10985,11 +11138,11 @@ func (o *InternetSubnet) Validate() error {
 func (o *InternetSubnet) setDefaults() interface{} {
 	return &struct {
 		ID             types.ID
-		DefaultRoute   string `validate:"ipv4"`
-		NextHop        string `validate:"ipv4"`
-		StaticRoute    string `validate:"ipv4"`
-		NetworkAddress string `validate:"ipv4"`
-		NetworkMaskLen int    `validate:"min=24,max=28"`
+		DefaultRoute   string
+		NextHop        string
+		StaticRoute    string
+		NetworkAddress string
+		NetworkMaskLen int
 	}{
 		ID:             o.GetID(),
 		DefaultRoute:   o.GetDefaultRoute(),
@@ -11165,11 +11318,11 @@ func (o *IPv6NetInfo) SetIPv6PrefixLen(v int) {
 
 // InternetCreateRequest represents API parameter/response structure
 type InternetCreateRequest struct {
-	Name           string `validate:"required"`
-	Description    string `validate:"min=0,max=512"`
+	Name           string
+	Description    string
 	Tags           types.Tags
 	IconID         types.ID `mapconv:"Icon.ID"`
-	NetworkMaskLen int      `validate:"min=24,max=28"`
+	NetworkMaskLen int
 	BandWidthMbps  int
 }
 
@@ -11181,11 +11334,11 @@ func (o *InternetCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *InternetCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name           string `validate:"required"`
-		Description    string `validate:"min=0,max=512"`
+		Name           string
+		Description    string
 		Tags           types.Tags
 		IconID         types.ID `mapconv:"Icon.ID"`
-		NetworkMaskLen int      `validate:"min=24,max=28"`
+		NetworkMaskLen int
 		BandWidthMbps  int
 	}{
 		Name:           o.GetName(),
@@ -11283,8 +11436,8 @@ func (o *InternetCreateRequest) SetBandWidthMbps(v int) {
 
 // InternetUpdateRequest represents API parameter/response structure
 type InternetUpdateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
 }
@@ -11297,8 +11450,8 @@ func (o *InternetUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *InternetUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
 	}{
@@ -11409,11 +11562,11 @@ func (o *InternetUpdateBandWidthRequest) SetBandWidthMbps(v int) {
 // InternetSubnetOperationResult represents API parameter/response structure
 type InternetSubnetOperationResult struct {
 	ID             types.ID
-	DefaultRoute   string   `validate:"ipv4"`
-	NextHop        string   `validate:"ipv4"`
-	StaticRoute    string   `validate:"ipv4"`
-	NetworkAddress string   `validate:"ipv4"`
-	NetworkMaskLen int      `validate:"min=24,max=28"`
+	DefaultRoute   string
+	NextHop        string
+	StaticRoute    string
+	NetworkAddress string
+	NetworkMaskLen int
 	IPAddresses    []string `mapconv:"[]IPAddresses.IPAddress"`
 }
 
@@ -11426,11 +11579,11 @@ func (o *InternetSubnetOperationResult) Validate() error {
 func (o *InternetSubnetOperationResult) setDefaults() interface{} {
 	return &struct {
 		ID             types.ID
-		DefaultRoute   string   `validate:"ipv4"`
-		NextHop        string   `validate:"ipv4"`
-		StaticRoute    string   `validate:"ipv4"`
-		NetworkAddress string   `validate:"ipv4"`
-		NetworkMaskLen int      `validate:"min=24,max=28"`
+		DefaultRoute   string
+		NextHop        string
+		StaticRoute    string
+		NetworkAddress string
+		NetworkMaskLen int
 		IPAddresses    []string `mapconv:"[]IPAddresses.IPAddress"`
 	}{
 		ID:             o.GetID(),
@@ -11539,8 +11692,8 @@ func (o *InternetSubnetOperationResult) SetIPAddresses(v []string) {
 
 // InternetAddSubnetRequest represents API parameter/response structure
 type InternetAddSubnetRequest struct {
-	NetworkMaskLen int    `validate:"min=24,max=28"`
-	NextHop        string `validate:"ipv4"`
+	NetworkMaskLen int
+	NextHop        string
 }
 
 // Validate validates by field tags
@@ -11551,8 +11704,8 @@ func (o *InternetAddSubnetRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *InternetAddSubnetRequest) setDefaults() interface{} {
 	return &struct {
-		NetworkMaskLen int    `validate:"min=24,max=28"`
-		NextHop        string `validate:"ipv4"`
+		NetworkMaskLen int
+		NextHop        string
 	}{
 		NetworkMaskLen: o.GetNetworkMaskLen(),
 		NextHop:        o.GetNextHop(),
@@ -11585,7 +11738,7 @@ func (o *InternetAddSubnetRequest) SetNextHop(v string) {
 
 // InternetUpdateSubnetRequest represents API parameter/response structure
 type InternetUpdateSubnetRequest struct {
-	NextHop string `validate:"ipv4"`
+	NextHop string
 }
 
 // Validate validates by field tags
@@ -11596,7 +11749,7 @@ func (o *InternetUpdateSubnetRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *InternetUpdateSubnetRequest) setDefaults() interface{} {
 	return &struct {
-		NextHop string `validate:"ipv4"`
+		NextHop string
 	}{
 		NextHop: o.GetNextHop(),
 	}
@@ -11651,9 +11804,9 @@ func (o *RouterActivity) SetValues(v []*MonitorRouterValue) {
 
 // MonitorRouterValue represents API parameter/response structure
 type MonitorRouterValue struct {
-	Time time.Time `json:",omitempty" mapconv:",omitempty"`
-	In   float64   `json:",omitempty" mapconv:",omitempty"`
-	Out  float64   `json:",omitempty" mapconv:",omitempty"`
+	Time time.Time `mapconv:",omitempty"`
+	In   float64   `mapconv:",omitempty"`
+	Out  float64   `mapconv:",omitempty"`
 }
 
 // Validate validates by field tags
@@ -11664,9 +11817,9 @@ func (o *MonitorRouterValue) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *MonitorRouterValue) setDefaults() interface{} {
 	return &struct {
-		Time time.Time `json:",omitempty" mapconv:",omitempty"`
-		In   float64   `json:",omitempty" mapconv:",omitempty"`
-		Out  float64   `json:",omitempty" mapconv:",omitempty"`
+		Time time.Time `mapconv:",omitempty"`
+		In   float64   `mapconv:",omitempty"`
+		Out  float64   `mapconv:",omitempty"`
 	}{
 		Time: o.GetTime(),
 		In:   o.GetIn(),
@@ -11711,7 +11864,7 @@ func (o *MonitorRouterValue) SetOut(v float64) {
 // InternetPlan represents API parameter/response structure
 type InternetPlan struct {
 	ID            types.ID
-	Name          string `validate:"required"`
+	Name          string
 	BandWidthMbps int
 	Availability  types.EAvailability
 }
@@ -11725,7 +11878,7 @@ func (o *InternetPlan) Validate() error {
 func (o *InternetPlan) setDefaults() interface{} {
 	return &struct {
 		ID            types.ID
-		Name          string `validate:"required"`
+		Name          string
 		BandWidthMbps int
 		Availability  types.EAvailability
 	}{
@@ -12209,7 +12362,7 @@ func (o *IPv6AddrUpdateRequest) SetHostName(v string) {
 // License represents API parameter/response structure
 type License struct {
 	ID              types.ID
-	Name            string   `validate:"required"`
+	Name            string
 	LicenseInfoID   types.ID `mapconv:"LicenseInfo.ID"`
 	LicenseInfoName string   `mapconv:"LicenseInfo.Name"`
 	CreatedAt       time.Time
@@ -12225,7 +12378,7 @@ func (o *License) Validate() error {
 func (o *License) setDefaults() interface{} {
 	return &struct {
 		ID              types.ID
-		Name            string   `validate:"required"`
+		Name            string
 		LicenseInfoID   types.ID `mapconv:"LicenseInfo.ID"`
 		LicenseInfoName string   `mapconv:"LicenseInfo.Name"`
 		CreatedAt       time.Time
@@ -12326,7 +12479,7 @@ func (o *License) SetModifiedAt(v time.Time) {
 
 // LicenseCreateRequest represents API parameter/response structure
 type LicenseCreateRequest struct {
-	Name          string   `validate:"required"`
+	Name          string
 	LicenseInfoID types.ID `mapconv:"LicenseInfo.ID"`
 }
 
@@ -12338,7 +12491,7 @@ func (o *LicenseCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *LicenseCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name          string   `validate:"required"`
+		Name          string
 		LicenseInfoID types.ID `mapconv:"LicenseInfo.ID"`
 	}{
 		Name:          o.GetName(),
@@ -12372,7 +12525,7 @@ func (o *LicenseCreateRequest) SetLicenseInfoID(v types.ID) {
 
 // LicenseUpdateRequest represents API parameter/response structure
 type LicenseUpdateRequest struct {
-	Name string `validate:"required"`
+	Name string
 }
 
 // Validate validates by field tags
@@ -12383,7 +12536,7 @@ func (o *LicenseUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *LicenseUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name string `validate:"required"`
+		Name string
 	}{
 		Name: o.GetName(),
 	}
@@ -12406,7 +12559,7 @@ func (o *LicenseUpdateRequest) SetName(v string) {
 // LicenseInfo represents API parameter/response structure
 type LicenseInfo struct {
 	ID         types.ID
-	Name       string `validate:"required"`
+	Name       string
 	CreatedAt  time.Time
 	ModifiedAt time.Time
 	TermsOfUse string
@@ -12421,7 +12574,7 @@ func (o *LicenseInfo) Validate() error {
 func (o *LicenseInfo) setDefaults() interface{} {
 	return &struct {
 		ID         types.ID
-		Name       string `validate:"required"`
+		Name       string
 		CreatedAt  time.Time
 		ModifiedAt time.Time
 		TermsOfUse string
@@ -12511,8 +12664,8 @@ func (o *LicenseInfo) SetTermsOfUse(v string) {
 // LoadBalancer represents API parameter/response structure
 type LoadBalancer struct {
 	ID                      types.ID
-	Name                    string `validate:"required"`
-	Description             string `validate:"min=0,max=512"`
+	Name                    string
+	Description             string
 	Tags                    types.Tags
 	Availability            types.EAvailability
 	Class                   string
@@ -12525,12 +12678,12 @@ type LoadBalancer struct {
 	InstanceStatusChangedAt time.Time                      `mapconv:"Instance.StatusChangedAt"`
 	PlanID                  types.ID                       `mapconv:"Remark.Plan.ID/Plan.ID"`
 	SwitchID                types.ID                       `mapconv:"Remark.Switch.ID"`
-	DefaultRoute            string                         `mapconv:"Remark.Network.DefaultRoute" validate:"ipv4"`
-	NetworkMaskLen          int                            `mapconv:"Remark.Network.NetworkMaskLen" validate:"min=1,max=32"`
+	DefaultRoute            string                         `mapconv:"Remark.Network.DefaultRoute"`
+	NetworkMaskLen          int                            `mapconv:"Remark.Network.NetworkMaskLen"`
 	IPAddresses             []string                       `mapconv:"Remark.[]Servers.IPAddress"`
 	ZoneID                  types.ID                       `mapconv:"Remark.Zone.ID"`
 	VRID                    int                            `mapconv:"Remark.VRRP.VRID"`
-	VirtualIPAddresses      LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive" validate:"min=0,max=10"`
+	VirtualIPAddresses      LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive"`
 	SettingsHash            string                         `json:",omitempty" mapconv:",omitempty"`
 	Interfaces              []*InterfaceView               `json:",omitempty" mapconv:"[]Interfaces,recursive,omitempty"`
 }
@@ -12544,8 +12697,8 @@ func (o *LoadBalancer) Validate() error {
 func (o *LoadBalancer) setDefaults() interface{} {
 	return &struct {
 		ID                      types.ID
-		Name                    string `validate:"required"`
-		Description             string `validate:"min=0,max=512"`
+		Name                    string
+		Description             string
 		Tags                    types.Tags
 		Availability            types.EAvailability
 		Class                   string
@@ -12558,12 +12711,12 @@ func (o *LoadBalancer) setDefaults() interface{} {
 		InstanceStatusChangedAt time.Time                      `mapconv:"Instance.StatusChangedAt"`
 		PlanID                  types.ID                       `mapconv:"Remark.Plan.ID/Plan.ID"`
 		SwitchID                types.ID                       `mapconv:"Remark.Switch.ID"`
-		DefaultRoute            string                         `mapconv:"Remark.Network.DefaultRoute" validate:"ipv4"`
-		NetworkMaskLen          int                            `mapconv:"Remark.Network.NetworkMaskLen" validate:"min=1,max=32"`
+		DefaultRoute            string                         `mapconv:"Remark.Network.DefaultRoute"`
+		NetworkMaskLen          int                            `mapconv:"Remark.Network.NetworkMaskLen"`
 		IPAddresses             []string                       `mapconv:"Remark.[]Servers.IPAddress"`
 		ZoneID                  types.ID                       `mapconv:"Remark.Zone.ID"`
 		VRID                    int                            `mapconv:"Remark.VRRP.VRID"`
-		VirtualIPAddresses      LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive" validate:"min=0,max=10"`
+		VirtualIPAddresses      LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive"`
 		SettingsHash            string                         `json:",omitempty" mapconv:",omitempty"`
 		Interfaces              []*InterfaceView               `json:",omitempty" mapconv:"[]Interfaces,recursive,omitempty"`
 	}{
@@ -12869,12 +13022,12 @@ func (o *LoadBalancer) SetInterfaces(v []*InterfaceView) {
 
 // LoadBalancerVirtualIPAddress represents API parameter/response structure
 type LoadBalancerVirtualIPAddress struct {
-	VirtualIPAddress string             `validate:"ipv4"`
-	Port             types.StringNumber `validate:"min=1,max=65535"`
-	DelayLoop        types.StringNumber `mapconv:",default=10" validate:"min=0,max=10000"`
-	SorryServer      string             `validate:"omitempty,ipv4"`
-	Description      string             `validate:"min=0,max=512"`
-	Servers          LoadBalancerServers
+	VirtualIPAddress string
+	Port             types.StringNumber
+	DelayLoop        types.StringNumber `mapconv:",default=10"`
+	SorryServer      string
+	Description      string
+	Servers          LoadBalancerServers `mapconv:"[]Servers,recursive"`
 }
 
 // Validate validates by field tags
@@ -12885,12 +13038,12 @@ func (o *LoadBalancerVirtualIPAddress) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *LoadBalancerVirtualIPAddress) setDefaults() interface{} {
 	return &struct {
-		VirtualIPAddress string             `validate:"ipv4"`
-		Port             types.StringNumber `validate:"min=1,max=65535"`
-		DelayLoop        types.StringNumber `mapconv:",default=10" validate:"min=0,max=10000"`
-		SorryServer      string             `validate:"omitempty,ipv4"`
-		Description      string             `validate:"min=0,max=512"`
-		Servers          LoadBalancerServers
+		VirtualIPAddress string
+		Port             types.StringNumber
+		DelayLoop        types.StringNumber `mapconv:",default=10"`
+		SorryServer      string
+		Description      string
+		Servers          LoadBalancerServers `mapconv:"[]Servers,recursive"`
 	}{
 		VirtualIPAddress: o.GetVirtualIPAddress(),
 		Port:             o.GetPort(),
@@ -12970,8 +13123,8 @@ func (o *LoadBalancerVirtualIPAddress) SetServers(v LoadBalancerServers) {
 
 // LoadBalancerServer represents API parameter/response structure
 type LoadBalancerServer struct {
-	IPAddress   string             `validate:"ipv4"`
-	Port        types.StringNumber `validate:"min=1,max=65535"`
+	IPAddress   string
+	Port        types.StringNumber
 	Enabled     types.StringFlag
 	HealthCheck *LoadBalancerServerHealthCheck `mapconv:"HealthCheck,recursive"`
 }
@@ -12984,8 +13137,8 @@ func (o *LoadBalancerServer) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *LoadBalancerServer) setDefaults() interface{} {
 	return &struct {
-		IPAddress   string             `validate:"ipv4"`
-		Port        types.StringNumber `validate:"min=1,max=65535"`
+		IPAddress   string
+		Port        types.StringNumber
 		Enabled     types.StringFlag
 		HealthCheck *LoadBalancerServerHealthCheck `mapconv:"HealthCheck,recursive"`
 	}{
@@ -13042,7 +13195,7 @@ func (o *LoadBalancerServer) SetHealthCheck(v *LoadBalancerServerHealthCheck) {
 
 // LoadBalancerServerHealthCheck represents API parameter/response structure
 type LoadBalancerServerHealthCheck struct {
-	Protocol     types.ELoadBalancerHealthCheckProtocol `validate:"oneof=http https ping tcp"`
+	Protocol     types.ELoadBalancerHealthCheckProtocol
 	Path         string
 	ResponseCode types.StringNumber `mapconv:"Status"`
 }
@@ -13055,7 +13208,7 @@ func (o *LoadBalancerServerHealthCheck) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *LoadBalancerServerHealthCheck) setDefaults() interface{} {
 	return &struct {
-		Protocol     types.ELoadBalancerHealthCheckProtocol `validate:"oneof=http https ping tcp"`
+		Protocol     types.ELoadBalancerHealthCheckProtocol
 		Path         string
 		ResponseCode types.StringNumber `mapconv:"Status"`
 	}{
@@ -13104,14 +13257,14 @@ type LoadBalancerCreateRequest struct {
 	SwitchID           types.ID `mapconv:"Remark.Switch.ID"`
 	PlanID             types.ID `mapconv:"Remark.Plan.ID/Plan.ID"`
 	VRID               int      `mapconv:"Remark.VRRP.VRID"`
-	IPAddresses        []string `mapconv:"Remark.[]Servers.IPAddress" validate:"min=1,max=2,dive,ipv4"`
-	NetworkMaskLen     int      `mapconv:"Remark.Network.NetworkMaskLen" validate:"min=1,max=32"`
-	DefaultRoute       string   `mapconv:"Remark.Network.DefaultRoute" validate:"ipv4"`
-	Name               string   `validate:"required"`
-	Description        string   `validate:"min=0,max=512"`
+	IPAddresses        []string `mapconv:"Remark.[]Servers.IPAddress"`
+	NetworkMaskLen     int      `mapconv:"Remark.Network.NetworkMaskLen"`
+	DefaultRoute       string   `mapconv:"Remark.Network.DefaultRoute"`
+	Name               string
+	Description        string
 	Tags               types.Tags
 	IconID             types.ID                       `mapconv:"Icon.ID"`
-	VirtualIPAddresses LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive" validate:"min=0,max=10"`
+	VirtualIPAddresses LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive"`
 }
 
 // Validate validates by field tags
@@ -13125,14 +13278,14 @@ func (o *LoadBalancerCreateRequest) setDefaults() interface{} {
 		SwitchID           types.ID `mapconv:"Remark.Switch.ID"`
 		PlanID             types.ID `mapconv:"Remark.Plan.ID/Plan.ID"`
 		VRID               int      `mapconv:"Remark.VRRP.VRID"`
-		IPAddresses        []string `mapconv:"Remark.[]Servers.IPAddress" validate:"min=1,max=2,dive,ipv4"`
-		NetworkMaskLen     int      `mapconv:"Remark.Network.NetworkMaskLen" validate:"min=1,max=32"`
-		DefaultRoute       string   `mapconv:"Remark.Network.DefaultRoute" validate:"ipv4"`
-		Name               string   `validate:"required"`
-		Description        string   `validate:"min=0,max=512"`
+		IPAddresses        []string `mapconv:"Remark.[]Servers.IPAddress"`
+		NetworkMaskLen     int      `mapconv:"Remark.Network.NetworkMaskLen"`
+		DefaultRoute       string   `mapconv:"Remark.Network.DefaultRoute"`
+		Name               string
+		Description        string
 		Tags               types.Tags
 		IconID             types.ID                       `mapconv:"Icon.ID"`
-		VirtualIPAddresses LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive" validate:"min=0,max=10"`
+		VirtualIPAddresses LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive"`
 		Class              string
 	}{
 		SwitchID:           o.GetSwitchID(),
@@ -13286,11 +13439,11 @@ func (o *LoadBalancerCreateRequest) SetVirtualIPAddresses(v LoadBalancerVirtualI
 
 // LoadBalancerUpdateRequest represents API parameter/response structure
 type LoadBalancerUpdateRequest struct {
-	Name               string `validate:"required"`
-	Description        string `validate:"min=0,max=512"`
+	Name               string
+	Description        string
 	Tags               types.Tags
 	IconID             types.ID                       `mapconv:"Icon.ID"`
-	VirtualIPAddresses LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive" validate:"min=0,max=10"`
+	VirtualIPAddresses LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive"`
 	SettingsHash       string                         `json:",omitempty" mapconv:",omitempty"`
 }
 
@@ -13302,11 +13455,11 @@ func (o *LoadBalancerUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *LoadBalancerUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name               string `validate:"required"`
-		Description        string `validate:"min=0,max=512"`
+		Name               string
+		Description        string
 		Tags               types.Tags
 		IconID             types.ID                       `mapconv:"Icon.ID"`
-		VirtualIPAddresses LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive" validate:"min=0,max=10"`
+		VirtualIPAddresses LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive"`
 		SettingsHash       string                         `json:",omitempty" mapconv:",omitempty"`
 	}{
 		Name:               o.GetName(),
@@ -13404,7 +13557,7 @@ func (o *LoadBalancerUpdateRequest) SetSettingsHash(v string) {
 
 // LoadBalancerUpdateSettingsRequest represents API parameter/response structure
 type LoadBalancerUpdateSettingsRequest struct {
-	VirtualIPAddresses LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive" validate:"min=0,max=10"`
+	VirtualIPAddresses LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive"`
 	SettingsHash       string                         `json:",omitempty" mapconv:",omitempty"`
 }
 
@@ -13416,7 +13569,7 @@ func (o *LoadBalancerUpdateSettingsRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *LoadBalancerUpdateSettingsRequest) setDefaults() interface{} {
 	return &struct {
-		VirtualIPAddresses LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive" validate:"min=0,max=10"`
+		VirtualIPAddresses LoadBalancerVirtualIPAddresses `mapconv:"Settings.[]LoadBalancer,recursive"`
 		SettingsHash       string                         `json:",omitempty" mapconv:",omitempty"`
 	}{
 		VirtualIPAddresses: o.GetVirtualIPAddresses(),
@@ -13608,8 +13761,8 @@ func (o *LoadBalancerServerStatus) SetCPS(v types.StringNumber) {
 // LocalRouter represents API parameter/response structure
 type LocalRouter struct {
 	ID           types.ID
-	Name         string `validate:"required"`
-	Description  string `validate:"min=0,max=512"`
+	Name         string
+	Description  string
 	Tags         types.Tags
 	Availability types.EAvailability
 	IconID       types.ID `mapconv:"Icon.ID"`
@@ -13632,8 +13785,8 @@ func (o *LocalRouter) Validate() error {
 func (o *LocalRouter) setDefaults() interface{} {
 	return &struct {
 		ID           types.ID
-		Name         string `validate:"required"`
-		Description  string `validate:"min=0,max=512"`
+		Name         string
+		Description  string
 		Tags         types.Tags
 		Availability types.EAvailability
 		IconID       types.ID `mapconv:"Icon.ID"`
@@ -14098,8 +14251,8 @@ func (o *LocalRouterStaticRoute) SetNextHop(v string) {
 
 // LocalRouterCreateRequest represents API parameter/response structure
 type LocalRouterCreateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
 }
@@ -14112,8 +14265,8 @@ func (o *LocalRouterCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *LocalRouterCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
 		Class       string   `mapconv:"Provider.Class"`
@@ -14197,8 +14350,8 @@ type LocalRouterUpdateRequest struct {
 	Peers        []*LocalRouterPeer        `mapconv:"Settings.LocalRouter.[]Peers,recursive"`
 	StaticRoutes []*LocalRouterStaticRoute `mapconv:"Settings.LocalRouter.[]StaticRoutes,recursive"`
 	SettingsHash string                    `json:",omitempty" mapconv:",omitempty"`
-	Name         string                    `validate:"required"`
-	Description  string                    `validate:"min=0,max=512"`
+	Name         string
+	Description  string
 	Tags         types.Tags
 	IconID       types.ID `mapconv:"Icon.ID"`
 }
@@ -14216,8 +14369,8 @@ func (o *LocalRouterUpdateRequest) setDefaults() interface{} {
 		Peers        []*LocalRouterPeer        `mapconv:"Settings.LocalRouter.[]Peers,recursive"`
 		StaticRoutes []*LocalRouterStaticRoute `mapconv:"Settings.LocalRouter.[]StaticRoutes,recursive"`
 		SettingsHash string                    `json:",omitempty" mapconv:",omitempty"`
-		Name         string                    `validate:"required"`
-		Description  string                    `validate:"min=0,max=512"`
+		Name         string
+		Description  string
 		Tags         types.Tags
 		IconID       types.ID `mapconv:"Icon.ID"`
 	}{
@@ -14559,9 +14712,9 @@ func (o *LocalRouterActivity) SetValues(v []*MonitorLocalRouterValue) {
 
 // MonitorLocalRouterValue represents API parameter/response structure
 type MonitorLocalRouterValue struct {
-	Time               time.Time `json:",omitempty" mapconv:",omitempty"`
-	ReceiveBytesPerSec float64   `json:",omitempty" mapconv:",omitempty"`
-	SendBytesPerSec    float64   `json:",omitempty" mapconv:",omitempty"`
+	Time               time.Time `mapconv:",omitempty"`
+	ReceiveBytesPerSec float64   `mapconv:",omitempty"`
+	SendBytesPerSec    float64   `mapconv:",omitempty"`
 }
 
 // Validate validates by field tags
@@ -14572,9 +14725,9 @@ func (o *MonitorLocalRouterValue) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *MonitorLocalRouterValue) setDefaults() interface{} {
 	return &struct {
-		Time               time.Time `json:",omitempty" mapconv:",omitempty"`
-		ReceiveBytesPerSec float64   `json:",omitempty" mapconv:",omitempty"`
-		SendBytesPerSec    float64   `json:",omitempty" mapconv:",omitempty"`
+		Time               time.Time `mapconv:",omitempty"`
+		ReceiveBytesPerSec float64   `mapconv:",omitempty"`
+		SendBytesPerSec    float64   `mapconv:",omitempty"`
 	}{
 		Time:               o.GetTime(),
 		ReceiveBytesPerSec: o.GetReceiveBytesPerSec(),
@@ -14619,8 +14772,8 @@ func (o *MonitorLocalRouterValue) SetSendBytesPerSec(v float64) {
 // MobileGateway represents API parameter/response structure
 type MobileGateway struct {
 	ID                              types.ID
-	Name                            string `validate:"required"`
-	Description                     string `validate:"min=0,max=512"`
+	Name                            string
+	Description                     string
 	Tags                            types.Tags
 	Availability                    types.EAvailability
 	Class                           string
@@ -14632,6 +14785,7 @@ type MobileGateway struct {
 	InstanceStatusChangedAt         time.Time                        `mapconv:"Instance.StatusChangedAt"`
 	Interfaces                      []*MobileGatewayInterface        `json:",omitempty" mapconv:"[]Interfaces,recursive,omitempty"`
 	ZoneID                          types.ID                         `mapconv:"Remark.Zone.ID"`
+	GlobalAddress                   string                           `mapconv:"Remark.MobileGateway.GlobalAddress"`
 	InterfaceSettings               []*MobileGatewayInterfaceSetting `mapconv:"Settings.MobileGateway.[]Interfaces,recursive"`
 	StaticRoutes                    []*MobileGatewayStaticRoute      `mapconv:"Settings.MobileGateway.[]StaticRoutes,recursive"`
 	InternetConnectionEnabled       types.StringFlag                 `mapconv:"Settings.MobileGateway.InternetConnection.Enabled"`
@@ -14648,8 +14802,8 @@ func (o *MobileGateway) Validate() error {
 func (o *MobileGateway) setDefaults() interface{} {
 	return &struct {
 		ID                              types.ID
-		Name                            string `validate:"required"`
-		Description                     string `validate:"min=0,max=512"`
+		Name                            string
+		Description                     string
 		Tags                            types.Tags
 		Availability                    types.EAvailability
 		Class                           string
@@ -14661,6 +14815,7 @@ func (o *MobileGateway) setDefaults() interface{} {
 		InstanceStatusChangedAt         time.Time                        `mapconv:"Instance.StatusChangedAt"`
 		Interfaces                      []*MobileGatewayInterface        `json:",omitempty" mapconv:"[]Interfaces,recursive,omitempty"`
 		ZoneID                          types.ID                         `mapconv:"Remark.Zone.ID"`
+		GlobalAddress                   string                           `mapconv:"Remark.MobileGateway.GlobalAddress"`
 		InterfaceSettings               []*MobileGatewayInterfaceSetting `mapconv:"Settings.MobileGateway.[]Interfaces,recursive"`
 		StaticRoutes                    []*MobileGatewayStaticRoute      `mapconv:"Settings.MobileGateway.[]StaticRoutes,recursive"`
 		InternetConnectionEnabled       types.StringFlag                 `mapconv:"Settings.MobileGateway.InternetConnection.Enabled"`
@@ -14681,6 +14836,7 @@ func (o *MobileGateway) setDefaults() interface{} {
 		InstanceStatusChangedAt:         o.GetInstanceStatusChangedAt(),
 		Interfaces:                      o.GetInterfaces(),
 		ZoneID:                          o.GetZoneID(),
+		GlobalAddress:                   o.GetGlobalAddress(),
 		InterfaceSettings:               o.GetInterfaceSettings(),
 		StaticRoutes:                    o.GetStaticRoutes(),
 		InternetConnectionEnabled:       o.GetInternetConnectionEnabled(),
@@ -14867,6 +15023,16 @@ func (o *MobileGateway) GetZoneID() types.ID {
 // SetZoneID sets value to ZoneID
 func (o *MobileGateway) SetZoneID(v types.ID) {
 	o.ZoneID = v
+}
+
+// GetGlobalAddress returns value of GlobalAddress
+func (o *MobileGateway) GetGlobalAddress() string {
+	return o.GlobalAddress
+}
+
+// SetGlobalAddress sets value to GlobalAddress
+func (o *MobileGateway) SetGlobalAddress(v string) {
+	o.GlobalAddress = v
 }
 
 // GetInterfaceSettings returns value of InterfaceSettings
@@ -15317,8 +15483,8 @@ func (o *MobileGatewayStaticRoute) SetNextHop(v string) {
 
 // MobileGatewayCreateRequest represents API parameter/response structure
 type MobileGatewayCreateRequest struct {
-	Name                            string `validate:"required"`
-	Description                     string `validate:"min=0,max=512"`
+	Name                            string
+	Description                     string
 	Tags                            types.Tags
 	IconID                          types.ID                    `mapconv:"Icon.ID"`
 	StaticRoutes                    []*MobileGatewayStaticRoute `json:",omitempty" mapconv:"Settings.MobileGateway.[]StaticRoutes,omitempty,recursive"`
@@ -15334,8 +15500,8 @@ func (o *MobileGatewayCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *MobileGatewayCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name                            string `validate:"required"`
-		Description                     string `validate:"min=0,max=512"`
+		Name                            string
+		Description                     string
 		Tags                            types.Tags
 		IconID                          types.ID                    `mapconv:"Icon.ID"`
 		StaticRoutes                    []*MobileGatewayStaticRoute `json:",omitempty" mapconv:"Settings.MobileGateway.[]StaticRoutes,omitempty,recursive"`
@@ -15454,8 +15620,8 @@ func (o *MobileGatewayCreateRequest) SetInterDeviceCommunicationEnabled(v types.
 
 // MobileGatewayUpdateRequest represents API parameter/response structure
 type MobileGatewayUpdateRequest struct {
-	Name                            string `validate:"required"`
-	Description                     string `validate:"min=0,max=512"`
+	Name                            string
+	Description                     string
 	Tags                            types.Tags
 	IconID                          types.ID                         `mapconv:"Icon.ID"`
 	InterfaceSettings               []*MobileGatewayInterfaceSetting `mapconv:"Settings.MobileGateway.[]Interfaces,recursive"`
@@ -15473,8 +15639,8 @@ func (o *MobileGatewayUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *MobileGatewayUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name                            string `validate:"required"`
-		Description                     string `validate:"min=0,max=512"`
+		Name                            string
+		Description                     string
 		Tags                            types.Tags
 		IconID                          types.ID                         `mapconv:"Icon.ID"`
 		InterfaceSettings               []*MobileGatewayInterfaceSetting `mapconv:"Settings.MobileGateway.[]Interfaces,recursive"`
@@ -15849,6 +16015,7 @@ func (o *MobileGatewaySIMRouteParam) SetPrefix(v string) {
 type MobileGatewaySIMInfo struct {
 	ICCID                      string
 	IMSI                       []string
+	IMEI                       string
 	IP                         string
 	SessionStatus              string
 	IMEILock                   bool
@@ -15873,6 +16040,7 @@ func (o *MobileGatewaySIMInfo) setDefaults() interface{} {
 	return &struct {
 		ICCID                      string
 		IMSI                       []string
+		IMEI                       string
 		IP                         string
 		SessionStatus              string
 		IMEILock                   bool
@@ -15888,6 +16056,7 @@ func (o *MobileGatewaySIMInfo) setDefaults() interface{} {
 	}{
 		ICCID:                      o.GetICCID(),
 		IMSI:                       o.GetIMSI(),
+		IMEI:                       o.GetIMEI(),
 		IP:                         o.GetIP(),
 		SessionStatus:              o.GetSessionStatus(),
 		IMEILock:                   o.GetIMEILock(),
@@ -15921,6 +16090,16 @@ func (o *MobileGatewaySIMInfo) GetIMSI() []string {
 // SetIMSI sets value to IMSI
 func (o *MobileGatewaySIMInfo) SetIMSI(v []string) {
 	o.IMSI = v
+}
+
+// GetIMEI returns value of IMEI
+func (o *MobileGatewaySIMInfo) GetIMEI() string {
+	return o.IMEI
+}
+
+// SetIMEI sets value to IMEI
+func (o *MobileGatewaySIMInfo) SetIMEI(v string) {
+	o.IMEI = v
 }
 
 // GetIP returns value of IP
@@ -16371,8 +16550,8 @@ func (o *MobileGatewayTrafficStatus) SetTrafficShaping(v bool) {
 // NFS represents API parameter/response structure
 type NFS struct {
 	ID                      types.ID
-	Name                    string `validate:"required"`
-	Description             string `validate:"min=0,max=512"`
+	Name                    string
+	Description             string
 	Tags                    types.Tags
 	Availability            types.EAvailability
 	Class                   string
@@ -16383,8 +16562,8 @@ type NFS struct {
 	Interfaces              []*InterfaceView            `json:",omitempty" mapconv:"[]Interfaces,recursive,omitempty"`
 	PlanID                  types.ID                    `mapconv:"Remark.Plan.ID/Plan.ID"`
 	SwitchID                types.ID                    `mapconv:"Remark.Switch.ID"`
-	DefaultRoute            string                      `mapconv:"Remark.Network.DefaultRoute" validate:"ipv4"`
-	NetworkMaskLen          int                         `mapconv:"Remark.Network.NetworkMaskLen" validate:"min=1,max=32"`
+	DefaultRoute            string                      `mapconv:"Remark.Network.DefaultRoute"`
+	NetworkMaskLen          int                         `mapconv:"Remark.Network.NetworkMaskLen"`
 	IPAddresses             []string                    `mapconv:"Remark.[]Servers.IPAddress"`
 	ZoneID                  types.ID                    `mapconv:"Remark.Zone.ID"`
 	IconID                  types.ID                    `mapconv:"Icon.ID"`
@@ -16402,8 +16581,8 @@ func (o *NFS) Validate() error {
 func (o *NFS) setDefaults() interface{} {
 	return &struct {
 		ID                      types.ID
-		Name                    string `validate:"required"`
-		Description             string `validate:"min=0,max=512"`
+		Name                    string
+		Description             string
 		Tags                    types.Tags
 		Availability            types.EAvailability
 		Class                   string
@@ -16414,8 +16593,8 @@ func (o *NFS) setDefaults() interface{} {
 		Interfaces              []*InterfaceView            `json:",omitempty" mapconv:"[]Interfaces,recursive,omitempty"`
 		PlanID                  types.ID                    `mapconv:"Remark.Plan.ID/Plan.ID"`
 		SwitchID                types.ID                    `mapconv:"Remark.Switch.ID"`
-		DefaultRoute            string                      `mapconv:"Remark.Network.DefaultRoute" validate:"ipv4"`
-		NetworkMaskLen          int                         `mapconv:"Remark.Network.NetworkMaskLen" validate:"min=1,max=32"`
+		DefaultRoute            string                      `mapconv:"Remark.Network.DefaultRoute"`
+		NetworkMaskLen          int                         `mapconv:"Remark.Network.NetworkMaskLen"`
 		IPAddresses             []string                    `mapconv:"Remark.[]Servers.IPAddress"`
 		ZoneID                  types.ID                    `mapconv:"Remark.Zone.ID"`
 		IconID                  types.ID                    `mapconv:"Icon.ID"`
@@ -16705,11 +16884,11 @@ func (o *NFS) SetSwitchName(v string) {
 type NFSCreateRequest struct {
 	SwitchID       types.ID `mapconv:"Remark.Switch.ID"`
 	PlanID         types.ID `mapconv:"Remark.Plan.ID/Plan.ID"`
-	IPAddresses    []string `mapconv:"Remark.[]Servers.IPAddress" validate:"min=1,max=2,dive,ipv4"`
-	NetworkMaskLen int      `mapconv:"Remark.Network.NetworkMaskLen" validate:"min=1,max=32"`
-	DefaultRoute   string   `mapconv:"Remark.Network.DefaultRoute" validate:"ipv4"`
-	Name           string   `validate:"required"`
-	Description    string   `validate:"min=0,max=512"`
+	IPAddresses    []string `mapconv:"Remark.[]Servers.IPAddress"`
+	NetworkMaskLen int      `mapconv:"Remark.Network.NetworkMaskLen"`
+	DefaultRoute   string   `mapconv:"Remark.Network.DefaultRoute"`
+	Name           string
+	Description    string
 	Tags           types.Tags
 	IconID         types.ID `mapconv:"Icon.ID"`
 }
@@ -16724,11 +16903,11 @@ func (o *NFSCreateRequest) setDefaults() interface{} {
 	return &struct {
 		SwitchID       types.ID `mapconv:"Remark.Switch.ID"`
 		PlanID         types.ID `mapconv:"Remark.Plan.ID/Plan.ID"`
-		IPAddresses    []string `mapconv:"Remark.[]Servers.IPAddress" validate:"min=1,max=2,dive,ipv4"`
-		NetworkMaskLen int      `mapconv:"Remark.Network.NetworkMaskLen" validate:"min=1,max=32"`
-		DefaultRoute   string   `mapconv:"Remark.Network.DefaultRoute" validate:"ipv4"`
-		Name           string   `validate:"required"`
-		Description    string   `validate:"min=0,max=512"`
+		IPAddresses    []string `mapconv:"Remark.[]Servers.IPAddress"`
+		NetworkMaskLen int      `mapconv:"Remark.Network.NetworkMaskLen"`
+		DefaultRoute   string   `mapconv:"Remark.Network.DefaultRoute"`
+		Name           string
+		Description    string
 		Tags           types.Tags
 		IconID         types.ID `mapconv:"Icon.ID"`
 		Class          string
@@ -16862,8 +17041,8 @@ func (o *NFSCreateRequest) SetIconID(v types.ID) {
 
 // NFSUpdateRequest represents API parameter/response structure
 type NFSUpdateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
 }
@@ -16876,8 +17055,8 @@ func (o *NFSUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *NFSUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
 	}{
@@ -16987,8 +17166,8 @@ func (o *FreeDiskSizeActivity) SetValues(v []*MonitorFreeDiskSizeValue) {
 
 // MonitorFreeDiskSizeValue represents API parameter/response structure
 type MonitorFreeDiskSizeValue struct {
-	Time         time.Time `json:",omitempty" mapconv:",omitempty"`
-	FreeDiskSize float64   `json:",omitempty" mapconv:",omitempty"`
+	Time         time.Time `mapconv:",omitempty"`
+	FreeDiskSize float64   `mapconv:",omitempty"`
 }
 
 // Validate validates by field tags
@@ -16999,8 +17178,8 @@ func (o *MonitorFreeDiskSizeValue) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *MonitorFreeDiskSizeValue) setDefaults() interface{} {
 	return &struct {
-		Time         time.Time `json:",omitempty" mapconv:",omitempty"`
-		FreeDiskSize float64   `json:",omitempty" mapconv:",omitempty"`
+		Time         time.Time `mapconv:",omitempty"`
+		FreeDiskSize float64   `mapconv:",omitempty"`
 	}{
 		Time:         o.GetTime(),
 		FreeDiskSize: o.GetFreeDiskSize(),
@@ -17034,8 +17213,8 @@ func (o *MonitorFreeDiskSizeValue) SetFreeDiskSize(v float64) {
 // Note represents API parameter/response structure
 type Note struct {
 	ID           types.ID
-	Name         string `validate:"required"`
-	Description  string `validate:"min=0,max=512"`
+	Name         string
+	Description  string
 	Tags         types.Tags
 	Availability types.EAvailability
 	Scope        types.EScope
@@ -17055,8 +17234,8 @@ func (o *Note) Validate() error {
 func (o *Note) setDefaults() interface{} {
 	return &struct {
 		ID           types.ID
-		Name         string `validate:"required"`
-		Description  string `validate:"min=0,max=512"`
+		Name         string
+		Description  string
 		Tags         types.Tags
 		Availability types.EAvailability
 		Scope        types.EScope
@@ -17236,7 +17415,7 @@ func (o *Note) SetModifiedAt(v time.Time) {
 
 // NoteCreateRequest represents API parameter/response structure
 type NoteCreateRequest struct {
-	Name    string `validate:"required"`
+	Name    string
 	Tags    types.Tags
 	IconID  types.ID `mapconv:"Icon.ID"`
 	Class   string
@@ -17251,7 +17430,7 @@ func (o *NoteCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *NoteCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name    string `validate:"required"`
+		Name    string
 		Tags    types.Tags
 		IconID  types.ID `mapconv:"Icon.ID"`
 		Class   string
@@ -17341,7 +17520,7 @@ func (o *NoteCreateRequest) SetContent(v string) {
 
 // NoteUpdateRequest represents API parameter/response structure
 type NoteUpdateRequest struct {
-	Name    string `validate:"required"`
+	Name    string
 	Tags    types.Tags
 	IconID  types.ID `mapconv:"Icon.ID"`
 	Class   string
@@ -17356,7 +17535,7 @@ func (o *NoteUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *NoteUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name    string `validate:"required"`
+		Name    string
 		Tags    types.Tags
 		IconID  types.ID `mapconv:"Icon.ID"`
 		Class   string
@@ -17447,8 +17626,8 @@ func (o *NoteUpdateRequest) SetContent(v string) {
 // PacketFilter represents API parameter/response structure
 type PacketFilter struct {
 	ID                  types.ID
-	Name                string `validate:"required"`
-	Description         string `validate:"min=0,max=512"`
+	Name                string
+	Description         string
 	RequiredHostVersion types.StringNumber
 	Expression          []*PacketFilterExpression `mapconv:"[]Expression,recursive"`
 	ExpressionHash      string
@@ -17464,8 +17643,8 @@ func (o *PacketFilter) Validate() error {
 func (o *PacketFilter) setDefaults() interface{} {
 	return &struct {
 		ID                  types.ID
-		Name                string `validate:"required"`
-		Description         string `validate:"min=0,max=512"`
+		Name                string
+		Description         string
 		RequiredHostVersion types.StringNumber
 		Expression          []*PacketFilterExpression `mapconv:"[]Expression,recursive"`
 		ExpressionHash      string
@@ -17675,8 +17854,8 @@ func (o *PacketFilterExpression) SetDescription(v string) {
 
 // PacketFilterCreateRequest represents API parameter/response structure
 type PacketFilterCreateRequest struct {
-	Name        string                    `validate:"required"`
-	Description string                    `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Expression  []*PacketFilterExpression `mapconv:"[]Expression,recursive"`
 }
 
@@ -17688,8 +17867,8 @@ func (o *PacketFilterCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *PacketFilterCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string                    `validate:"required"`
-		Description string                    `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Expression  []*PacketFilterExpression `mapconv:"[]Expression,recursive"`
 	}{
 		Name:        o.GetName(),
@@ -17734,8 +17913,8 @@ func (o *PacketFilterCreateRequest) SetExpression(v []*PacketFilterExpression) {
 
 // PacketFilterUpdateRequest represents API parameter/response structure
 type PacketFilterUpdateRequest struct {
-	Name        string                    `validate:"required"`
-	Description string                    `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Expression  []*PacketFilterExpression `mapconv:"[]Expression,recursive"`
 }
 
@@ -17747,8 +17926,8 @@ func (o *PacketFilterUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *PacketFilterUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string                    `validate:"required"`
-		Description string                    `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Expression  []*PacketFilterExpression `mapconv:"[]Expression,recursive"`
 	}{
 		Name:        o.GetName(),
@@ -17794,8 +17973,8 @@ func (o *PacketFilterUpdateRequest) SetExpression(v []*PacketFilterExpression) {
 // PrivateHost represents API parameter/response structure
 type PrivateHost struct {
 	ID               types.ID
-	Name             string `validate:"required"`
-	Description      string `validate:"min=0,max=512"`
+	Name             string
+	Description      string
 	Tags             types.Tags
 	IconID           types.ID `mapconv:"Icon.ID"`
 	CreatedAt        time.Time
@@ -17818,8 +17997,8 @@ func (o *PrivateHost) Validate() error {
 func (o *PrivateHost) setDefaults() interface{} {
 	return &struct {
 		ID               types.ID
-		Name             string `validate:"required"`
-		Description      string `validate:"min=0,max=512"`
+		Name             string
+		Description      string
 		Tags             types.Tags
 		IconID           types.ID `mapconv:"Icon.ID"`
 		CreatedAt        time.Time
@@ -18055,8 +18234,8 @@ func (o *PrivateHost) SetHostName(v string) {
 
 // PrivateHostCreateRequest represents API parameter/response structure
 type PrivateHostCreateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
 	PlanID      types.ID `mapconv:"Plan.ID,omitempty"`
@@ -18070,8 +18249,8 @@ func (o *PrivateHostCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *PrivateHostCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
 		PlanID      types.ID `mapconv:"Plan.ID,omitempty"`
@@ -18160,8 +18339,8 @@ func (o *PrivateHostCreateRequest) SetPlanID(v types.ID) {
 
 // PrivateHostUpdateRequest represents API parameter/response structure
 type PrivateHostUpdateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
 }
@@ -18174,8 +18353,8 @@ func (o *PrivateHostUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *PrivateHostUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
 	}{
@@ -18253,7 +18432,7 @@ func (o *PrivateHostUpdateRequest) SetIconID(v types.ID) {
 // PrivateHostPlan represents API parameter/response structure
 type PrivateHostPlan struct {
 	ID           types.ID
-	Name         string `validate:"required"`
+	Name         string
 	Class        string
 	CPU          int
 	MemoryMB     int
@@ -18269,7 +18448,7 @@ func (o *PrivateHostPlan) Validate() error {
 func (o *PrivateHostPlan) setDefaults() interface{} {
 	return &struct {
 		ID           types.ID
-		Name         string `validate:"required"`
+		Name         string
 		Class        string
 		CPU          int
 		MemoryMB     int
@@ -18381,8 +18560,8 @@ func (o *PrivateHostPlan) SetAvailability(v types.EAvailability) {
 // ProxyLB represents API parameter/response structure
 type ProxyLB struct {
 	ID               types.ID
-	Name             string `validate:"required"`
-	Description      string `validate:"min=0,max=512"`
+	Name             string
+	Description      string
 	Tags             types.Tags
 	Availability     types.EAvailability
 	IconID           types.ID `mapconv:"Icon.ID"`
@@ -18414,8 +18593,8 @@ func (o *ProxyLB) Validate() error {
 func (o *ProxyLB) setDefaults() interface{} {
 	return &struct {
 		ID               types.ID
-		Name             string `validate:"required"`
-		Description      string `validate:"min=0,max=512"`
+		Name             string
+		Description      string
 		Tags             types.Tags
 		Availability     types.EAvailability
 		IconID           types.ID `mapconv:"Icon.ID"`
@@ -18811,8 +18990,8 @@ func (o *ProxyLBHealthCheck) SetDelayLoop(v int) {
 
 // ProxyLBSorryServer represents API parameter/response structure
 type ProxyLBSorryServer struct {
-	IPAddress string `validate:"ipv4"`
-	Port      int    `mapconv:",omitempty" validate:"min=0,max=65535"`
+	IPAddress string
+	Port      int `mapconv:",omitempty"`
 }
 
 // Validate validates by field tags
@@ -18823,8 +19002,8 @@ func (o *ProxyLBSorryServer) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *ProxyLBSorryServer) setDefaults() interface{} {
 	return &struct {
-		IPAddress string `validate:"ipv4"`
-		Port      int    `mapconv:",omitempty" validate:"min=0,max=65535"`
+		IPAddress string
+		Port      int `mapconv:",omitempty"`
 	}{
 		IPAddress: o.GetIPAddress(),
 		Port:      o.GetPort(),
@@ -18858,7 +19037,7 @@ func (o *ProxyLBSorryServer) SetPort(v int) {
 // ProxyLBBindPort represents API parameter/response structure
 type ProxyLBBindPort struct {
 	ProxyMode         types.EProxyLBProxyMode
-	Port              int `validate:"min=0,max=65535"`
+	Port              int
 	RedirectToHTTPS   bool
 	SupportHTTP2      bool
 	AddResponseHeader []*ProxyLBResponseHeader `mapconv:"[]AddResponseHeader,recursive"`
@@ -18873,7 +19052,7 @@ func (o *ProxyLBBindPort) Validate() error {
 func (o *ProxyLBBindPort) setDefaults() interface{} {
 	return &struct {
 		ProxyMode         types.EProxyLBProxyMode
-		Port              int `validate:"min=0,max=65535"`
+		Port              int
 		RedirectToHTTPS   bool
 		SupportHTTP2      bool
 		AddResponseHeader []*ProxyLBResponseHeader `mapconv:"[]AddResponseHeader,recursive"`
@@ -18988,8 +19167,8 @@ func (o *ProxyLBResponseHeader) SetValue(v string) {
 
 // ProxyLBServer represents API parameter/response structure
 type ProxyLBServer struct {
-	IPAddress   string `validate:"ipv4"`
-	Port        int    `validate:"min=0,max=65535"`
+	IPAddress   string
+	Port        int
 	ServerGroup string
 	Enabled     bool
 }
@@ -19002,8 +19181,8 @@ func (o *ProxyLBServer) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *ProxyLBServer) setDefaults() interface{} {
 	return &struct {
-		IPAddress   string `validate:"ipv4"`
-		Port        int    `validate:"min=0,max=65535"`
+		IPAddress   string
+		Port        int
 		ServerGroup string
 		Enabled     bool
 	}{
@@ -19211,7 +19390,7 @@ func (o *ProxyLBStickySession) SetEnabled(v bool) {
 
 // ProxyLBTimeout represents API parameter/response structure
 type ProxyLBTimeout struct {
-	InactiveSec int `validate:"min=10,max=600"`
+	InactiveSec int
 }
 
 // Validate validates by field tags
@@ -19222,7 +19401,7 @@ func (o *ProxyLBTimeout) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *ProxyLBTimeout) setDefaults() interface{} {
 	return &struct {
-		InactiveSec int `validate:"min=10,max=600"`
+		InactiveSec int
 	}{
 		InactiveSec: o.GetInactiveSec(),
 	}
@@ -19258,8 +19437,8 @@ type ProxyLBCreateRequest struct {
 	Timeout        *ProxyLBTimeout       `json:",omitempty" mapconv:"Settings.ProxyLB.Timeout,recursive,omitempty"`
 	UseVIPFailover bool                  `mapconv:"Status.UseVIPFailover"`
 	Region         types.EProxyLBRegion  `mapconv:"Status.Region"`
-	Name           string                `validate:"required"`
-	Description    string                `validate:"min=0,max=512"`
+	Name           string
+	Description    string
 	Tags           types.Tags
 	IconID         types.ID `mapconv:"Icon.ID"`
 }
@@ -19283,8 +19462,8 @@ func (o *ProxyLBCreateRequest) setDefaults() interface{} {
 		Timeout        *ProxyLBTimeout       `json:",omitempty" mapconv:"Settings.ProxyLB.Timeout,recursive,omitempty"`
 		UseVIPFailover bool                  `mapconv:"Status.UseVIPFailover"`
 		Region         types.EProxyLBRegion  `mapconv:"Status.Region"`
-		Name           string                `validate:"required"`
-		Description    string                `validate:"min=0,max=512"`
+		Name           string
+		Description    string
 		Tags           types.Tags
 		IconID         types.ID `mapconv:"Icon.ID"`
 		Class          string   `mapconv:"Provider.Class"`
@@ -19493,8 +19672,8 @@ type ProxyLBUpdateRequest struct {
 	StickySession *ProxyLBStickySession `mapconv:"Settings.ProxyLB.StickySession,recursive"`
 	Timeout       *ProxyLBTimeout       `json:",omitempty" mapconv:"Settings.ProxyLB.Timeout,recursive,omitempty"`
 	SettingsHash  string                `json:",omitempty" mapconv:",omitempty"`
-	Name          string                `validate:"required"`
-	Description   string                `validate:"min=0,max=512"`
+	Name          string
+	Description   string
 	Tags          types.Tags
 	IconID        types.ID `mapconv:"Icon.ID"`
 }
@@ -19516,8 +19695,8 @@ func (o *ProxyLBUpdateRequest) setDefaults() interface{} {
 		StickySession *ProxyLBStickySession `mapconv:"Settings.ProxyLB.StickySession,recursive"`
 		Timeout       *ProxyLBTimeout       `json:",omitempty" mapconv:"Settings.ProxyLB.Timeout,recursive,omitempty"`
 		SettingsHash  string                `json:",omitempty" mapconv:",omitempty"`
-		Name          string                `validate:"required"`
-		Description   string                `validate:"min=0,max=512"`
+		Name          string
+		Description   string
 		Tags          types.Tags
 		IconID        types.ID `mapconv:"Icon.ID"`
 	}{
@@ -20079,7 +20258,7 @@ func (o *ProxyLBAdditionalCert) SetCertificateCommonName(v string) {
 
 // ProxyLBSetCertificatesRequest represents API parameter/response structure
 type ProxyLBSetCertificatesRequest struct {
-	PrimaryCerts    *ProxyLBPrimaryCert
+	PrimaryCerts    *ProxyLBPrimaryCert      `mapconv:"PrimaryCert"`
 	AdditionalCerts []*ProxyLBAdditionalCert `mapconv:"[]AdditionalCerts, recursive"`
 }
 
@@ -20091,7 +20270,7 @@ func (o *ProxyLBSetCertificatesRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *ProxyLBSetCertificatesRequest) setDefaults() interface{} {
 	return &struct {
-		PrimaryCerts    *ProxyLBPrimaryCert
+		PrimaryCerts    *ProxyLBPrimaryCert      `mapconv:"PrimaryCert"`
 		AdditionalCerts []*ProxyLBAdditionalCert `mapconv:"[]AdditionalCerts, recursive"`
 	}{
 		PrimaryCerts:    o.GetPrimaryCerts(),
@@ -20230,9 +20409,9 @@ func (o *ConnectionActivity) SetValues(v []*MonitorConnectionValue) {
 
 // MonitorConnectionValue represents API parameter/response structure
 type MonitorConnectionValue struct {
-	Time              time.Time `json:",omitempty" mapconv:",omitempty"`
-	ActiveConnections float64   `json:",omitempty" mapconv:",omitempty"`
-	ConnectionsPerSec float64   `json:",omitempty" mapconv:",omitempty"`
+	Time              time.Time `mapconv:",omitempty"`
+	ActiveConnections float64   `mapconv:",omitempty"`
+	ConnectionsPerSec float64   `mapconv:",omitempty"`
 }
 
 // Validate validates by field tags
@@ -20243,9 +20422,9 @@ func (o *MonitorConnectionValue) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *MonitorConnectionValue) setDefaults() interface{} {
 	return &struct {
-		Time              time.Time `json:",omitempty" mapconv:",omitempty"`
-		ActiveConnections float64   `json:",omitempty" mapconv:",omitempty"`
-		ConnectionsPerSec float64   `json:",omitempty" mapconv:",omitempty"`
+		Time              time.Time `mapconv:",omitempty"`
+		ActiveConnections float64   `mapconv:",omitempty"`
+		ConnectionsPerSec float64   `mapconv:",omitempty"`
 	}{
 		Time:              o.GetTime(),
 		ActiveConnections: o.GetActiveConnections(),
@@ -20290,8 +20469,8 @@ func (o *MonitorConnectionValue) SetConnectionsPerSec(v float64) {
 // Server represents API parameter/response structure
 type Server struct {
 	ID                      types.ID
-	Name                    string `validate:"required"`
-	Description             string `validate:"min=0,max=512"`
+	Name                    string
+	Description             string
 	Tags                    types.Tags
 	Availability            types.EAvailability
 	HostName                string
@@ -20330,8 +20509,8 @@ func (o *Server) Validate() error {
 func (o *Server) setDefaults() interface{} {
 	return &struct {
 		ID                      types.ID
-		Name                    string `validate:"required"`
-		Description             string `validate:"min=0,max=512"`
+		Name                    string
+		Description             string
 		Tags                    types.Tags
 		Availability            types.EAvailability
 		HostName                string
@@ -20751,7 +20930,7 @@ func (o *Server) SetModifiedAt(v time.Time) {
 // ZoneInfo represents API parameter/response structure
 type ZoneInfo struct {
 	ID          types.ID
-	Name        string         `validate:"required"`
+	Name        string
 	DisplayName string         `json:",omitempty" mapconv:"Description,omitempty"`
 	IsDummy     bool           `json:",omitempty" mapconv:",omitempty"`
 	VNCProxy    *VNCProxy      `json:",omitempty" mapconv:",omitempty,recursive"`
@@ -20768,7 +20947,7 @@ func (o *ZoneInfo) Validate() error {
 func (o *ZoneInfo) setDefaults() interface{} {
 	return &struct {
 		ID          types.ID
-		Name        string         `validate:"required"`
+		Name        string
 		DisplayName string         `json:",omitempty" mapconv:"Description,omitempty"`
 		IsDummy     bool           `json:",omitempty" mapconv:",omitempty"`
 		VNCProxy    *VNCProxy      `json:",omitempty" mapconv:",omitempty,recursive"`
@@ -20974,7 +21153,7 @@ func (o *FTPServerInfo) SetIPAddress(v string) {
 // ServerConnectedDisk represents API parameter/response structure
 type ServerConnectedDisk struct {
 	ID              types.ID
-	Name            string `validate:"required"`
+	Name            string
 	Availability    types.EAvailability
 	Connection      types.EDiskConnection `json:",omitempty" mapconv:",omitempty"`
 	ConnectionOrder int
@@ -20993,7 +21172,7 @@ func (o *ServerConnectedDisk) Validate() error {
 func (o *ServerConnectedDisk) setDefaults() interface{} {
 	return &struct {
 		ID              types.ID
-		Name            string `validate:"required"`
+		Name            string
 		Availability    types.EAvailability
 		Connection      types.EDiskConnection `json:",omitempty" mapconv:",omitempty"`
 		ConnectionOrder int
@@ -21146,8 +21325,8 @@ type ServerCreateRequest struct {
 	ServerPlanGeneration types.EPlanGeneration `mapconv:"ServerPlan.Generation"`
 	ConnectedSwitches    []*ConnectedSwitch    `json:",omitempty" mapconv:"[]ConnectedSwitches,recursive"`
 	InterfaceDriver      types.EInterfaceDriver
-	Name                 string `validate:"required"`
-	Description          string `validate:"min=0,max=512"`
+	Name                 string
+	Description          string
 	Tags                 types.Tags
 	IconID               types.ID `mapconv:"Icon.ID"`
 	WaitDiskMigration    bool     `json:",omitempty" mapconv:",omitempty"`
@@ -21168,8 +21347,8 @@ func (o *ServerCreateRequest) setDefaults() interface{} {
 		ServerPlanGeneration types.EPlanGeneration `mapconv:"ServerPlan.Generation"`
 		ConnectedSwitches    []*ConnectedSwitch    `json:",omitempty" mapconv:"[]ConnectedSwitches,recursive"`
 		InterfaceDriver      types.EInterfaceDriver
-		Name                 string `validate:"required"`
-		Description          string `validate:"min=0,max=512"`
+		Name                 string
+		Description          string
 		Tags                 types.Tags
 		IconID               types.ID `mapconv:"Icon.ID"`
 		WaitDiskMigration    bool     `json:",omitempty" mapconv:",omitempty"`
@@ -21413,8 +21592,8 @@ func (o *ConnectedSwitch) SetScope(v types.EScope) {
 
 // ServerUpdateRequest represents API parameter/response structure
 type ServerUpdateRequest struct {
-	Name            string `validate:"required"`
-	Description     string `validate:"min=0,max=512"`
+	Name            string
+	Description     string
 	Tags            types.Tags
 	IconID          types.ID `mapconv:"Icon.ID"`
 	PrivateHostID   types.ID `mapconv:"PrivateHost.ID"`
@@ -21429,8 +21608,8 @@ func (o *ServerUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *ServerUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name            string `validate:"required"`
-		Description     string `validate:"min=0,max=512"`
+		Name            string
+		Description     string
 		Tags            types.Tags
 		IconID          types.ID `mapconv:"Icon.ID"`
 		PrivateHostID   types.ID `mapconv:"PrivateHost.ID"`
@@ -21569,8 +21748,8 @@ func (o *ServerDeleteWithDisksRequest) SetIDs(v []types.ID) {
 type ServerChangePlanRequest struct {
 	CPU                  int
 	MemoryMB             int
-	ServerPlanGeneration types.EPlanGeneration
-	ServerPlanCommitment types.ECommitment `json:",omitempty" mapconv:"ServerPlan.Commitment"`
+	ServerPlanGeneration types.EPlanGeneration `json:"Generation,omitempty"`
+	ServerPlanCommitment types.ECommitment     `json:"Commitment,omitempty"`
 }
 
 // Validate validates by field tags
@@ -21583,8 +21762,8 @@ func (o *ServerChangePlanRequest) setDefaults() interface{} {
 	return &struct {
 		CPU                  int
 		MemoryMB             int
-		ServerPlanGeneration types.EPlanGeneration
-		ServerPlanCommitment types.ECommitment `json:",omitempty" mapconv:"ServerPlan.Commitment"`
+		ServerPlanGeneration types.EPlanGeneration `json:"Generation,omitempty"`
+		ServerPlanCommitment types.ECommitment     `json:"Commitment,omitempty"`
 	}{
 		CPU:                  o.GetCPU(),
 		MemoryMB:             o.GetMemoryMB(),
@@ -21903,7 +22082,7 @@ func (o *VNCProxyInfo) SetVNCFile(v string) {
 // ServerPlan represents API parameter/response structure
 type ServerPlan struct {
 	ID           types.ID
-	Name         string `validate:"required"`
+	Name         string
 	CPU          int
 	MemoryMB     int
 	Commitment   types.ECommitment
@@ -21920,7 +22099,7 @@ func (o *ServerPlan) Validate() error {
 func (o *ServerPlan) setDefaults() interface{} {
 	return &struct {
 		ID           types.ID
-		Name         string `validate:"required"`
+		Name         string
 		CPU          int
 		MemoryMB     int
 		Commitment   types.ECommitment
@@ -22338,12 +22517,12 @@ func (o *Price) SetZone(v string) {
 // SIM represents API parameter/response structure
 type SIM struct {
 	ID           types.ID
-	Name         string `validate:"required"`
-	Description  string `validate:"min=0,max=512"`
+	Name         string
+	Description  string
 	Tags         types.Tags
 	Availability types.EAvailability
 	Class        string
-	ICCID        string   `mapconv:"Status.ICCID" validate:"numeric"`
+	ICCID        string   `mapconv:"Status.ICCID"`
 	Info         *SIMInfo `mapconv:"Status.SIMInfo"`
 	IconID       types.ID `mapconv:"Icon.ID"`
 	CreatedAt    time.Time
@@ -22359,12 +22538,12 @@ func (o *SIM) Validate() error {
 func (o *SIM) setDefaults() interface{} {
 	return &struct {
 		ID           types.ID
-		Name         string `validate:"required"`
-		Description  string `validate:"min=0,max=512"`
+		Name         string
+		Description  string
 		Tags         types.Tags
 		Availability types.EAvailability
 		Class        string
-		ICCID        string   `mapconv:"Status.ICCID" validate:"numeric"`
+		ICCID        string   `mapconv:"Status.ICCID"`
 		Info         *SIMInfo `mapconv:"Status.SIMInfo"`
 		IconID       types.ID `mapconv:"Icon.ID"`
 		CreatedAt    time.Time
@@ -22542,6 +22721,7 @@ func (o *SIM) SetModifiedAt(v time.Time) {
 type SIMInfo struct {
 	ICCID                      string
 	IMSI                       []string
+	IMEI                       string
 	IP                         string
 	SessionStatus              string
 	IMEILock                   bool
@@ -22566,6 +22746,7 @@ func (o *SIMInfo) setDefaults() interface{} {
 	return &struct {
 		ICCID                      string
 		IMSI                       []string
+		IMEI                       string
 		IP                         string
 		SessionStatus              string
 		IMEILock                   bool
@@ -22581,6 +22762,7 @@ func (o *SIMInfo) setDefaults() interface{} {
 	}{
 		ICCID:                      o.GetICCID(),
 		IMSI:                       o.GetIMSI(),
+		IMEI:                       o.GetIMEI(),
 		IP:                         o.GetIP(),
 		SessionStatus:              o.GetSessionStatus(),
 		IMEILock:                   o.GetIMEILock(),
@@ -22614,6 +22796,16 @@ func (o *SIMInfo) GetIMSI() []string {
 // SetIMSI sets value to IMSI
 func (o *SIMInfo) SetIMSI(v []string) {
 	o.IMSI = v
+}
+
+// GetIMEI returns value of IMEI
+func (o *SIMInfo) GetIMEI() string {
+	return o.IMEI
+}
+
+// SetIMEI sets value to IMEI
+func (o *SIMInfo) SetIMEI(v string) {
+	o.IMEI = v
 }
 
 // GetIP returns value of IP
@@ -22742,11 +22934,11 @@ func (o *SIMInfo) SetConnectedIMEI(v string) {
 
 // SIMCreateRequest represents API parameter/response structure
 type SIMCreateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
-	ICCID       string   `mapconv:"Status.ICCID" validate:"numeric"`
+	ICCID       string   `mapconv:"Status.ICCID"`
 	PassCode    string   `mapconv:"Remark.PassCode"`
 }
 
@@ -22758,11 +22950,11 @@ func (o *SIMCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *SIMCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
-		ICCID       string   `mapconv:"Status.ICCID" validate:"numeric"`
+		ICCID       string   `mapconv:"Status.ICCID"`
 		PassCode    string   `mapconv:"Remark.PassCode"`
 		Class       string   `mapconv:"Provider.Class"`
 	}{
@@ -22862,8 +23054,8 @@ func (o *SIMCreateRequest) SetPassCode(v string) {
 
 // SIMUpdateRequest represents API parameter/response structure
 type SIMUpdateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID `mapconv:"Icon.ID"`
 }
@@ -22876,8 +23068,8 @@ func (o *SIMUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *SIMUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID `mapconv:"Icon.ID"`
 	}{
@@ -23197,9 +23389,9 @@ func (o *LinkActivity) SetValues(v []*MonitorLinkValue) {
 
 // MonitorLinkValue represents API parameter/response structure
 type MonitorLinkValue struct {
-	Time        time.Time `json:",omitempty" mapconv:",omitempty"`
-	UplinkBPS   float64   `json:",omitempty" mapconv:",omitempty"`
-	DownlinkBPS float64   `json:",omitempty" mapconv:",omitempty"`
+	Time        time.Time `mapconv:",omitempty"`
+	UplinkBPS   float64   `mapconv:",omitempty"`
+	DownlinkBPS float64   `mapconv:",omitempty"`
 }
 
 // Validate validates by field tags
@@ -23210,9 +23402,9 @@ func (o *MonitorLinkValue) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *MonitorLinkValue) setDefaults() interface{} {
 	return &struct {
-		Time        time.Time `json:",omitempty" mapconv:",omitempty"`
-		UplinkBPS   float64   `json:",omitempty" mapconv:",omitempty"`
-		DownlinkBPS float64   `json:",omitempty" mapconv:",omitempty"`
+		Time        time.Time `mapconv:",omitempty"`
+		UplinkBPS   float64   `mapconv:",omitempty"`
+		DownlinkBPS float64   `mapconv:",omitempty"`
 	}{
 		Time:        o.GetTime(),
 		UplinkBPS:   o.GetUplinkBPS(),
@@ -23257,8 +23449,8 @@ func (o *MonitorLinkValue) SetDownlinkBPS(v float64) {
 // SimpleMonitor represents API parameter/response structure
 type SimpleMonitor struct {
 	ID                 types.ID
-	Name               string `validate:"required"`
-	Description        string `validate:"min=0,max=512"`
+	Name               string
+	Description        string
 	Tags               types.Tags
 	Availability       types.EAvailability
 	IconID             types.ID `mapconv:"Icon.ID"`
@@ -23266,14 +23458,14 @@ type SimpleMonitor struct {
 	ModifiedAt         time.Time
 	Class              string
 	Target             string                    `mapconv:"Status.Target"`
-	DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop" validate:"min=60,max=3600"`
+	DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop"`
 	Enabled            types.StringFlag          `mapconv:"Settings.SimpleMonitor.Enabled"`
 	HealthCheck        *SimpleMonitorHealthCheck `mapconv:"Settings.SimpleMonitor.HealthCheck,recursive"`
 	NotifyEmailEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.Enabled"`
 	NotifyEmailHTML    types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.HTML"`
 	NotifySlackEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifySlack.Enabled"`
 	SlackWebhooksURL   string                    `mapconv:"Settings.SimpleMonitor.NotifySlack.IncomingWebhooksURL"`
-	NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval" validate:"min=3600,max=259200"`
+	NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval"`
 	SettingsHash       string                    `json:",omitempty" mapconv:",omitempty"`
 }
 
@@ -23286,8 +23478,8 @@ func (o *SimpleMonitor) Validate() error {
 func (o *SimpleMonitor) setDefaults() interface{} {
 	return &struct {
 		ID                 types.ID
-		Name               string `validate:"required"`
-		Description        string `validate:"min=0,max=512"`
+		Name               string
+		Description        string
 		Tags               types.Tags
 		Availability       types.EAvailability
 		IconID             types.ID `mapconv:"Icon.ID"`
@@ -23295,14 +23487,14 @@ func (o *SimpleMonitor) setDefaults() interface{} {
 		ModifiedAt         time.Time
 		Class              string
 		Target             string                    `mapconv:"Status.Target"`
-		DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop" validate:"min=60,max=3600"`
+		DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop"`
 		Enabled            types.StringFlag          `mapconv:"Settings.SimpleMonitor.Enabled"`
 		HealthCheck        *SimpleMonitorHealthCheck `mapconv:"Settings.SimpleMonitor.HealthCheck,recursive"`
 		NotifyEmailEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.Enabled"`
 		NotifyEmailHTML    types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.HTML"`
 		NotifySlackEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifySlack.Enabled"`
 		SlackWebhooksURL   string                    `mapconv:"Settings.SimpleMonitor.NotifySlack.IncomingWebhooksURL"`
-		NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval" validate:"min=3600,max=259200"`
+		NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval"`
 		SettingsHash       string                    `json:",omitempty" mapconv:",omitempty"`
 	}{
 		ID:                 o.GetID(),
@@ -23771,16 +23963,16 @@ func (o *SimpleMonitorHealthCheck) SetRemainingDays(v int) {
 
 // SimpleMonitorCreateRequest represents API parameter/response structure
 type SimpleMonitorCreateRequest struct {
-	Target             string                    `mapconv:"Name/Status.Target" validate:"required"`
-	DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop" validate:"min=60,max=3600"`
+	Target             string                    `mapconv:"Name/Status.Target"`
+	DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop"`
 	Enabled            types.StringFlag          `mapconv:"Settings.SimpleMonitor.Enabled"`
 	HealthCheck        *SimpleMonitorHealthCheck `mapconv:"Settings.SimpleMonitor.HealthCheck,recursive"`
 	NotifyEmailEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.Enabled"`
 	NotifyEmailHTML    types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.HTML"`
 	NotifySlackEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifySlack.Enabled"`
 	SlackWebhooksURL   string                    `mapconv:"Settings.SimpleMonitor.NotifySlack.IncomingWebhooksURL"`
-	NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval" validate:"min=3600,max=259200"`
-	Description        string                    `validate:"min=0,max=512"`
+	NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval"`
+	Description        string
 	Tags               types.Tags
 	IconID             types.ID `mapconv:"Icon.ID"`
 }
@@ -23793,16 +23985,16 @@ func (o *SimpleMonitorCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *SimpleMonitorCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Target             string                    `mapconv:"Name/Status.Target" validate:"required"`
-		DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop" validate:"min=60,max=3600"`
+		Target             string                    `mapconv:"Name/Status.Target"`
+		DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop"`
 		Enabled            types.StringFlag          `mapconv:"Settings.SimpleMonitor.Enabled"`
 		HealthCheck        *SimpleMonitorHealthCheck `mapconv:"Settings.SimpleMonitor.HealthCheck,recursive"`
 		NotifyEmailEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.Enabled"`
 		NotifyEmailHTML    types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.HTML"`
 		NotifySlackEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifySlack.Enabled"`
 		SlackWebhooksURL   string                    `mapconv:"Settings.SimpleMonitor.NotifySlack.IncomingWebhooksURL"`
-		NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval" validate:"min=3600,max=259200"`
-		Description        string                    `validate:"min=0,max=512"`
+		NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval"`
+		Description        string
 		Tags               types.Tags
 		IconID             types.ID `mapconv:"Icon.ID"`
 		Class              string   `mapconv:"Provider.Class"`
@@ -23975,17 +24167,17 @@ func (o *SimpleMonitorCreateRequest) SetIconID(v types.ID) {
 
 // SimpleMonitorUpdateRequest represents API parameter/response structure
 type SimpleMonitorUpdateRequest struct {
-	Description        string `validate:"min=0,max=512"`
+	Description        string
 	Tags               types.Tags
 	IconID             types.ID                  `mapconv:"Icon.ID"`
-	DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop" validate:"min=60,max=3600"`
+	DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop"`
 	Enabled            types.StringFlag          `mapconv:"Settings.SimpleMonitor.Enabled"`
 	HealthCheck        *SimpleMonitorHealthCheck `mapconv:"Settings.SimpleMonitor.HealthCheck,recursive"`
 	NotifyEmailEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.Enabled"`
 	NotifyEmailHTML    types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.HTML"`
 	NotifySlackEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifySlack.Enabled"`
 	SlackWebhooksURL   string                    `mapconv:"Settings.SimpleMonitor.NotifySlack.IncomingWebhooksURL"`
-	NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval" validate:"min=3600,max=259200"`
+	NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval"`
 	SettingsHash       string                    `json:",omitempty" mapconv:",omitempty"`
 }
 
@@ -23997,17 +24189,17 @@ func (o *SimpleMonitorUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *SimpleMonitorUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Description        string `validate:"min=0,max=512"`
+		Description        string
 		Tags               types.Tags
 		IconID             types.ID                  `mapconv:"Icon.ID"`
-		DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop" validate:"min=60,max=3600"`
+		DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop"`
 		Enabled            types.StringFlag          `mapconv:"Settings.SimpleMonitor.Enabled"`
 		HealthCheck        *SimpleMonitorHealthCheck `mapconv:"Settings.SimpleMonitor.HealthCheck,recursive"`
 		NotifyEmailEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.Enabled"`
 		NotifyEmailHTML    types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.HTML"`
 		NotifySlackEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifySlack.Enabled"`
 		SlackWebhooksURL   string                    `mapconv:"Settings.SimpleMonitor.NotifySlack.IncomingWebhooksURL"`
-		NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval" validate:"min=3600,max=259200"`
+		NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval"`
 		SettingsHash       string                    `json:",omitempty" mapconv:",omitempty"`
 	}{
 		Description:        o.GetDescription(),
@@ -24177,14 +24369,14 @@ func (o *SimpleMonitorUpdateRequest) SetSettingsHash(v string) {
 
 // SimpleMonitorUpdateSettingsRequest represents API parameter/response structure
 type SimpleMonitorUpdateSettingsRequest struct {
-	DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop" validate:"min=60,max=3600"`
+	DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop"`
 	Enabled            types.StringFlag          `mapconv:"Settings.SimpleMonitor.Enabled"`
 	HealthCheck        *SimpleMonitorHealthCheck `mapconv:"Settings.SimpleMonitor.HealthCheck,recursive"`
 	NotifyEmailEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.Enabled"`
 	NotifyEmailHTML    types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.HTML"`
 	NotifySlackEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifySlack.Enabled"`
 	SlackWebhooksURL   string                    `mapconv:"Settings.SimpleMonitor.NotifySlack.IncomingWebhooksURL"`
-	NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval" validate:"min=3600,max=259200"`
+	NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval"`
 	SettingsHash       string                    `json:",omitempty" mapconv:",omitempty"`
 }
 
@@ -24196,14 +24388,14 @@ func (o *SimpleMonitorUpdateSettingsRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *SimpleMonitorUpdateSettingsRequest) setDefaults() interface{} {
 	return &struct {
-		DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop" validate:"min=60,max=3600"`
+		DelayLoop          int                       `mapconv:"Settings.SimpleMonitor.DelayLoop"`
 		Enabled            types.StringFlag          `mapconv:"Settings.SimpleMonitor.Enabled"`
 		HealthCheck        *SimpleMonitorHealthCheck `mapconv:"Settings.SimpleMonitor.HealthCheck,recursive"`
 		NotifyEmailEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.Enabled"`
 		NotifyEmailHTML    types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifyEmail.HTML"`
 		NotifySlackEnabled types.StringFlag          `mapconv:"Settings.SimpleMonitor.NotifySlack.Enabled"`
 		SlackWebhooksURL   string                    `mapconv:"Settings.SimpleMonitor.NotifySlack.IncomingWebhooksURL"`
-		NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval" validate:"min=3600,max=259200"`
+		NotifyInterval     int                       `mapconv:"Settings.SimpleMonitor.NotifyInterval"`
 		SettingsHash       string                    `json:",omitempty" mapconv:",omitempty"`
 	}{
 		DelayLoop:          o.GetDelayLoop(),
@@ -24353,8 +24545,8 @@ func (o *ResponseTimeSecActivity) SetValues(v []*MonitorResponseTimeSecValue) {
 
 // MonitorResponseTimeSecValue represents API parameter/response structure
 type MonitorResponseTimeSecValue struct {
-	Time            time.Time `json:",omitempty" mapconv:",omitempty"`
-	ResponseTimeSec float64   `json:",omitempty" mapconv:",omitempty"`
+	Time            time.Time `mapconv:",omitempty"`
+	ResponseTimeSec float64   `mapconv:",omitempty"`
 }
 
 // Validate validates by field tags
@@ -24365,8 +24557,8 @@ func (o *MonitorResponseTimeSecValue) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *MonitorResponseTimeSecValue) setDefaults() interface{} {
 	return &struct {
-		Time            time.Time `json:",omitempty" mapconv:",omitempty"`
-		ResponseTimeSec float64   `json:",omitempty" mapconv:",omitempty"`
+		Time            time.Time `mapconv:",omitempty"`
+		ResponseTimeSec float64   `mapconv:",omitempty"`
 	}{
 		Time:            o.GetTime(),
 		ResponseTimeSec: o.GetResponseTimeSec(),
@@ -24459,8 +24651,8 @@ func (o *SimpleMonitorHealthStatus) SetHealth(v types.ESimpleMonitorHealth) {
 // SSHKey represents API parameter/response structure
 type SSHKey struct {
 	ID          types.ID
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	CreatedAt   time.Time
 	PublicKey   string
 	Fingerprint string
@@ -24475,8 +24667,8 @@ func (o *SSHKey) Validate() error {
 func (o *SSHKey) setDefaults() interface{} {
 	return &struct {
 		ID          types.ID
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		CreatedAt   time.Time
 		PublicKey   string
 		Fingerprint string
@@ -24576,8 +24768,8 @@ func (o *SSHKey) SetFingerprint(v string) {
 
 // SSHKeyCreateRequest represents API parameter/response structure
 type SSHKeyCreateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	PublicKey   string
 }
 
@@ -24589,8 +24781,8 @@ func (o *SSHKeyCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *SSHKeyCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		PublicKey   string
 	}{
 		Name:        o.GetName(),
@@ -24636,8 +24828,8 @@ func (o *SSHKeyCreateRequest) SetPublicKey(v string) {
 // SSHKeyGenerated represents API parameter/response structure
 type SSHKeyGenerated struct {
 	ID          types.ID
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	CreatedAt   time.Time
 	PublicKey   string
 	Fingerprint string
@@ -24653,8 +24845,8 @@ func (o *SSHKeyGenerated) Validate() error {
 func (o *SSHKeyGenerated) setDefaults() interface{} {
 	return &struct {
 		ID          types.ID
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		CreatedAt   time.Time
 		PublicKey   string
 		Fingerprint string
@@ -24766,8 +24958,8 @@ func (o *SSHKeyGenerated) SetPrivateKey(v string) {
 
 // SSHKeyGenerateRequest represents API parameter/response structure
 type SSHKeyGenerateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	PassPhrase  string
 }
 
@@ -24779,8 +24971,8 @@ func (o *SSHKeyGenerateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *SSHKeyGenerateRequest) setDefaults() interface{} {
 	return &struct {
-		Name           string `validate:"required"`
-		Description    string `validate:"min=0,max=512"`
+		Name           string
+		Description    string
 		PassPhrase     string
 		GenerateFormat string
 	}{
@@ -24827,8 +25019,8 @@ func (o *SSHKeyGenerateRequest) SetPassPhrase(v string) {
 
 // SSHKeyUpdateRequest represents API parameter/response structure
 type SSHKeyUpdateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 }
 
 // Validate validates by field tags
@@ -24839,8 +25031,8 @@ func (o *SSHKeyUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *SSHKeyUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 	}{
 		Name:        o.GetName(),
 		Description: o.GetDescription(),
@@ -24874,13 +25066,13 @@ func (o *SSHKeyUpdateRequest) SetDescription(v string) {
 // Subnet represents API parameter/response structure
 type Subnet struct {
 	ID             types.ID
-	SwitchID       types.ID           `mapconv:"Switch.ID,omitempty"`
-	InternetID     types.ID           `mapconv:"Switch.Internet.ID,omitempty"`
-	DefaultRoute   string             `validate:"ipv4"`
-	NextHop        string             `validate:"ipv4"`
-	StaticRoute    string             `validate:"ipv4"`
-	NetworkAddress string             `validate:"ipv4"`
-	NetworkMaskLen int                `validate:"min=24,max=28"`
+	SwitchID       types.ID `mapconv:"Switch.ID,omitempty"`
+	InternetID     types.ID `mapconv:"Switch.Internet.ID,omitempty"`
+	DefaultRoute   string
+	NextHop        string
+	StaticRoute    string
+	NetworkAddress string
+	NetworkMaskLen int
 	IPAddresses    []*SubnetIPAddress `mapconv:"[]IPAddresses,recursive"`
 }
 
@@ -24893,13 +25085,13 @@ func (o *Subnet) Validate() error {
 func (o *Subnet) setDefaults() interface{} {
 	return &struct {
 		ID             types.ID
-		SwitchID       types.ID           `mapconv:"Switch.ID,omitempty"`
-		InternetID     types.ID           `mapconv:"Switch.Internet.ID,omitempty"`
-		DefaultRoute   string             `validate:"ipv4"`
-		NextHop        string             `validate:"ipv4"`
-		StaticRoute    string             `validate:"ipv4"`
-		NetworkAddress string             `validate:"ipv4"`
-		NetworkMaskLen int                `validate:"min=24,max=28"`
+		SwitchID       types.ID `mapconv:"Switch.ID,omitempty"`
+		InternetID     types.ID `mapconv:"Switch.Internet.ID,omitempty"`
+		DefaultRoute   string
+		NextHop        string
+		StaticRoute    string
+		NetworkAddress string
+		NetworkMaskLen int
 		IPAddresses    []*SubnetIPAddress `mapconv:"[]IPAddresses,recursive"`
 	}{
 		ID:             o.GetID(),
@@ -25077,16 +25269,16 @@ func (o *SubnetIPAddress) SetIPAddress(v string) {
 // Switch represents API parameter/response structure
 type Switch struct {
 	ID                 types.ID
-	Name               string `validate:"required"`
-	Description        string `validate:"min=0,max=512"`
+	Name               string
+	Description        string
 	Tags               types.Tags
 	IconID             types.ID `mapconv:"Icon.ID"`
 	CreatedAt          time.Time
 	ModifiedAt         time.Time
 	Scope              types.EScope
 	ServerCount        int
-	NetworkMaskLen     int             `mapconv:"UserSubnet.NetworkMaskLen" validate:"min=1,max=32"`
-	DefaultRoute       string          `mapconv:"UserSubnet.DefaultRoute" validate:"ipv4"`
+	NetworkMaskLen     int             `mapconv:"UserSubnet.NetworkMaskLen"`
+	DefaultRoute       string          `mapconv:"UserSubnet.DefaultRoute"`
 	Subnets            []*SwitchSubnet `json:",omitempty" mapconv:"[]Subnets,omitempty,recursive"`
 	BridgeID           types.ID        `mapconv:"Bridge.ID,omitempty"`
 	HybridConnectionID types.ID        `mapconv:"HybridConnection.ID,omitempty"`
@@ -25101,16 +25293,16 @@ func (o *Switch) Validate() error {
 func (o *Switch) setDefaults() interface{} {
 	return &struct {
 		ID                 types.ID
-		Name               string `validate:"required"`
-		Description        string `validate:"min=0,max=512"`
+		Name               string
+		Description        string
 		Tags               types.Tags
 		IconID             types.ID `mapconv:"Icon.ID"`
 		CreatedAt          time.Time
 		ModifiedAt         time.Time
 		Scope              types.EScope
 		ServerCount        int
-		NetworkMaskLen     int             `mapconv:"UserSubnet.NetworkMaskLen" validate:"min=1,max=32"`
-		DefaultRoute       string          `mapconv:"UserSubnet.DefaultRoute" validate:"ipv4"`
+		NetworkMaskLen     int             `mapconv:"UserSubnet.NetworkMaskLen"`
+		DefaultRoute       string          `mapconv:"UserSubnet.DefaultRoute"`
 		Subnets            []*SwitchSubnet `json:",omitempty" mapconv:"[]Subnets,omitempty,recursive"`
 		BridgeID           types.ID        `mapconv:"Bridge.ID,omitempty"`
 		HybridConnectionID types.ID        `mapconv:"HybridConnection.ID,omitempty"`
@@ -25319,11 +25511,11 @@ func (o *Switch) SetHybridConnectionID(v types.ID) {
 // SwitchSubnet represents API parameter/response structure
 type SwitchSubnet struct {
 	ID                   types.ID
-	DefaultRoute         string `validate:"ipv4"`
-	NextHop              string `validate:"ipv4"`
-	StaticRoute          string `validate:"ipv4"`
-	NetworkAddress       string `validate:"ipv4"`
-	NetworkMaskLen       int    `validate:"min=24,max=28"`
+	DefaultRoute         string
+	NextHop              string
+	StaticRoute          string
+	NetworkAddress       string
+	NetworkMaskLen       int
 	Internet             *Internet
 	AssignedIPAddressMax string `mapconv:"IPAddresses.Max"`
 	AssignedIPAddressMin string `mapconv:"IPAddresses.Min"`
@@ -25338,11 +25530,11 @@ func (o *SwitchSubnet) Validate() error {
 func (o *SwitchSubnet) setDefaults() interface{} {
 	return &struct {
 		ID                   types.ID
-		DefaultRoute         string `validate:"ipv4"`
-		NextHop              string `validate:"ipv4"`
-		StaticRoute          string `validate:"ipv4"`
-		NetworkAddress       string `validate:"ipv4"`
-		NetworkMaskLen       int    `validate:"min=24,max=28"`
+		DefaultRoute         string
+		NextHop              string
+		StaticRoute          string
+		NetworkAddress       string
+		NetworkMaskLen       int
 		Internet             *Internet
 		AssignedIPAddressMax string `mapconv:"IPAddresses.Max"`
 		AssignedIPAddressMin string `mapconv:"IPAddresses.Min"`
@@ -25480,10 +25672,10 @@ func (o *SwitchSubnet) SetAssignedIPAddressMin(v string) {
 
 // SwitchCreateRequest represents API parameter/response structure
 type SwitchCreateRequest struct {
-	Name           string `validate:"required"`
-	NetworkMaskLen int    `mapconv:"UserSubnet.NetworkMaskLen" validate:"min=1,max=32"`
-	DefaultRoute   string `mapconv:"UserSubnet.DefaultRoute" validate:"ipv4"`
-	Description    string `validate:"min=0,max=512"`
+	Name           string
+	NetworkMaskLen int    `mapconv:"UserSubnet.NetworkMaskLen"`
+	DefaultRoute   string `mapconv:"UserSubnet.DefaultRoute"`
+	Description    string
 	Tags           types.Tags
 	IconID         types.ID `mapconv:"Icon.ID"`
 }
@@ -25496,10 +25688,10 @@ func (o *SwitchCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *SwitchCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name           string `validate:"required"`
-		NetworkMaskLen int    `mapconv:"UserSubnet.NetworkMaskLen" validate:"min=1,max=32"`
-		DefaultRoute   string `mapconv:"UserSubnet.DefaultRoute" validate:"ipv4"`
-		Description    string `validate:"min=0,max=512"`
+		Name           string
+		NetworkMaskLen int    `mapconv:"UserSubnet.NetworkMaskLen"`
+		DefaultRoute   string `mapconv:"UserSubnet.DefaultRoute"`
+		Description    string
 		Tags           types.Tags
 		IconID         types.ID `mapconv:"Icon.ID"`
 	}{
@@ -25598,10 +25790,10 @@ func (o *SwitchCreateRequest) SetIconID(v types.ID) {
 
 // SwitchUpdateRequest represents API parameter/response structure
 type SwitchUpdateRequest struct {
-	Name           string `validate:"required"`
-	NetworkMaskLen int    `mapconv:"UserSubnet.NetworkMaskLen" validate:"min=1,max=32"`
-	DefaultRoute   string `mapconv:"UserSubnet.DefaultRoute" validate:"ipv4"`
-	Description    string `validate:"min=0,max=512"`
+	Name           string
+	NetworkMaskLen int    `mapconv:"UserSubnet.NetworkMaskLen"`
+	DefaultRoute   string `mapconv:"UserSubnet.DefaultRoute"`
+	Description    string
 	Tags           types.Tags
 	IconID         types.ID `mapconv:"Icon.ID"`
 }
@@ -25614,10 +25806,10 @@ func (o *SwitchUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *SwitchUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name           string `validate:"required"`
-		NetworkMaskLen int    `mapconv:"UserSubnet.NetworkMaskLen" validate:"min=1,max=32"`
-		DefaultRoute   string `mapconv:"UserSubnet.DefaultRoute" validate:"ipv4"`
-		Description    string `validate:"min=0,max=512"`
+		Name           string
+		NetworkMaskLen int    `mapconv:"UserSubnet.NetworkMaskLen"`
+		DefaultRoute   string `mapconv:"UserSubnet.DefaultRoute"`
+		Description    string
 		Tags           types.Tags
 		IconID         types.ID `mapconv:"Icon.ID"`
 	}{
@@ -25717,14 +25909,15 @@ func (o *SwitchUpdateRequest) SetIconID(v types.ID) {
 // VPCRouter represents API parameter/response structure
 type VPCRouter struct {
 	ID                      types.ID
-	Name                    string `validate:"required"`
-	Description             string `validate:"min=0,max=512"`
+	Name                    string
+	Description             string
 	Tags                    types.Tags
 	Availability            types.EAvailability
 	Class                   string
 	IconID                  types.ID `mapconv:"Icon.ID"`
 	CreatedAt               time.Time
 	PlanID                  types.ID                    `mapconv:"Remark.Plan.ID/Plan.ID"`
+	Version                 int                         `mapconv:"Remark.Router.VPCRouterVersion"`
 	Settings                *VPCRouterSetting           `mapconv:",omitempty,recursive"`
 	SettingsHash            string                      `json:",omitempty" mapconv:",omitempty"`
 	InstanceHostName        string                      `mapconv:"Instance.Host.Name"`
@@ -25744,14 +25937,15 @@ func (o *VPCRouter) Validate() error {
 func (o *VPCRouter) setDefaults() interface{} {
 	return &struct {
 		ID                      types.ID
-		Name                    string `validate:"required"`
-		Description             string `validate:"min=0,max=512"`
+		Name                    string
+		Description             string
 		Tags                    types.Tags
 		Availability            types.EAvailability
 		Class                   string
 		IconID                  types.ID `mapconv:"Icon.ID"`
 		CreatedAt               time.Time
 		PlanID                  types.ID                    `mapconv:"Remark.Plan.ID/Plan.ID"`
+		Version                 int                         `mapconv:"Remark.Router.VPCRouterVersion"`
 		Settings                *VPCRouterSetting           `mapconv:",omitempty,recursive"`
 		SettingsHash            string                      `json:",omitempty" mapconv:",omitempty"`
 		InstanceHostName        string                      `mapconv:"Instance.Host.Name"`
@@ -25770,6 +25964,7 @@ func (o *VPCRouter) setDefaults() interface{} {
 		IconID:                  o.GetIconID(),
 		CreatedAt:               o.GetCreatedAt(),
 		PlanID:                  o.GetPlanID(),
+		Version:                 o.GetVersion(),
 		Settings:                o.GetSettings(),
 		SettingsHash:            o.GetSettingsHash(),
 		InstanceHostName:        o.GetInstanceHostName(),
@@ -25909,6 +26104,19 @@ func (o *VPCRouter) GetPlanID() types.ID {
 // SetPlanID sets value to PlanID
 func (o *VPCRouter) SetPlanID(v types.ID) {
 	o.PlanID = v
+}
+
+// GetVersion returns value of Version
+func (o *VPCRouter) GetVersion() int {
+	if o.Version == 0 {
+		return 2
+	}
+	return o.Version
+}
+
+// SetVersion sets value to Version
+func (o *VPCRouter) SetVersion(v int) {
+	o.Version = v
 }
 
 // GetSettings returns value of Settings
@@ -26310,8 +26518,8 @@ func (o *VPCRouterInterfaceSetting) SetIndex(v int) {
 
 // VPCRouterStaticNAT represents API parameter/response structure
 type VPCRouterStaticNAT struct {
-	GlobalAddress  string `mapconv:"GlobalAddress" validate:"ipv4"`
-	PrivateAddress string `mapconv:"PrivateAddress" validate:"ipv4"`
+	GlobalAddress  string `mapconv:"GlobalAddress"`
+	PrivateAddress string `mapconv:"PrivateAddress"`
 	Description    string
 }
 
@@ -26323,8 +26531,8 @@ func (o *VPCRouterStaticNAT) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *VPCRouterStaticNAT) setDefaults() interface{} {
 	return &struct {
-		GlobalAddress  string `mapconv:"GlobalAddress" validate:"ipv4"`
-		PrivateAddress string `mapconv:"PrivateAddress" validate:"ipv4"`
+		GlobalAddress  string `mapconv:"GlobalAddress"`
+		PrivateAddress string `mapconv:"PrivateAddress"`
 		Description    string
 	}{
 		GlobalAddress:  o.GetGlobalAddress(),
@@ -26371,7 +26579,7 @@ func (o *VPCRouterStaticNAT) SetDescription(v string) {
 type VPCRouterPortForwarding struct {
 	Protocol       types.EVPCRouterPortForwardingProtocol
 	GlobalPort     types.StringNumber
-	PrivateAddress string `mapconv:"PrivateAddress" validate:"ipv4"`
+	PrivateAddress string `mapconv:"PrivateAddress"`
 	PrivatePort    types.StringNumber
 	Description    string
 }
@@ -26386,7 +26594,7 @@ func (o *VPCRouterPortForwarding) setDefaults() interface{} {
 	return &struct {
 		Protocol       types.EVPCRouterPortForwardingProtocol
 		GlobalPort     types.StringNumber
-		PrivateAddress string `mapconv:"PrivateAddress" validate:"ipv4"`
+		PrivateAddress string `mapconv:"PrivateAddress"`
 		PrivatePort    types.StringNumber
 		Description    string
 	}{
@@ -26638,9 +26846,9 @@ func (o *VPCRouterFirewallRule) SetDescription(v string) {
 // VPCRouterDHCPServer represents API parameter/response structure
 type VPCRouterDHCPServer struct {
 	Interface  string
-	RangeStart string   `validate:"ipv4"`
-	RangeStop  string   `validate:"ipv4"`
-	DNSServers []string `validate:"dive,ipv4"`
+	RangeStart string
+	RangeStop  string
+	DNSServers []string
 }
 
 // Validate validates by field tags
@@ -26652,9 +26860,9 @@ func (o *VPCRouterDHCPServer) Validate() error {
 func (o *VPCRouterDHCPServer) setDefaults() interface{} {
 	return &struct {
 		Interface  string
-		RangeStart string   `validate:"ipv4"`
-		RangeStop  string   `validate:"ipv4"`
-		DNSServers []string `validate:"dive,ipv4"`
+		RangeStart string
+		RangeStop  string
+		DNSServers []string
 	}{
 		Interface:  o.GetInterface(),
 		RangeStart: o.GetRangeStart(),
@@ -26710,7 +26918,7 @@ func (o *VPCRouterDHCPServer) SetDNSServers(v []string) {
 // VPCRouterDHCPStaticMapping represents API parameter/response structure
 type VPCRouterDHCPStaticMapping struct {
 	MACAddress string
-	IPAddress  string `validate:"ipv4"`
+	IPAddress  string
 }
 
 // Validate validates by field tags
@@ -26722,7 +26930,7 @@ func (o *VPCRouterDHCPStaticMapping) Validate() error {
 func (o *VPCRouterDHCPStaticMapping) setDefaults() interface{} {
 	return &struct {
 		MACAddress string
-		IPAddress  string `validate:"ipv4"`
+		IPAddress  string
 	}{
 		MACAddress: o.GetMACAddress(),
 		IPAddress:  o.GetIPAddress(),
@@ -26755,8 +26963,8 @@ func (o *VPCRouterDHCPStaticMapping) SetIPAddress(v string) {
 
 // VPCRouterPPTPServer represents API parameter/response structure
 type VPCRouterPPTPServer struct {
-	RangeStart string `validate:"ipv4"`
-	RangeStop  string `validate:"ipv4"`
+	RangeStart string
+	RangeStop  string
 }
 
 // Validate validates by field tags
@@ -26767,8 +26975,8 @@ func (o *VPCRouterPPTPServer) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *VPCRouterPPTPServer) setDefaults() interface{} {
 	return &struct {
-		RangeStart string `validate:"ipv4"`
-		RangeStop  string `validate:"ipv4"`
+		RangeStart string
+		RangeStop  string
 	}{
 		RangeStart: o.GetRangeStart(),
 		RangeStop:  o.GetRangeStop(),
@@ -26801,8 +27009,8 @@ func (o *VPCRouterPPTPServer) SetRangeStop(v string) {
 
 // VPCRouterL2TPIPsecServer represents API parameter/response structure
 type VPCRouterL2TPIPsecServer struct {
-	RangeStart      string `validate:"ipv4"`
-	RangeStop       string `validate:"ipv4"`
+	RangeStart      string
+	RangeStop       string
 	PreSharedSecret string
 }
 
@@ -26814,8 +27022,8 @@ func (o *VPCRouterL2TPIPsecServer) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *VPCRouterL2TPIPsecServer) setDefaults() interface{} {
 	return &struct {
-		RangeStart      string `validate:"ipv4"`
-		RangeStop       string `validate:"ipv4"`
+		RangeStart      string
+		RangeStop       string
 		PreSharedSecret string
 	}{
 		RangeStart:      o.GetRangeStart(),
@@ -27324,13 +27532,14 @@ func (o *VPCRouterInterface) SetIndex(v int) {
 
 // VPCRouterCreateRequest represents API parameter/response structure
 type VPCRouterCreateRequest struct {
-	Name        string `validate:"required"`
-	Description string `validate:"min=0,max=512"`
+	Name        string
+	Description string
 	Tags        types.Tags
 	IconID      types.ID                  `mapconv:"Icon.ID"`
 	PlanID      types.ID                  `mapconv:"Plan.ID"`
 	Switch      *ApplianceConnectedSwitch `json:",omitempty" mapconv:"Remark.Switch,recursive"`
-	IPAddresses []string                  `mapconv:"Remark.[]Servers.IPAddress" validate:"min=1,max=2,dive,ipv4"`
+	IPAddresses []string                  `mapconv:"Remark.[]Servers.IPAddress"`
+	Version     int                       `mapconv:"Remark.Router.VPCRouterVersion"`
 	Settings    *VPCRouterSetting         `mapconv:",omitempty,recursive"`
 }
 
@@ -27342,13 +27551,14 @@ func (o *VPCRouterCreateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *VPCRouterCreateRequest) setDefaults() interface{} {
 	return &struct {
-		Name        string `validate:"required"`
-		Description string `validate:"min=0,max=512"`
+		Name        string
+		Description string
 		Tags        types.Tags
 		IconID      types.ID                  `mapconv:"Icon.ID"`
 		PlanID      types.ID                  `mapconv:"Plan.ID"`
 		Switch      *ApplianceConnectedSwitch `json:",omitempty" mapconv:"Remark.Switch,recursive"`
-		IPAddresses []string                  `mapconv:"Remark.[]Servers.IPAddress" validate:"min=1,max=2,dive,ipv4"`
+		IPAddresses []string                  `mapconv:"Remark.[]Servers.IPAddress"`
+		Version     int                       `mapconv:"Remark.Router.VPCRouterVersion"`
 		Settings    *VPCRouterSetting         `mapconv:",omitempty,recursive"`
 		Class       string
 	}{
@@ -27359,6 +27569,7 @@ func (o *VPCRouterCreateRequest) setDefaults() interface{} {
 		PlanID:      o.GetPlanID(),
 		Switch:      o.GetSwitch(),
 		IPAddresses: o.GetIPAddresses(),
+		Version:     o.GetVersion(),
 		Settings:    o.GetSettings(),
 		Class:       "vpcrouter",
 	}
@@ -27454,6 +27665,19 @@ func (o *VPCRouterCreateRequest) SetIPAddresses(v []string) {
 	o.IPAddresses = v
 }
 
+// GetVersion returns value of Version
+func (o *VPCRouterCreateRequest) GetVersion() int {
+	if o.Version == 0 {
+		return 2
+	}
+	return o.Version
+}
+
+// SetVersion sets value to Version
+func (o *VPCRouterCreateRequest) SetVersion(v int) {
+	o.Version = v
+}
+
 // GetSettings returns value of Settings
 func (o *VPCRouterCreateRequest) GetSettings() *VPCRouterSetting {
 	return o.Settings
@@ -27536,8 +27760,8 @@ func (o *ApplianceConnectedSwitch) SetScope(v types.EScope) {
 
 // VPCRouterUpdateRequest represents API parameter/response structure
 type VPCRouterUpdateRequest struct {
-	Name         string `validate:"required"`
-	Description  string `validate:"min=0,max=512"`
+	Name         string
+	Description  string
 	Tags         types.Tags
 	IconID       types.ID          `mapconv:"Icon.ID"`
 	Settings     *VPCRouterSetting `mapconv:",omitempty,recursive"`
@@ -27552,8 +27776,8 @@ func (o *VPCRouterUpdateRequest) Validate() error {
 // setDefaults implements sacloud.argumentDefaulter
 func (o *VPCRouterUpdateRequest) setDefaults() interface{} {
 	return &struct {
-		Name         string `validate:"required"`
-		Description  string `validate:"min=0,max=512"`
+		Name         string
+		Description  string
 		Tags         types.Tags
 		IconID       types.ID          `mapconv:"Icon.ID"`
 		Settings     *VPCRouterSetting `mapconv:",omitempty,recursive"`
@@ -28035,7 +28259,7 @@ func (o *VPCRouterSiteToSiteIPsecVPNPeer) SetPeer(v string) {
 // WebAccel represents API parameter/response structure
 type WebAccel struct {
 	ID                 types.ID
-	Name               string `validate:"required"`
+	Name               string
 	DomainType         types.EWebAccelDomainType
 	Domain             string
 	Subdomain          string
@@ -28060,7 +28284,7 @@ func (o *WebAccel) Validate() error {
 func (o *WebAccel) setDefaults() interface{} {
 	return &struct {
 		ID                 types.ID
-		Name               string `validate:"required"`
+		Name               string
 		DomainType         types.EWebAccelDomainType
 		Domain             string
 		Subdomain          string
@@ -29114,8 +29338,8 @@ func (o *WebAccelDeleteCacheRequest) SetURL(v []string) {
 // Zone represents API parameter/response structure
 type Zone struct {
 	ID           types.ID
-	Name         string `validate:"required"`
-	Description  string `validate:"min=0,max=512"`
+	Name         string
+	Description  string
 	DisplayOrder int64
 	IsDummy      bool
 	VNCProxy     *VNCProxy      `json:",omitempty"`
@@ -29132,8 +29356,8 @@ func (o *Zone) Validate() error {
 func (o *Zone) setDefaults() interface{} {
 	return &struct {
 		ID           types.ID
-		Name         string `validate:"required"`
-		Description  string `validate:"min=0,max=512"`
+		Name         string
+		Description  string
 		DisplayOrder int64
 		IsDummy      bool
 		VNCProxy     *VNCProxy      `json:",omitempty"`

@@ -1,4 +1,4 @@
-// Copyright 2016-2020 The Libsacloud Authors
+// Copyright 2016-2021 The Libsacloud Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ type TransferArchiveBuilder struct {
 	SourceArchiveID   types.ID
 	SourceArchiveZone string
 
+	NoWait bool
 	Client *APIClient
 }
 
@@ -77,6 +78,9 @@ func (b *TransferArchiveBuilder) Build(ctx context.Context, zone string) (*saclo
 		})
 	if err != nil {
 		return nil, err
+	}
+	if b.NoWait {
+		return archive, nil
 	}
 
 	lastState, err := sacloud.WaiterForReady(func() (interface{}, error) {

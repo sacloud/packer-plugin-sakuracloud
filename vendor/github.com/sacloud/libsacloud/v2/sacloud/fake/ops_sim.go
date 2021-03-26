@@ -1,4 +1,4 @@
-// Copyright 2016-2020 The Libsacloud Authors
+// Copyright 2016-2021 The Libsacloud Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -165,7 +165,7 @@ func (o *SIMOp) IMEILock(ctx context.Context, id types.ID, param *sacloud.SIMIME
 		return errors.New("SIM[%d] is already locked with IMEI")
 	}
 	value.Info.IMEILock = true
-	value.Info.ConnectedIMEI = param.IMEI
+	value.Info.IMEI = param.IMEI
 	putSIM(sacloud.APIDefaultZone, value)
 	return nil
 }
@@ -180,7 +180,7 @@ func (o *SIMOp) IMEIUnlock(ctx context.Context, id types.ID) error {
 		return errors.New("SIM[%d] is not locked with IMEI")
 	}
 	value.Info.IMEILock = false
-	value.Info.ConnectedIMEI = ""
+	value.Info.IMEI = ""
 	putSIM(sacloud.APIDefaultZone, value)
 	return nil
 }

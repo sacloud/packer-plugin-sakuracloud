@@ -1,4 +1,4 @@
-// Copyright 2016-2020 The Libsacloud Authors
+// Copyright 2016-2021 The Libsacloud Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,16 @@
 
 package builder
 
-import "time"
+import (
+	"time"
 
-var (
-	// DefaultNICUpdateWaitDuration NIC切断/削除後の待ち時間デフォルト値
-	DefaultNICUpdateWaitDuration = 5 * time.Second
+	"github.com/sacloud/libsacloud/v2/helper/defaults"
 )
 
 // DefaultSetupOptions RetryableSetupのデフォルトオプション
 func DefaultSetupOptions() *RetryableSetupParameter {
 	return &RetryableSetupParameter{
-		NICUpdateWaitDuration: DefaultNICUpdateWaitDuration,
+		NICUpdateWaitDuration: defaults.DefaultNICUpdateWaitDuration,
 	}
 }
 
