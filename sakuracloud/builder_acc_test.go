@@ -4,11 +4,11 @@ import (
 	"os"
 	"testing"
 
-	builderT "github.com/hashicorp/packer/helper/builder/testing"
+	"github.com/hashicorp/packer-plugin-sdk/acctest"
 )
 
 func TestBuilderAcc_basic(t *testing.T) {
-	builderT.Test(t, builderT.TestCase{
+	acctest.Test(t, acctest.TestCase{
 		PreCheck: func() { testAccPreCheck(t) },
 		Builder:  &Builder{},
 		Template: testBuilderAccBasic,
@@ -17,7 +17,7 @@ func TestBuilderAcc_basic(t *testing.T) {
 
 func TestBuilderAcc_withSSHKeyFile(t *testing.T) {
 	var deferFunc func()
-	builderT.Test(t, builderT.TestCase{
+	acctest.Test(t, acctest.TestCase{
 		PreCheck: func() {
 			deferFunc = prepareTestPrivateKeyFile()
 			testAccPreCheck(t)

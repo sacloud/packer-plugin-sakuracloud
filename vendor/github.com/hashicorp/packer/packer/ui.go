@@ -7,15 +7,14 @@ import (
 	"io"
 	"log"
 	"os"
-	"os/signal"
 	"runtime"
 	"strings"
-	"sync"
 	"syscall"
 	"time"
 	"unicode"
 
 	getter "github.com/hashicorp/go-getter/v2"
+	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 )
 
 var ErrInterrupted = errors.New("interrupted")
@@ -31,39 +30,15 @@ const (
 	UiColorCyan            = 36
 )
 
-// The Ui interface handles all communication for Packer with the outside
-// world. This sort of control allows us to strictly control how output
-// is formatted and various levels of output.
-type Ui interface {
-	Ask(string) (string, error)
-	Say(string)
-	Message(string)
-	Error(string)
-	Machine(string, ...string)
-	getter.ProgressTracker
-}
-
-type NoopUi struct {
-	NoopProgressTracker
-}
-
-var _ Ui = new(NoopUi)
-
-func (*NoopUi) Ask(string) (string, error) { return "", errors.New("this is a noop ui") }
-func (*NoopUi) Say(string)                 { return }
-func (*NoopUi) Message(string)             { return }
-func (*NoopUi) Error(string)               { return }
-func (*NoopUi) Machine(string, ...string)  { return }
-
 // ColoredUi is a UI that is colored using terminal colors.
 type ColoredUi struct {
 	Color      UiColor
 	ErrorColor UiColor
-	Ui         Ui
-	*uiProgressBar
+	Ui         packersdk.Ui
+	PB         getter.ProgressTracker
 }
 
-var _ Ui = new(ColoredUi)
+var _ packersdk.Ui = new(ColoredUi)
 
 func (u *ColoredUi) Ask(query string) (string, error) {
 	return u.Ui.Ask(u.colorize(query, u.Color, true))
@@ -89,6 +64,10 @@ func (u *ColoredUi) Error(message string) {
 func (u *ColoredUi) Machine(t string, args ...string) {
 	// Don't colorize machine-readable output
 	u.Ui.Machine(t, args...)
+}
+
+func (u *ColoredUi) TrackProgress(src string, currentSize, totalSize int64, stream io.ReadCloser) io.ReadCloser {
+	return u.Ui.TrackProgress(u.colorize(src, u.Color, false), currentSize, totalSize, stream)
 }
 
 func (u *ColoredUi) colorize(message string, color UiColor, bold bool) string {
@@ -130,11 +109,10 @@ func (u *ColoredUi) supportsColors() bool {
 // with Say output. Machine-readable output has the proper target set.
 type TargetedUI struct {
 	Target string
-	Ui     Ui
-	*uiProgressBar
+	Ui     packersdk.Ui
 }
 
-var _ Ui = new(TargetedUI)
+var _ packersdk.Ui = new(TargetedUI)
 
 func (u *TargetedUI) Ask(query string) (string, error) {
 	return u.Ui.Ask(u.prefixLines(true, query))
@@ -172,139 +150,18 @@ func (u *TargetedUI) prefixLines(arrow bool, message string) string {
 	return strings.TrimRightFunc(result.String(), unicode.IsSpace)
 }
 
-// The BasicUI is a UI that reads and writes from a standard Go reader
-// and writer. It is safe to be called from multiple goroutines. Machine
-// readable output is simply logged for this UI.
-type BasicUi struct {
-	Reader      io.Reader
-	Writer      io.Writer
-	ErrorWriter io.Writer
-	l           sync.Mutex
-	interrupted bool
-	TTY         TTY
-	*uiProgressBar
-}
-
-var _ Ui = new(BasicUi)
-
-func (rw *BasicUi) Ask(query string) (string, error) {
-	rw.l.Lock()
-	defer rw.l.Unlock()
-
-	if rw.interrupted {
-		return "", ErrInterrupted
-	}
-
-	if rw.TTY == nil {
-		return "", errors.New("no available tty")
-	}
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
-	defer signal.Stop(sigCh)
-
-	log.Printf("ui: ask: %s", query)
-	if query != "" {
-		if _, err := fmt.Fprint(rw.Writer, query+" "); err != nil {
-			return "", err
-		}
-	}
-
-	result := make(chan string, 1)
-	go func() {
-		line, err := rw.TTY.ReadString()
-		if err != nil {
-			log.Printf("ui: scan err: %s", err)
-			return
-		}
-		result <- strings.TrimSpace(line)
-	}()
-
-	select {
-	case line := <-result:
-		return line, nil
-	case <-sigCh:
-		// Print a newline so that any further output starts properly
-		// on a new line.
-		fmt.Fprintln(rw.Writer)
-
-		// Mark that we were interrupted so future Ask calls fail.
-		rw.interrupted = true
-
-		return "", ErrInterrupted
-	}
-}
-
-func (rw *BasicUi) Say(message string) {
-	rw.l.Lock()
-	defer rw.l.Unlock()
-
-	// Use LogSecretFilter to scrub out sensitive variables
-	for s := range LogSecretFilter.s {
-		if s != "" {
-			message = strings.Replace(message, s, "<sensitive>", -1)
-		}
-	}
-
-	log.Printf("ui: %s", message)
-	_, err := fmt.Fprint(rw.Writer, message+"\n")
-	if err != nil {
-		log.Printf("[ERR] Failed to write to UI: %s", err)
-	}
-}
-
-func (rw *BasicUi) Message(message string) {
-	rw.l.Lock()
-	defer rw.l.Unlock()
-
-	// Use LogSecretFilter to scrub out sensitive variables
-	for s := range LogSecretFilter.s {
-		if s != "" {
-			message = strings.Replace(message, s, "<sensitive>", -1)
-		}
-	}
-
-	log.Printf("ui: %s", message)
-	_, err := fmt.Fprint(rw.Writer, message+"\n")
-	if err != nil {
-		log.Printf("[ERR] Failed to write to UI: %s", err)
-	}
-}
-
-func (rw *BasicUi) Error(message string) {
-	rw.l.Lock()
-	defer rw.l.Unlock()
-
-	writer := rw.ErrorWriter
-	if writer == nil {
-		writer = rw.Writer
-	}
-
-	// Use LogSecretFilter to scrub out sensitive variables
-	for s := range LogSecretFilter.s {
-		if s != "" {
-			message = strings.Replace(message, s, "<sensitive>", -1)
-		}
-	}
-
-	log.Printf("ui error: %s", message)
-	_, err := fmt.Fprint(writer, message+"\n")
-	if err != nil {
-		log.Printf("[ERR] Failed to write to UI: %s", err)
-	}
-}
-
-func (rw *BasicUi) Machine(t string, args ...string) {
-	log.Printf("machine readable: %s %#v", t, args)
+func (u *TargetedUI) TrackProgress(src string, currentSize, totalSize int64, stream io.ReadCloser) io.ReadCloser {
+	return u.Ui.TrackProgress(u.prefixLines(false, src), currentSize, totalSize, stream)
 }
 
 // MachineReadableUi is a UI that only outputs machine-readable output
 // to the given Writer.
 type MachineReadableUi struct {
 	Writer io.Writer
-	NoopProgressTracker
+	PB     packersdk.NoopProgressTracker
 }
 
-var _ Ui = new(MachineReadableUi)
+var _ packersdk.Ui = new(MachineReadableUi)
 
 func (u *MachineReadableUi) Ask(query string) (string, error) {
 	return "", errors.New("machine-readable UI can't ask")
@@ -335,12 +192,8 @@ func (u *MachineReadableUi) Machine(category string, args ...string) {
 
 	// Prepare the args
 	for i, v := range args {
-		// Use LogSecretFilter to scrub out sensitive variables
-		for s := range LogSecretFilter.s {
-			if s != "" {
-				args[i] = strings.Replace(args[i], s, "<sensitive>", -1)
-			}
-		}
+		// Use packersdk.LogSecretFilter to scrub out sensitive variables
+		args[i] = packersdk.LogSecretFilter.FilterString(args[i])
 		args[i] = strings.Replace(v, ",", "%!(PACKER_COMMA)", -1)
 		args[i] = strings.Replace(args[i], "\r", "\\r", -1)
 		args[i] = strings.Replace(args[i], "\n", "\\n", -1)
@@ -359,14 +212,18 @@ func (u *MachineReadableUi) Machine(category string, args ...string) {
 	log.Printf("%d,%s,%s,%s\n", now.Unix(), target, category, argsString)
 }
 
+func (u *MachineReadableUi) TrackProgress(src string, currentSize, totalSize int64, stream io.ReadCloser) (body io.ReadCloser) {
+	return u.PB.TrackProgress(src, currentSize, totalSize, stream)
+}
+
 // TimestampedUi is a UI that wraps another UI implementation and
 // prefixes each message with an RFC3339 timestamp
 type TimestampedUi struct {
-	Ui Ui
-	*uiProgressBar
+	Ui packersdk.Ui
+	PB getter.ProgressTracker
 }
 
-var _ Ui = new(TimestampedUi)
+var _ packersdk.Ui = new(TimestampedUi)
 
 func (u *TimestampedUi) Ask(query string) (string, error) {
 	return u.Ui.Ask(query)
@@ -388,48 +245,10 @@ func (u *TimestampedUi) Machine(message string, args ...string) {
 	u.Ui.Machine(message, args...)
 }
 
+func (u *TimestampedUi) TrackProgress(src string, currentSize, totalSize int64, stream io.ReadCloser) (body io.ReadCloser) {
+	return u.Ui.TrackProgress(src, currentSize, totalSize, stream)
+}
+
 func (u *TimestampedUi) timestampLine(string string) string {
 	return fmt.Sprintf("%v: %v", time.Now().Format(time.RFC3339), string)
-}
-
-// Safe is a UI that wraps another UI implementation and
-// provides concurrency-safe access
-type SafeUi struct {
-	Sem chan int
-	Ui  Ui
-	*uiProgressBar
-}
-
-var _ Ui = new(SafeUi)
-
-func (u *SafeUi) Ask(s string) (string, error) {
-	u.Sem <- 1
-	ret, err := u.Ui.Ask(s)
-	<-u.Sem
-
-	return ret, err
-}
-
-func (u *SafeUi) Say(s string) {
-	u.Sem <- 1
-	u.Ui.Say(s)
-	<-u.Sem
-}
-
-func (u *SafeUi) Message(s string) {
-	u.Sem <- 1
-	u.Ui.Message(s)
-	<-u.Sem
-}
-
-func (u *SafeUi) Error(s string) {
-	u.Sem <- 1
-	u.Ui.Error(s)
-	<-u.Sem
-}
-
-func (u *SafeUi) Machine(t string, args ...string) {
-	u.Sem <- 1
-	u.Ui.Machine(t, args...)
-	<-u.Sem
 }

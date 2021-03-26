@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hashicorp/packer/helper/multistep"
+	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,7 +15,7 @@ func TestStepBootWait(t *testing.T) {
 	conf := dummyConfig()
 	conf.BootWait = 10 * time.Millisecond
 
-	state := dummyMinimumStateBag(&conf)
+	state := dummyMinimumStateBag(t, &conf)
 
 	// run
 	start := time.Now()

@@ -6,9 +6,10 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"os"
+	"testing"
 
-	"github.com/hashicorp/packer/helper/multistep"
-	"github.com/hashicorp/packer/packer"
+	"github.com/hashicorp/packer-plugin-sdk/multistep"
+	"github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/sacloud/libsacloud/v2/sacloud/fake"
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
 	"github.com/sacloud/packer-builder-sakuracloud/iaas"
@@ -61,10 +62,6 @@ func readTestKeyPair() (string, string, error) {
 	return string(bytes), string(ssh.MarshalAuthorizedKey(signer.PublicKey())), nil
 }
 
-func dummyUI() packer.Ui {
-	return new(packer.NoopUi)
-}
-
 func dummyStateBag() multistep.StateBag {
 	return new(multistep.BasicStateBag)
 }
@@ -81,9 +78,9 @@ func dummyConfigWithValues(values map[string]interface{}) Config {
 	return *conf
 }
 
-func dummyMinimumStateBag(config *Config) multistep.StateBag {
+func dummyMinimumStateBag(t *testing.T, config *Config) multistep.StateBag {
 	state := dummyStateBag()
-	state.Put("ui", dummyUI())
+	state.Put("ui", packer.TestUi(t))
 	if config == nil {
 		state.Put("config", dummyConfig())
 	} else {

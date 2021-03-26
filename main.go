@@ -1,17 +1,24 @@
 package main
 
 import (
-	"github.com/hashicorp/packer/packer/plugin"
+	"fmt"
+	"os"
+
+	"github.com/hashicorp/packer-plugin-sdk/plugin"
+	"github.com/hashicorp/packer-plugin-sdk/version"
 	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud"
+	pversion "github.com/sacloud/packer-builder-sakuracloud/version"
 )
 
+var pluginVersion = version.InitializePluginVersion(pversion.Version, "")
+
 func main() {
-	server, err := plugin.Server()
+	pps := plugin.NewSet()
+	pps.RegisterBuilder(plugin.DEFAULT_NAME, new(sakuracloud.Builder))
+	pps.SetVersion(pluginVersion)
+	err := pps.Run()
 	if err != nil {
-		panic(err)
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
 	}
-	if err := server.RegisterBuilder(new(sakuracloud.Builder)); err != nil {
-		panic(err)
-	}
-	server.Serve()
 }

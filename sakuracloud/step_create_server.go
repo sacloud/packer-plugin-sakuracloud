@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/packer/helper/multistep"
-	"github.com/hashicorp/packer/packer"
+	"github.com/hashicorp/packer-plugin-sdk/multistep"
+	"github.com/hashicorp/packer-plugin-sdk/packer"
 	diskBuilders "github.com/sacloud/libsacloud/v2/helper/builder/disk"
 	serverBuilders "github.com/sacloud/libsacloud/v2/helper/builder/server"
 	"github.com/sacloud/libsacloud/v2/helper/power"
