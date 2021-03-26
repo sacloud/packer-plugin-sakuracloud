@@ -16,7 +16,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/sacloud/libsacloud/v2/sacloud/ostype"
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
+	"github.com/sacloud/packer-plugin-sakuracloud/sakuracloud/constants"
 )
 
 const (

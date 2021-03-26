@@ -4,4 +4,4 @@ package constants
 const UploadedFromPackerMarkerTag = "packer-for-sakuracloud"
 
 // ServerName is name of the server created by packer
-const ServerName = "packer-builder-sakuracloud"
+const ServerName = "packer-plugin-sakuracloud"

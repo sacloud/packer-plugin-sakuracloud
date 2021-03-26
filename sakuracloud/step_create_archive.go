@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/sacloud/libsacloud/v2/sacloud"
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	"github.com/sacloud/packer-builder-sakuracloud/iaas"
+	"github.com/sacloud/packer-plugin-sakuracloud/iaas"
 )
 
 type stepCreateArchive struct {

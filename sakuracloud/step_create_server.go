@@ -12,8 +12,8 @@ import (
 	"github.com/sacloud/libsacloud/v2/sacloud"
 	"github.com/sacloud/libsacloud/v2/sacloud/ostype"
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	"github.com/sacloud/packer-builder-sakuracloud/iaas"
-	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud/constants"
+	"github.com/sacloud/packer-plugin-sakuracloud/iaas"
+	"github.com/sacloud/packer-plugin-sakuracloud/sakuracloud/constants"
 )
 
 type stepCreateServer struct {

@@ -8,7 +8,7 @@ import (
 	"github.com/sacloud/ftps"
 	"github.com/sacloud/libsacloud/v2/sacloud"
 	"github.com/sacloud/libsacloud/v2/sacloud/trace"
-	"github.com/sacloud/packer-builder-sakuracloud/version"
+	"github.com/sacloud/packer-plugin-sakuracloud/version"
 )
 
 // Client represents SakuraCloud API Client
