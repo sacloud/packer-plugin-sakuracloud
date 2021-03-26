@@ -1,4 +1,4 @@
-// Copyright 2016-2020 The Libsacloud Authors
+// Copyright 2016-2021 The Libsacloud Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -618,6 +618,19 @@ type databaseStatusResponseEnvelope struct {
 	Appliance *naked.DatabaseStatusResponse `json:",omitempty"`
 }
 
+// databaseGetParameterResponseEnvelope is envelop of API response
+type databaseGetParameterResponseEnvelope struct {
+	IsOk    bool            `json:"is_ok,omitempty"` // is_ok項目
+	Success types.APIResult `json:",omitempty"`      // success項目
+
+	Database *naked.DatabaseParameter `json:",omitempty"`
+}
+
+// databaseSetParameterRequestEnvelope is envelop of API request
+type databaseSetParameterRequestEnvelope struct {
+	Parameter *naked.DatabaseParameterSetting `json:",omitempty"`
+}
+
 // diskFindRequestEnvelope is envelop of API request
 type diskFindRequestEnvelope struct {
 	Count   int             `mapconv:",omitempty"`
@@ -685,20 +698,6 @@ type diskCreateWithConfigResponseEnvelope struct {
 // diskResizePartitionRequestEnvelope is envelop of API request
 type diskResizePartitionRequestEnvelope struct {
 	Background bool `json:",omitempty"`
-}
-
-// diskInstallRequestEnvelope is envelop of API request
-type diskInstallRequestEnvelope struct {
-	Disk        *naked.Disk `json:",omitempty"`
-	DistantFrom []types.ID  `json:",omitempty"`
-}
-
-// diskInstallResponseEnvelope is envelop of API response
-type diskInstallResponseEnvelope struct {
-	IsOk    bool            `json:"is_ok,omitempty"` // is_ok項目
-	Success types.APIResult `json:",omitempty"`      // success項目
-
-	Disk *naked.Disk `json:",omitempty"`
 }
 
 // diskReadResponseEnvelope is envelop of API response
@@ -1184,8 +1183,8 @@ type internetUpdateBandWidthResponseEnvelope struct {
 
 // internetAddSubnetRequestEnvelope is envelop of API request
 type internetAddSubnetRequestEnvelope struct {
-	NetworkMaskLen int    `validate:"min=24,max=28"`
-	NextHop        string `validate:"ipv4"`
+	NetworkMaskLen int    `json:",omitempty"`
+	NextHop        string `json:",omitempty"`
 }
 
 // internetAddSubnetResponseEnvelope is envelop of API response
@@ -1198,7 +1197,7 @@ type internetAddSubnetResponseEnvelope struct {
 
 // internetUpdateSubnetRequestEnvelope is envelop of API request
 type internetUpdateSubnetRequestEnvelope struct {
-	NextHop string `validate:"ipv4"`
+	NextHop string `json:",omitempty"`
 }
 
 // internetUpdateSubnetResponseEnvelope is envelop of API response
@@ -2290,8 +2289,8 @@ type serverDeleteWithDisksRequestEnvelope struct {
 type serverChangePlanRequestEnvelope struct {
 	CPU                  int                   `json:",omitempty"`
 	MemoryMB             int                   `json:",omitempty"`
-	ServerPlanGeneration types.EPlanGeneration `json:",omitempty"`
-	ServerPlanCommitment types.ECommitment     `json:",omitempty" mapconv:"ServerPlan.Commitment"`
+	ServerPlanGeneration types.EPlanGeneration `json:"Generation,omitempty"`
+	ServerPlanCommitment types.ECommitment     `json:"Commitment,omitempty"`
 }
 
 // serverChangePlanResponseEnvelope is envelop of API response

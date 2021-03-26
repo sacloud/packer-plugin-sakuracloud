@@ -1,4 +1,4 @@
-// Copyright 2016-2020 The Libsacloud Authors
+// Copyright 2016-2021 The Libsacloud Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ type ESME struct {
 type ESMESendSMSRequest struct {
 	Destination  string              `json:"destination,omitempty" yaml:"destination,omitempty" structs:",omitempty"` // 宛先 現在は81(+81)開始固定
 	Sender       string              `json:"sender,omitempty" yaml:"sender,omitempty" structs:",omitempty"`           // 送信者名 本文中に反映される
+	DomainName   string              `json:"domain_name,omitempty" yaml:"domain_name,omitempty" structs:",omitempty"` // Web OTPを利用する際に本文中に記載されるオリジン(FQDNで指定)
 	OTPOperation types.EOTPOperation `json:"otpOperation,omitempty" yaml:"otp_operation,omitempty" structs:",omitempty"`
 	OTP          string              `json:"otp,omitempty" yaml:"otp,omitempty" structs:",omitempty"` // ワンタイムパスワード、OTPOperationがinputの場合に使用する
 }

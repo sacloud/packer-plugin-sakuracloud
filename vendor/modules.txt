@@ -116,7 +116,7 @@ github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
 # github.com/golang/snappy v0.0.1
 github.com/golang/snappy
-# github.com/google/go-cmp v0.5.2
+# github.com/google/go-cmp v0.5.4
 github.com/google/go-cmp/cmp
 github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
@@ -286,13 +286,14 @@ github.com/ryanuber/go-glob
 # github.com/sacloud/ftps v1.1.0
 ## explicit
 github.com/sacloud/ftps
-# github.com/sacloud/libsacloud/v2 v2.8.2
+# github.com/sacloud/libsacloud/v2 v2.15.1
 ## explicit
 github.com/sacloud/libsacloud/v2
 github.com/sacloud/libsacloud/v2/helper/builder
 github.com/sacloud/libsacloud/v2/helper/builder/archive
 github.com/sacloud/libsacloud/v2/helper/builder/disk
 github.com/sacloud/libsacloud/v2/helper/builder/server
+github.com/sacloud/libsacloud/v2/helper/defaults
 github.com/sacloud/libsacloud/v2/helper/power
 github.com/sacloud/libsacloud/v2/helper/query
 github.com/sacloud/libsacloud/v2/helper/setup
@@ -301,6 +302,7 @@ github.com/sacloud/libsacloud/v2/pkg/cidr
 github.com/sacloud/libsacloud/v2/pkg/mapconv
 github.com/sacloud/libsacloud/v2/pkg/mutexkv
 github.com/sacloud/libsacloud/v2/pkg/size
+github.com/sacloud/libsacloud/v2/pkg/util
 github.com/sacloud/libsacloud/v2/sacloud
 github.com/sacloud/libsacloud/v2/sacloud/accessor
 github.com/sacloud/libsacloud/v2/sacloud/fake

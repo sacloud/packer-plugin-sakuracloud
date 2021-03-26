@@ -1,4 +1,4 @@
-// Copyright 2016-2020 The Libsacloud Authors
+// Copyright 2016-2021 The Libsacloud Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -70,13 +70,50 @@ type DatabaseSettingCommon struct {
 	//
 	// [HACK] Create時はbool型、Read/Update時は文字列(FQDN or IP)となる。
 	// また、無効にするにはJSONで要素自体を指定しないことで行う。
-	WebUI           interface{} `yaml:"web_ui"`
-	ServicePort     int         `json:",omitempty" yaml:"service_port,omitempty" structs:",omitempty"`
-	SourceNetwork   []string    `yaml:"source_network"`
-	DefaultUser     string      `json:",omitempty" yaml:"default_user,omitempty" structs:",omitempty"`
-	UserPassword    string      `json:",omitempty" yaml:"user_password,omitempty" structs:",omitempty"`
-	ReplicaUser     string      `json:",omitempty" yaml:"replica_user,omitempty" structs:",omitempty"`
-	ReplicaPassword string      `json:",omitempty" yaml:"replica_password,omitempty" structs:",omitempty"`
+	WebUI           interface{}                   `yaml:"web_ui"`
+	ServicePort     int                           `json:",omitempty" yaml:"service_port,omitempty" structs:",omitempty"`
+	SourceNetwork   DatabaseSettingSourceNetworks `yaml:"source_network"`
+	DefaultUser     string                        `json:",omitempty" yaml:"default_user,omitempty" structs:",omitempty"`
+	UserPassword    string                        `json:",omitempty" yaml:"user_password,omitempty" structs:",omitempty"`
+	ReplicaUser     string                        `json:",omitempty" yaml:"replica_user,omitempty" structs:",omitempty"`
+	ReplicaPassword string                        `json:",omitempty" yaml:"replica_password,omitempty" structs:",omitempty"`
+}
+
+// DatabaseSettingSourceNetworks データベースへのアクセスを許可するCIDRリスト
+//
+// Note: すべての接続先を許可する場合は"0.0.0.0/0"を指定する。
+// この処理はMarshalJSON時にDatabaseSettingSourceNetwork側で行われるため、
+// APIクライアント側は許可したいCIDRブロックのリストを指定する。
+// libsacloudではすべての接続を拒否する設定はサポートしない。
+type DatabaseSettingSourceNetworks []string
+
+// MarshalJSON すべての接続先を許可する場合は"0.0.0.0/0"を指定するための対応
+func (d DatabaseSettingSourceNetworks) MarshalJSON() ([]byte, error) {
+	type alias DatabaseSettingSourceNetworks
+	dest := alias(d)
+
+	if dest == nil || len(dest) == 0 {
+		dest = append(dest, "0.0.0.0/0")
+	}
+
+	return json.Marshal(dest)
+}
+
+func (d *DatabaseSettingSourceNetworks) UnmarshalJSON(b []byte) error {
+	if string(b) == `""` || string(b) == "" {
+		return nil
+	}
+	type alias DatabaseSettingSourceNetworks
+
+	var a alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		return err
+	}
+	if len(a) == 1 && a[0] == "0.0.0.0/0" {
+		return nil
+	}
+	*d = DatabaseSettingSourceNetworks(a)
+	return nil
 }
 
 // DatabaseSettingBackup データベース設定 バックアップ設定
@@ -249,4 +286,57 @@ func (h *DatabaseBackupHistory) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
+}
+
+// DatabaseParameter RDBMSごとに固有のパラメータ設定
+type DatabaseParameter struct {
+	Parameter *DatabaseParameterSetting `json:",omitempty" yaml:",omitempty" structs:",omitempty"`
+	Remark    *DatabaseParameterRemark  `json:",omitempty" yaml:",omitempty" structs:",omitempty"`
+}
+
+type DatabaseParameterSetting struct {
+	NoteID types.ID                     `json:",omitempty" yaml:"note_id,omitempty" structs:",omitempty"`
+	Attr   DatabaseParameterSettingAttr `json:",omitempty" yaml:"attr,omitempty" structs:",omitempty"`
+}
+
+type DatabaseParameterSettingAttr map[string]interface{}
+
+// UnmarshalJSON 配列/オブジェクトが混在することへの対応
+func (d *DatabaseParameterSettingAttr) UnmarshalJSON(b []byte) error {
+	if string(b) == "[]" {
+		return nil
+	}
+	type alias map[string]interface{}
+
+	var a alias
+	if err := json.Unmarshal(b, &a); err != nil {
+		return err
+	}
+	*d = DatabaseParameterSettingAttr(a)
+	return nil
+}
+
+type DatabaseParameterRemark struct {
+	Settings []interface{}                // どのような値が入るのか不明
+	Form     []*DatabaseParameterFormMeta `json:",omitempty" yaml:"form,omitempty" structs:",omitempty"`
+}
+
+type DatabaseParameterFormMeta struct {
+	Type    string                            `json:"type" yaml:"yaml"`
+	Name    string                            `json:"name" yaml:"name"`
+	Label   string                            `json:"label" yaml:"label"`
+	Options *DatabaseParameterFormMetaOptions `json:"options" yaml:"options"`
+	Items   [][]interface{}                   `json:"items,omitempty" yaml:"items,omitempty" structs:",omitempty"` // 例: [["value1", "text1"],[ "value2", "text2"]] ※ valueは数値となる可能性がある
+}
+
+type DatabaseParameterFormMetaOptions struct {
+	Validator string  `json:"validator" yaml:"validator"`
+	Example   string  `json:"ex" yaml:"ex"`
+	Min       float64 `json:"min" yaml:"min"`
+	Max       float64 `json:"max" yaml:"max"`
+	MaxLen    int     `json:"maxlen" yaml:"maxlen"`
+	Text      string  `json:"text" yaml:"text"`
+	Reboot    string  `json:"reboot" yaml:"reboot"`
+	Type      string  `json:"type" yaml:"type"`
+	Integer   bool    `json:"integer" yaml:"integer"` // postgres用のパラメータにだけ存在する模様
 }

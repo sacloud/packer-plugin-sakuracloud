@@ -1,4 +1,4 @@
-// Copyright 2016-2020 The Libsacloud Authors
+// Copyright 2016-2021 The Libsacloud Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,24 +16,33 @@ package mapconv
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
+
+	"github.com/sacloud/libsacloud/v2/pkg/util"
 
 	"github.com/fatih/structs"
 	"github.com/mitchellh/mapstructure"
 )
 
-const defaultMapConvTag = "mapconv"
+// DefaultMapConvTag デフォルトのmapconvタグ名
+const DefaultMapConvTag = "mapconv"
 
 // DecoderConfig mapconvでの変換の設定
 type DecoderConfig struct {
-	TagName string
+	TagName     string
+	FilterFuncs map[string]FilterFunc
 }
+
+// FilterFunc mapconvでの変換時に適用するフィルタ
+type FilterFunc func(v interface{}) (interface{}, error)
 
 // TagInfo mapconvタグの情報
 type TagInfo struct {
 	Ignore       bool
 	SourceFields []string
+	Filters      []string
 	DefaultValue interface{}
 	OmitEmpty    bool
 	Recursive    bool
@@ -48,7 +57,13 @@ type Decoder struct {
 
 func (d *Decoder) ConvertTo(source interface{}, dest interface{}) error {
 	s := structs.New(source)
-	destMap := Map(make(map[string]interface{}))
+	mappedValues := Map(make(map[string]interface{}))
+
+	// recursiveの際に参照するためのdestのmap
+	destValues := Map(make(map[string]interface{}))
+	if structs.IsStruct(dest) {
+		destValues = Map(structs.Map(dest))
+	}
 
 	fields := s.Fields()
 	for _, f := range fields {
@@ -76,26 +91,64 @@ func (d *Decoder) ConvertTo(source interface{}, dest interface{}) error {
 				}
 			}
 
+			for _, filter := range tags.Filters {
+				filterFunc, ok := d.Config.FilterFuncs[filter]
+				if !ok {
+					return fmt.Errorf("filter %s not exists", filter)
+				}
+				filtered, err := filterFunc(value)
+				if err != nil {
+					return fmt.Errorf("failed to apply the filter: %s", err)
+				}
+				value = filtered
+			}
+
 			if tags.Squash {
-				d := Map(make(map[string]interface{}))
-				err := ConvertTo(value, &d)
+				dest := Map(make(map[string]interface{}))
+				err := d.ConvertTo(value, &dest)
 				if err != nil {
 					return err
 				}
-				for k, v := range d {
-					destMap.Set(k, v)
+				for k, v := range dest {
+					mappedValues.Set(k, v)
 				}
 				continue
 			}
 
 			if tags.Recursive {
+				current, err := destValues.Get(destKey)
+				if err != nil {
+					return err
+				}
+
 				var dest []interface{}
 				values := valueToSlice(value)
-				for _, v := range values {
+				currentValues := valueToSlice(current)
+				for i, v := range values {
 					if structs.IsStruct(v) {
+						var currentDest interface{}
+						if len(currentValues) > i {
+							currentDest = currentValues[i]
+						}
 						destMap := Map(make(map[string]interface{}))
-						if err := ConvertTo(v, &destMap); err != nil {
+						if err := d.ConvertTo(v, &destMap); err != nil {
 							return err
+						}
+						// 宛先が存在しstructであれば(map[string]interface{}になっているはずなので)マージする
+						if currentDest != nil {
+							mv, ok := currentDest.(map[string]interface{})
+							// 元の値から空の値を除去する(structs:",omitempty"でも可)
+							for k, v := range mv {
+								if util.IsEmpty(v) {
+									delete(mv, k)
+								}
+							}
+							if ok {
+								for k, v := range destMap.Map() {
+									mv[k] = v
+								}
+								destMap = Map(mv)
+							}
 						}
 						dest = append(dest, destMap)
 					} else {
@@ -109,7 +162,7 @@ func (d *Decoder) ConvertTo(source interface{}, dest interface{}) error {
 				}
 			}
 
-			destMap.Set(destKey, value)
+			mappedValues.Set(destKey, value)
 		}
 	}
 
@@ -122,7 +175,7 @@ func (d *Decoder) ConvertTo(source interface{}, dest interface{}) error {
 	if err != nil {
 		return err
 	}
-	return decoder.Decode(destMap.Map())
+	return decoder.Decode(mappedValues.Map())
 }
 
 func (d *Decoder) ConvertFrom(source interface{}, dest interface{}) error {
@@ -162,6 +215,18 @@ func (d *Decoder) ConvertFrom(source interface{}, dest interface{}) error {
 				continue
 			}
 
+			for _, filter := range tags.Filters {
+				filterFunc, ok := d.Config.FilterFuncs[filter]
+				if !ok {
+					return fmt.Errorf("filter %s not exists", filter)
+				}
+				filtered, err := filterFunc(value)
+				if err != nil {
+					return fmt.Errorf("failed to apply the filter: %s", err)
+				}
+				value = filtered
+			}
+
 			if tags.Recursive {
 				t := reflect.TypeOf(f.Value())
 				if t.Kind() == reflect.Slice {
@@ -177,11 +242,11 @@ func (d *Decoder) ConvertFrom(source interface{}, dest interface{}) error {
 						dest = append(dest, v)
 						continue
 					}
-					d := reflect.New(t).Interface()
-					if err := ConvertFrom(v, d); err != nil {
+					dt := reflect.New(t).Interface()
+					if err := d.ConvertFrom(v, dt); err != nil {
 						return err
 					}
-					dest = append(dest, d)
+					dest = append(dest, dt)
 				}
 
 				if dest != nil {
@@ -210,23 +275,24 @@ func (d *Decoder) ConvertFrom(source interface{}, dest interface{}) error {
 
 // ConvertTo converts struct which input by mapconv to plain models
 func ConvertTo(source interface{}, dest interface{}) error {
-	decoder := &Decoder{Config: &DecoderConfig{TagName: defaultMapConvTag}}
+	decoder := &Decoder{Config: &DecoderConfig{TagName: DefaultMapConvTag}}
 	return decoder.ConvertTo(source, dest)
 }
 
 // ConvertFrom converts struct which input by mapconv from plain models
 func ConvertFrom(source interface{}, dest interface{}) error {
-	decoder := &Decoder{Config: &DecoderConfig{TagName: defaultMapConvTag}}
+	decoder := &Decoder{Config: &DecoderConfig{TagName: DefaultMapConvTag}}
 	return decoder.ConvertFrom(source, dest)
 }
 
 // ParseMapConvTag mapconvタグを文字列で受け取りパースしてTagInfoを返す
 func (d *Decoder) ParseMapConvTag(tagBody string) TagInfo {
 	tokens := strings.Split(tagBody, ",")
-	key := tokens[0]
+	key := strings.TrimSpace(tokens[0])
 
 	keys := strings.Split(key, "/")
 	var defaultValue interface{}
+	var filters []string
 	var ignore, omitEmpty, recursive, squash, isSlice bool
 
 	for _, k := range keys {
@@ -244,6 +310,8 @@ func (d *Decoder) ParseMapConvTag(tagBody string) TagInfo {
 			continue
 		}
 
+		token = strings.TrimSpace(token)
+
 		switch {
 		case strings.HasPrefix(token, "omitempty"):
 			omitEmpty = true
@@ -251,6 +319,11 @@ func (d *Decoder) ParseMapConvTag(tagBody string) TagInfo {
 			recursive = true
 		case strings.HasPrefix(token, "squash"):
 			squash = true
+		case strings.HasPrefix(token, "filters"):
+			keyValue := strings.Split(token, "=")
+			if len(keyValue) > 1 {
+				filters = strings.Split(strings.Join(keyValue[1:], ""), " ")
+			}
 		case strings.HasPrefix(token, "default"):
 			keyValue := strings.Split(token, "=")
 			if len(keyValue) > 1 {
@@ -266,5 +339,6 @@ func (d *Decoder) ParseMapConvTag(tagBody string) TagInfo {
 		Recursive:    recursive,
 		Squash:       squash,
 		IsSlice:      isSlice,
+		Filters:      filters,
 	}
 }

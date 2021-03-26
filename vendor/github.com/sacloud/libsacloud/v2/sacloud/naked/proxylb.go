@@ -1,4 +1,4 @@
-// Copyright 2016-2020 The Libsacloud Authors
+// Copyright 2016-2021 The Libsacloud Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -189,6 +189,16 @@ type ProxyLBAdditionalCerts []*ProxyLBCertificate
 type ProxyLBCertificates struct {
 	PrimaryCert     *ProxyLBCertificate    `yaml:"primary_cert"`
 	AdditionalCerts ProxyLBAdditionalCerts `yaml:"additional_certs"`
+}
+
+// MarshalJSON nullの場合に空配列を出力するための実装
+func (s ProxyLBCertificates) MarshalJSON() ([]byte, error) {
+	if s.AdditionalCerts == nil {
+		s.AdditionalCerts = make([]*ProxyLBCertificate, 0)
+	}
+	type alias ProxyLBCertificates
+	tmp := alias(s)
+	return json.Marshal(&tmp)
 }
 
 // UnmarshalJSON UnmarshalJSON(AdditionalCertsが空の場合に空文字を返す問題への対応)

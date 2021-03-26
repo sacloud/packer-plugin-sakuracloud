@@ -1,4 +1,4 @@
-// Copyright 2016-2020 The Libsacloud Authors
+// Copyright 2016-2021 The Libsacloud Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,14 +24,26 @@ import (
 //
 // Appliance.Remarkを表現する
 type ApplianceRemark struct {
-	Zone            *ApplianceRemarkZone    `json:",omitempty" yaml:"zone,omitempty" structs:",omitempty"`
-	Switch          *ApplianceRemarkSwitch  `json:",omitempty" yaml:"switch,omitempty" structs:",omitempty"`
-	VRRP            *ApplianceVRRP          `json:",omitempty" yaml:"vrrp,omitempty" structs:",omitempty"`
-	Network         *ApplianceRemarkNetwork `json:",omitempty" yaml:"network,omitempty" structs:",omitempty"`
-	Servers         ApplianceRemarkServers  `yaml:"servers"`
-	Plan            *AppliancePlan          `json:",omitempty" yaml:"plan,omitempty" structs:",omitempty"`
-	DBConf          *ApplianceRemarkDBConf  `json:",omitempty" yaml:"db_conf,omitempty" structs:",omitempty"` // for database
-	SourceAppliance *ApplianceSource        `json:",omitempty" yaml:"db_conf,omitempty" structs:",omitempty"` // for database
+	Zone            *ApplianceRemarkZone          `json:",omitempty" yaml:"zone,omitempty" structs:",omitempty"`
+	Switch          *ApplianceRemarkSwitch        `json:",omitempty" yaml:"switch,omitempty" structs:",omitempty"`
+	VRRP            *ApplianceVRRP                `json:",omitempty" yaml:"vrrp,omitempty" structs:",omitempty"`
+	Network         *ApplianceRemarkNetwork       `json:",omitempty" yaml:"network,omitempty" structs:",omitempty"`
+	Servers         ApplianceRemarkServers        `yaml:"servers"`
+	Plan            *AppliancePlan                `json:",omitempty" yaml:"plan,omitempty" structs:",omitempty"`
+	DBConf          *ApplianceRemarkDBConf        `json:",omitempty" yaml:"db_conf,omitempty" structs:",omitempty"`        // for database
+	SourceAppliance *ApplianceSource              `json:",omitempty" yaml:"db_conf,omitempty" structs:",omitempty"`        // for database
+	MobileGateway   *ApplianceRemarkMobileGateway `json:",omitempty" yaml:"mobile_gateway,omitempty" structs:",omitempty"` // for mobile gateway
+	Router          *ApplianceRemarkRouter        `json:",omitempty" yaml:"router,omitempty" structs:",omitempty"`         // for vpc router
+}
+
+// ApplianceRemarkMobileGateway モバイルゲートウェイのグローバルIP
+type ApplianceRemarkMobileGateway struct {
+	GlobalAddress string
+}
+
+// ApplianceRemarkRouter VPCルータのバージョンなど
+type ApplianceRemarkRouter struct {
+	VPCRouterVersion int `json:",omitempty" yaml:"vpc_router_version,omitempty" structs:",omitempty"`
 }
 
 // ApplianceSource クローン元アプライアンス データベースのクローン時に利用

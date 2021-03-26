@@ -1,4 +1,4 @@
-// Copyright 2016-2020 The Libsacloud Authors
+// Copyright 2016-2021 The Libsacloud Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,8 +60,12 @@ var RDBMSTypeStrings = []string{
 
 // RDBMSTypeFromString 文字列からRDBMSTypeを取得
 func RDBMSTypeFromString(s string) RDBMSType {
-	if s == strings.ToLower(RDBMSTypesMariaDB.String()) {
+	switch {
+	case s == strings.ToLower(RDBMSTypesMariaDB.String()):
 		return RDBMSTypesMariaDB
+	case strings.ToLower(s) == "postgresql":
+		return RDBMSTypesPostgreSQL
+	default:
+		return RDBMSType(s)
 	}
-	return RDBMSType(s)
 }
