@@ -1,5 +1,5 @@
 # from https://docs.github.com/en/free-pro-team@latest/actions/guides/publishing-docker-images#publishing-images-to-github-packages
-name: Publish Docker image(latest)
+name: Publish Docker image(dev)
 on:
   push:
     branches:
