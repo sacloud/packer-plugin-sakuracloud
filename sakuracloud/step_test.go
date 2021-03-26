@@ -5,7 +5,6 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"io/ioutil"
 	"os"
 
 	"github.com/hashicorp/packer/helper/multistep"
@@ -44,14 +43,14 @@ func prepareTestPrivateKeyFile() func() {
 			panic(err)
 		}
 	}
-	if err := ioutil.WriteFile(dummyPrivateKeyFile, pem.EncodeToMemory(&privBlk), 0600); err != nil {
+	if err := os.WriteFile(dummyPrivateKeyFile, pem.EncodeToMemory(&privBlk), 0600); err != nil {
 		defer deferFunc()
 	}
 	return deferFunc
 }
 
 func readTestKeyPair() (string, string, error) {
-	bytes, err := ioutil.ReadFile(dummyPrivateKeyFile)
+	bytes, err := os.ReadFile(dummyPrivateKeyFile)
 	if err != nil {
 		return "", "", err
 	}

@@ -154,10 +154,12 @@ github.com/hashicorp/hcl/json/parser
 github.com/hashicorp/hcl/json/scanner
 github.com/hashicorp/hcl/json/token
 # github.com/hashicorp/hcl/v2 v2.3.0
+## explicit
 github.com/hashicorp/hcl/v2
 github.com/hashicorp/hcl/v2/ext/customdecode
 github.com/hashicorp/hcl/v2/hcldec
 # github.com/hashicorp/packer v1.5.4
+## explicit
 github.com/hashicorp/packer/common
 github.com/hashicorp/packer/common/filelock
 github.com/hashicorp/packer/common/net
@@ -222,12 +224,14 @@ github.com/mitchellh/go-homedir
 # github.com/mitchellh/go-testing-interface v1.0.0
 github.com/mitchellh/go-testing-interface
 # github.com/mitchellh/go-vnc v0.0.0-20150629162542-723ed9867aed
+## explicit
 github.com/mitchellh/go-vnc
 # github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7
 github.com/mitchellh/go-wordwrap
 # github.com/mitchellh/iochan v1.0.0
 github.com/mitchellh/iochan
 # github.com/mitchellh/mapstructure v1.3.2
+## explicit
 github.com/mitchellh/mapstructure
 # github.com/mitchellh/reflectwalk v1.0.0
 github.com/mitchellh/reflectwalk
@@ -245,8 +249,10 @@ github.com/pmezard/go-difflib/difflib
 # github.com/ryanuber/go-glob v0.0.0-20170128012129-256dc444b735
 github.com/ryanuber/go-glob
 # github.com/sacloud/ftps v1.1.0
+## explicit
 github.com/sacloud/ftps
 # github.com/sacloud/libsacloud/v2 v2.8.2
+## explicit
 github.com/sacloud/libsacloud/v2
 github.com/sacloud/libsacloud/v2/helper/builder
 github.com/sacloud/libsacloud/v2/helper/builder/archive
@@ -270,6 +276,7 @@ github.com/sacloud/libsacloud/v2/sacloud/search/keys
 github.com/sacloud/libsacloud/v2/sacloud/trace
 github.com/sacloud/libsacloud/v2/sacloud/types
 # github.com/stretchr/testify v1.4.0
+## explicit
 github.com/stretchr/testify/assert
 # github.com/ugorji/go v0.0.0-20151218193438-646ae4a518c1
 github.com/ugorji/go/codec
@@ -279,6 +286,7 @@ github.com/ulikunitz/xz/internal/hash
 github.com/ulikunitz/xz/internal/xlog
 github.com/ulikunitz/xz/lzma
 # github.com/zclconf/go-cty v1.2.1 => github.com/azr/go-cty v1.1.1-0.20200203143058-28fcda2fe0cc
+## explicit
 github.com/zclconf/go-cty/cty
 github.com/zclconf/go-cty/cty/convert
 github.com/zclconf/go-cty/cty/function
@@ -306,6 +314,7 @@ go.opencensus.io/trace/tracestate
 go.uber.org/ratelimit
 go.uber.org/ratelimit/internal/clock
 # golang.org/x/crypto v0.0.0-20200117160349-530e935923ad
+## explicit
 golang.org/x/crypto/chacha20
 golang.org/x/crypto/curve25519
 golang.org/x/crypto/ed25519
@@ -478,3 +487,4 @@ honnef.co/go/tools/staticcheck/vrp
 honnef.co/go/tools/stylecheck
 honnef.co/go/tools/unused
 honnef.co/go/tools/version
+# github.com/zclconf/go-cty => github.com/azr/go-cty v1.1.1-0.20200203143058-28fcda2fe0cc
