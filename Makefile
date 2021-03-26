@@ -53,19 +53,6 @@ golangci-lint: fmt
 goimports:
 	find . -name '*.go' | grep -v vendor | xargs goimports -l -w
 
-.PHONY: docker-shell docker-test docker-testacc docker-build
-docker-shell:
-	docker-compose run --rm packer
-
-docker-test:
-	sh -c "'$(CURDIR)/scripts/build_on_docker.sh' 'test'"
-
-docker-testacc:
-	sh -c "'$(CURDIR)/scripts/build_on_docker.sh' 'testacc'"
-
-docker-build: clean 
-	sh -c "'$(CURDIR)/scripts/build_on_docker.sh' 'build-x'"
-
 .PHONY: prepare-homebrew
 prepare-homebrew:
 	rm -rf homebrew-packer-builder-sakuracloud/; \
