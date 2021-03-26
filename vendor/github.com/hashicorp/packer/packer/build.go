@@ -6,91 +6,23 @@ import (
 	"log"
 	"sync"
 
-	"github.com/hashicorp/packer/helper/common"
+	"github.com/hashicorp/packer-plugin-sdk/common"
+	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/hashicorp/packer-plugin-sdk/packerbuilderdata"
+	"github.com/hashicorp/packer/version"
 )
-
-const (
-	// This is the key in configurations that is set to the name of the
-	// build.
-	BuildNameConfigKey = "packer_build_name"
-
-	// This is the key in the configuration that is set to the type
-	// of the builder that is run. This is useful for provisioners and
-	// such who want to make use of this.
-	BuilderTypeConfigKey = "packer_builder_type"
-
-	// This is the key in configurations that is set to "true" when Packer
-	// debugging is enabled.
-	DebugConfigKey = "packer_debug"
-
-	// This is the key in configurations that is set to "true" when Packer
-	// force build is enabled.
-	ForceConfigKey = "packer_force"
-
-	// This key determines what to do when a normal multistep step fails
-	// - "cleanup" - run cleanup steps
-	// - "abort" - exit without cleanup
-	// - "ask" - ask the user
-	OnErrorConfigKey = "packer_on_error"
-
-	// TemplatePathKey is the path to the template that configured this build
-	TemplatePathKey = "packer_template_path"
-
-	// This key contains a map[string]string of the user variables for
-	// template processing.
-	UserVariablesConfigKey = "packer_user_variables"
-)
-
-// A Build represents a single job within Packer that is responsible for
-// building some machine image artifact. Builds are meant to be parallelized.
-type Build interface {
-	// Name is the name of the build. This is unique across a single template,
-	// but not absolutely unique. This is meant more to describe to the user
-	// what is being built rather than being a unique identifier.
-	Name() string
-
-	// Prepare configures the various components of this build and reports
-	// any errors in doing so (such as syntax errors, validation errors, etc.).
-	// It also reports any warnings.
-	Prepare() ([]string, error)
-
-	// Run runs the actual builder, returning an artifact implementation
-	// of what is built. If anything goes wrong, an error is returned.
-	// Run can be context cancelled.
-	Run(context.Context, Ui) ([]Artifact, error)
-
-	// SetDebug will enable/disable debug mode. Debug mode is always
-	// enabled by adding the additional key "packer_debug" to boolean
-	// true in the configuration of the various components. This must
-	// be called prior to Prepare.
-	//
-	// When SetDebug is set to true, parallelism between builds is
-	// strictly prohibited.
-	SetDebug(bool)
-
-	// SetForce will enable/disable forcing a build when artifacts exist.
-	//
-	// When SetForce is set to true, existing artifacts from the build are
-	// deleted prior to the build.
-	SetForce(bool)
-
-	// SetOnError will determine what to do when a normal multistep step fails
-	// - "cleanup" - run cleanup steps
-	// - "abort" - exit without cleanup
-	// - "ask" - ask the user
-	SetOnError(string)
-}
 
 // A CoreBuild struct represents a single build job, the result of which should
 // be a single machine image artifact. This artifact may be comprised of
 // multiple files, of course, but it should be for only a single provider (such
 // as VirtualBox, EC2, etc.).
 type CoreBuild struct {
+	BuildName          string
 	Type               string
-	Builder            Builder
+	Builder            packersdk.Builder
 	BuilderConfig      interface{}
 	BuilderType        string
-	hooks              map[string][]Hook
+	hooks              map[string][]packersdk.Hook
 	Provisioners       []CoreBuildProvisioner
 	PostProcessors     [][]CoreBuildPostProcessor
 	CleanupProvisioner CoreBuildProvisioner
@@ -110,11 +42,11 @@ type CoreBuild struct {
 // CoreBuildPostProcessor Keeps track of the post-processor and the
 // configuration of the post-processor used within a build.
 type CoreBuildPostProcessor struct {
-	PostProcessor     PostProcessor
+	PostProcessor     packersdk.PostProcessor
 	PType             string
 	PName             string
 	config            map[string]interface{}
-	keepInputArtifact *bool
+	KeepInputArtifact *bool
 }
 
 // CoreBuildProvisioner keeps track of the provisioner and the configuration of
@@ -122,12 +54,15 @@ type CoreBuildPostProcessor struct {
 type CoreBuildProvisioner struct {
 	PType       string
 	PName       string
-	Provisioner Provisioner
+	Provisioner packersdk.Provisioner
 	config      []interface{}
 }
 
 // Returns the name of the build.
 func (b *CoreBuild) Name() string {
+	if b.BuildName != "" {
+		return b.BuildName + "." + b.Type
+	}
 	return b.Type
 }
 
@@ -135,8 +70,8 @@ func (b *CoreBuild) Name() string {
 // and any hooks. This _must_ be called prior to Run. The parameter is the
 // overrides for the variables within the template (if any).
 func (b *CoreBuild) Prepare() (warn []string, err error) {
-	// For HCL2 templates, the builder and hooks are initialized when the template is parsed.
-	// Calling Prepare(...) is not necessary
+	// For HCL2 templates, the builder and hooks are initialized when the
+	// template is parsed. Calling Prepare(...) is not necessary
 	if b.Prepared {
 		b.prepareCalled = true
 		return
@@ -149,16 +84,19 @@ func (b *CoreBuild) Prepare() (warn []string, err error) {
 		panic("prepare already called")
 	}
 
+	// Templates loaded from HCL2 will never get here. TODO: move this code into
+	// a custom json area instead of just aborting early for HCL.
 	b.prepareCalled = true
 
 	packerConfig := map[string]interface{}{
-		BuildNameConfigKey:     b.Type,
-		BuilderTypeConfigKey:   b.BuilderType,
-		DebugConfigKey:         b.debug,
-		ForceConfigKey:         b.force,
-		OnErrorConfigKey:       b.onError,
-		TemplatePathKey:        b.TemplatePath,
-		UserVariablesConfigKey: b.Variables,
+		common.BuildNameConfigKey:     b.Type,
+		common.BuilderTypeConfigKey:   b.BuilderType,
+		common.CoreVersionConfigKey:   version.FormattedVersion(),
+		common.DebugConfigKey:         b.debug,
+		common.ForceConfigKey:         b.force,
+		common.OnErrorConfigKey:       b.onError,
+		common.TemplatePathKey:        b.TemplatePath,
+		common.UserVariablesConfigKey: b.Variables,
 	}
 
 	// Prepare the builder
@@ -176,7 +114,7 @@ func (b *CoreBuild) Prepare() (warn []string, err error) {
 	if generatedVars != nil {
 		for _, k := range generatedVars {
 			generatedPlaceholderMap[k] = fmt.Sprintf("Build_%s. "+
-				common.PlaceholderMsg, k)
+				packerbuilderdata.PlaceholderMsg, k)
 		}
 	}
 
@@ -218,15 +156,15 @@ func (b *CoreBuild) Prepare() (warn []string, err error) {
 }
 
 // Runs the actual build. Prepare must be called prior to running this.
-func (b *CoreBuild) Run(ctx context.Context, originalUi Ui) ([]Artifact, error) {
+func (b *CoreBuild) Run(ctx context.Context, originalUi packersdk.Ui) ([]packersdk.Artifact, error) {
 	if !b.prepareCalled {
 		panic("Prepare must be called first")
 	}
 
 	// Copy the hooks
-	hooks := make(map[string][]Hook)
+	hooks := make(map[string][]packersdk.Hook)
 	for hookName, hookList := range b.hooks {
-		hooks[hookName] = make([]Hook, len(hookList))
+		hooks[hookName] = make([]packersdk.Hook, len(hookList))
 		copy(hooks[hookName], hookList)
 	}
 
@@ -253,11 +191,11 @@ func (b *CoreBuild) Run(ctx context.Context, originalUi Ui) ([]Artifact, error) 
 			}
 		}
 
-		if _, ok := hooks[HookProvision]; !ok {
-			hooks[HookProvision] = make([]Hook, 0, 1)
+		if _, ok := hooks[packersdk.HookProvision]; !ok {
+			hooks[packersdk.HookProvision] = make([]packersdk.Hook, 0, 1)
 		}
 
-		hooks[HookProvision] = append(hooks[HookProvision], &ProvisionHook{
+		hooks[packersdk.HookProvision] = append(hooks[packersdk.HookProvision], &ProvisionHook{
 			Provisioners: hookedProvisioners,
 		})
 	}
@@ -268,13 +206,13 @@ func (b *CoreBuild) Run(ctx context.Context, originalUi Ui) ([]Artifact, error) 
 			b.CleanupProvisioner.config,
 			b.CleanupProvisioner.PType,
 		}
-		hooks[HookCleanupProvision] = []Hook{&ProvisionHook{
+		hooks[packersdk.HookCleanupProvision] = []packersdk.Hook{&ProvisionHook{
 			Provisioners: []*HookedProvisioner{hookedCleanupProvisioner},
 		}}
 	}
 
-	hook := &DispatchHook{Mapping: hooks}
-	artifacts := make([]Artifact, 0, 1)
+	hook := &packersdk.DispatchHook{Mapping: hooks}
+	artifacts := make([]packersdk.Artifact, 0, 1)
 
 	// The builder just has a normal Ui, but targeted
 	builderUi := &TargetedUI{
@@ -298,6 +236,13 @@ func (b *CoreBuild) Run(ctx context.Context, originalUi Ui) ([]Artifact, error) 
 
 	errors := make([]error, 0)
 	keepOriginalArtifact := len(b.PostProcessors) == 0
+
+	select {
+	case <-ctx.Done():
+		log.Println("Build was cancelled. Skipping post-processors.")
+		return nil, nil
+	default:
+	}
 
 	// Run the post-processors
 PostProcessorRunSeqLoop:
@@ -335,15 +280,15 @@ PostProcessorRunSeqLoop:
 			// Exception: for postprocessors that will fail/become
 			// useless if keep isn't true, heed forceOverride and keep the
 			// input artifact regardless of user preference.
-			if corePP.keepInputArtifact != nil {
-				if defaultKeep && *corePP.keepInputArtifact == false && forceOverride {
+			if corePP.KeepInputArtifact != nil {
+				if defaultKeep && *corePP.KeepInputArtifact == false && forceOverride {
 					log.Printf("The %s post-processor forces "+
 						"keep_input_artifact=true to preserve integrity of the"+
 						"build chain. User-set keep_input_artifact=false will be"+
 						"ignored.", corePP.PType)
 				} else {
 					// User overrides default.
-					keep = *corePP.keepInputArtifact
+					keep = *corePP.KeepInputArtifact
 				}
 			}
 			if i == 0 {
@@ -391,7 +336,7 @@ PostProcessorRunSeqLoop:
 	}
 
 	if len(errors) > 0 {
-		err = &MultiError{errors}
+		err = &packersdk.MultiError{Errors: errors}
 	}
 
 	return artifacts, err

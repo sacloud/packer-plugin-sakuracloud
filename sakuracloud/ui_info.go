@@ -3,7 +3,7 @@ package sakuracloud
 import (
 	"fmt"
 
-	"github.com/hashicorp/packer/packer"
+	"github.com/hashicorp/packer-plugin-sdk/packer"
 )
 
 var uiMsgPerStep = "%s step: %s %s"

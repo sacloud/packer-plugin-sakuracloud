@@ -6,10 +6,10 @@ import (
 	"log"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
-	"github.com/hashicorp/packer/common"
-	"github.com/hashicorp/packer/helper/communicator"
-	"github.com/hashicorp/packer/helper/multistep"
-	"github.com/hashicorp/packer/packer"
+	"github.com/hashicorp/packer-plugin-sdk/communicator"
+	"github.com/hashicorp/packer-plugin-sdk/multistep"
+	"github.com/hashicorp/packer-plugin-sdk/multistep/commonsteps"
+	"github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/sacloud/libsacloud/v2/sacloud/ostype"
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
 	"github.com/sacloud/packer-builder-sakuracloud/iaas"
@@ -94,14 +94,13 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 		}
 	} else {
 		isoSteps = []multistep.Step{
-			&common.StepDownload{
-				Checksum:     b.config.ISOChecksum,
-				ChecksumType: b.config.ISOChecksumType,
-				Description:  "ISO",
-				Extension:    "iso",
-				ResultKey:    "iso_path",
-				TargetPath:   b.config.TargetPath,
-				Url:          b.config.ISOUrls,
+			&commonsteps.StepDownload{
+				Checksum:    b.config.ISOChecksum,
+				Description: "ISO",
+				Extension:   "iso",
+				ResultKey:   "iso_path",
+				TargetPath:  b.config.TargetPath,
+				Url:         b.config.ISOUrls,
 			},
 			&stepRemoteUpload{
 				Debug: b.config.PackerDebug,
@@ -131,7 +130,7 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 			Ctx:   b.config.ctx,
 		},
 		communicateStep, // ssh or winrm
-		new(common.StepProvision),
+		new(commonsteps.StepProvision),
 		&stepPowerOff{
 			Debug: b.config.PackerDebug,
 		},
@@ -151,7 +150,7 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 	if b.config.PackerDebug {
 		b.runner = &multistep.DebugRunner{
 			Steps:   steps,
-			PauseFn: common.MultistepDebugFn(ui),
+			PauseFn: commonsteps.MultistepDebugFn(ui),
 		}
 	} else {
 		b.runner = &multistep.BasicRunner{Steps: steps}

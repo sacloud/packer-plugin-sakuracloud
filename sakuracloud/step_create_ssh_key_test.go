@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/hashicorp/packer/helper/multistep"
+	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/ssh"
 )
@@ -14,7 +14,7 @@ func TestStepCreateSSHKey(t *testing.T) {
 		ctx := context.Background()
 		step := &stepCreateSSHKey{}
 
-		state := dummyMinimumStateBag(nil)
+		state := dummyMinimumStateBag(t, nil)
 
 		// run
 		action := step.Run(ctx, state)
@@ -42,7 +42,7 @@ func TestStepCreateSSHKey(t *testing.T) {
 		step := &stepCreateSSHKey{}
 		config := dummyConfig()
 		config.Comm.SSHPrivateKeyFile = dummyPrivateKeyFile
-		state := dummyMinimumStateBag(&config)
+		state := dummyMinimumStateBag(t, &config)
 
 		// run
 		action := step.Run(ctx, state)
@@ -76,7 +76,7 @@ func TestStepCreateSSHKey(t *testing.T) {
 		config := dummyConfig()
 		config.Comm.SSHPrivateKeyFile = dummyPrivateKeyFile
 		config.Comm.SSHPrivateKey = []byte(expectPrivateKey)
-		state := dummyMinimumStateBag(&config)
+		state := dummyMinimumStateBag(t, &config)
 
 		// run
 		action := step.Run(ctx, state)
@@ -96,7 +96,7 @@ func TestStepCreateSSHKey(t *testing.T) {
 		config := dummyConfig()
 		config.Comm.SSHPrivateKeyFile = dummyPrivateKeyFile
 		config.DisableGeneratePublicKey = true
-		state := dummyMinimumStateBag(&config)
+		state := dummyMinimumStateBag(t, &config)
 
 		// run
 		action := step.Run(ctx, state)

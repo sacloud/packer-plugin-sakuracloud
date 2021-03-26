@@ -8,29 +8,13 @@ import (
 	"time"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
-	"github.com/hashicorp/packer/helper/common"
+	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/hashicorp/packer-plugin-sdk/packerbuilderdata"
 )
-
-// A provisioner is responsible for installing and configuring software
-// on a machine prior to building the actual image.
-type Provisioner interface {
-	HCL2Speccer
-
-	// Prepare is called with a set of configurations to setup the
-	// internal state of the provisioner. The multiple configurations
-	// should be merged in some sane way.
-	Prepare(...interface{}) error
-
-	// Provision is called to actually provision the machine. A context is
-	// given for cancellation, a UI is given to communicate with the user, and
-	// a communicator is given that is guaranteed to be connected to some
-	// machine so that provisioning can be done.
-	Provision(context.Context, Ui, Communicator, map[string]interface{}) error
-}
 
 // A HookedProvisioner represents a provisioner and information describing it
 type HookedProvisioner struct {
-	Provisioner Provisioner
+	Provisioner packersdk.Provisioner
 	Config      interface{}
 	TypeName    string
 }
@@ -40,6 +24,31 @@ type ProvisionHook struct {
 	// The provisioners to run as part of the hook. These should already
 	// be prepared (by calling Prepare) at some earlier stage.
 	Provisioners []*HookedProvisioner
+}
+
+// BuilderDataCommonKeys is the list of common keys that all builder will
+// return
+var BuilderDataCommonKeys = []string{
+	"ID",
+	// The following correspond to communicator-agnostic functions that are		}
+	// part of the SSH and WinRM communicator implementations. These functions
+	// are not part of the communicator interface, but are stored on the
+	// Communicator Config and return the appropriate values rather than
+	// depending on the actual communicator config values. E.g "Password"
+	// reprosents either WinRMPassword or SSHPassword, which makes this more
+	// useful if a template contains multiple builds.
+	"Host",
+	"Port",
+	"User",
+	"Password",
+	"ConnType",
+	"PackerRunUUID",
+	"PackerHTTPPort",
+	"PackerHTTPIP",
+	"PackerHTTPAddr",
+	"SSHPublicKey",
+	"SSHPrivateKey",
+	"WinRMPassword",
 }
 
 // Provisioners interpolate most of their fields in the prepare stage; this
@@ -53,24 +62,9 @@ type ProvisionHook struct {
 // data.
 func BasicPlaceholderData() map[string]string {
 	placeholderData := map[string]string{}
-	msg := "Build_%s. " + common.PlaceholderMsg
-	placeholderData["ID"] = fmt.Sprintf(msg, "ID")
-	// The following correspond to communicator-agnostic functions that are
-	// part of the SSH and WinRM communicator implementations. These functions
-	// are not part of the communicator interface, but are stored on the
-	// Communicator Config and return the appropriate values rather than
-	// depending on the actual communicator config values. E.g "Password"
-	// reprosents either WinRMPassword or SSHPassword, which makes this more
-	// useful if a template contains multiple builds.
-	placeholderData["Host"] = fmt.Sprintf(msg, "Host")
-	placeholderData["Port"] = fmt.Sprintf(msg, "Port")
-	placeholderData["User"] = fmt.Sprintf(msg, "User")
-	placeholderData["Password"] = fmt.Sprintf(msg, "Password")
-	placeholderData["ConnType"] = fmt.Sprintf(msg, "Type")
-	placeholderData["PackerRunUUID"] = fmt.Sprintf(msg, "PackerRunUUID")
-	placeholderData["PackerHTTPAddr"] = fmt.Sprintf(msg, "PackerHTTPAddr")
-	placeholderData["SSHPublicKey"] = fmt.Sprintf(msg, "SSHPublicKey")
-	placeholderData["SSHPrivateKey"] = fmt.Sprintf(msg, "SSHPrivateKey")
+	for _, key := range BuilderDataCommonKeys {
+		placeholderData[key] = fmt.Sprintf("Build_%s. "+packerbuilderdata.PlaceholderMsg, key)
+	}
 
 	// Backwards-compatability: WinRM Password can get through without forcing
 	// the generated func validation.
@@ -109,7 +103,7 @@ func CastDataToMap(data interface{}) map[string]interface{} {
 }
 
 // Runs the provisioners in order.
-func (h *ProvisionHook) Run(ctx context.Context, name string, ui Ui, comm Communicator, data interface{}) error {
+func (h *ProvisionHook) Run(ctx context.Context, name string, ui packersdk.Ui, comm packersdk.Communicator, data interface{}) error {
 	// Shortcut
 	if len(h.Provisioners) == 0 {
 		return nil
@@ -140,7 +134,7 @@ func (h *ProvisionHook) Run(ctx context.Context, name string, ui Ui, comm Commun
 // the provisioner is actually run.
 type PausedProvisioner struct {
 	PauseBefore time.Duration
-	Provisioner Provisioner
+	Provisioner packersdk.Provisioner
 }
 
 func (p *PausedProvisioner) ConfigSpec() hcldec.ObjectSpec { return p.ConfigSpec() }
@@ -149,7 +143,7 @@ func (p *PausedProvisioner) Prepare(raws ...interface{}) error {
 	return p.Provisioner.Prepare(raws...)
 }
 
-func (p *PausedProvisioner) Provision(ctx context.Context, ui Ui, comm Communicator, generatedData map[string]interface{}) error {
+func (p *PausedProvisioner) Provision(ctx context.Context, ui packersdk.Ui, comm packersdk.Communicator, generatedData map[string]interface{}) error {
 
 	// Use a select to determine if we get cancelled during the wait
 	ui.Say(fmt.Sprintf("Pausing %s before the next provisioner...", p.PauseBefore))
@@ -162,10 +156,52 @@ func (p *PausedProvisioner) Provision(ctx context.Context, ui Ui, comm Communica
 	return p.Provisioner.Provision(ctx, ui, comm, generatedData)
 }
 
+// RetriedProvisioner is a Provisioner implementation that retries
+// the provisioner whenever there's an error.
+type RetriedProvisioner struct {
+	MaxRetries  int
+	Provisioner packersdk.Provisioner
+}
+
+func (r *RetriedProvisioner) ConfigSpec() hcldec.ObjectSpec { return r.ConfigSpec() }
+func (r *RetriedProvisioner) FlatConfig() interface{}       { return r.FlatConfig() }
+func (r *RetriedProvisioner) Prepare(raws ...interface{}) error {
+	return r.Provisioner.Prepare(raws...)
+}
+
+func (r *RetriedProvisioner) Provision(ctx context.Context, ui packersdk.Ui, comm packersdk.Communicator, generatedData map[string]interface{}) error {
+	if ctx.Err() != nil { // context was cancelled
+		return ctx.Err()
+	}
+
+	err := r.Provisioner.Provision(ctx, ui, comm, generatedData)
+	if err == nil {
+		return nil
+	}
+
+	leftTries := r.MaxRetries
+	for ; leftTries > 0; leftTries-- {
+		if ctx.Err() != nil { // context was cancelled
+			return ctx.Err()
+		}
+
+		ui.Say(fmt.Sprintf("Provisioner failed with %q, retrying with %d trie(s) left", err, leftTries))
+
+		err := r.Provisioner.Provision(ctx, ui, comm, generatedData)
+		if err == nil {
+			return nil
+		}
+
+	}
+	ui.Say("retry limit reached.")
+
+	return err
+}
+
 // DebuggedProvisioner is a Provisioner implementation that waits until a key
 // press before the provisioner is actually run.
 type DebuggedProvisioner struct {
-	Provisioner Provisioner
+	Provisioner packersdk.Provisioner
 
 	cancelCh chan struct{}
 	doneCh   chan struct{}
@@ -178,7 +214,7 @@ func (p *DebuggedProvisioner) Prepare(raws ...interface{}) error {
 	return p.Provisioner.Prepare(raws...)
 }
 
-func (p *DebuggedProvisioner) Provision(ctx context.Context, ui Ui, comm Communicator, generatedData map[string]interface{}) error {
+func (p *DebuggedProvisioner) Provision(ctx context.Context, ui packersdk.Ui, comm packersdk.Communicator, generatedData map[string]interface{}) error {
 	// Use a select to determine if we get cancelled during the wait
 	message := "Pausing before the next provisioner . Press enter to continue."
 

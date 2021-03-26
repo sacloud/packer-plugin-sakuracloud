@@ -7,11 +7,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/hashicorp/packer/common"
-	"github.com/hashicorp/packer/helper/communicator"
-	"github.com/hashicorp/packer/helper/config"
-	"github.com/hashicorp/packer/packer"
-	"github.com/hashicorp/packer/template/interpolate"
+	"github.com/hashicorp/packer-plugin-sdk/common"
+	"github.com/hashicorp/packer-plugin-sdk/communicator"
+	"github.com/hashicorp/packer-plugin-sdk/multistep/commonsteps"
+	"github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/hashicorp/packer-plugin-sdk/template/config"
+	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/mitchellh/mapstructure"
 	"github.com/sacloud/libsacloud/v2/sacloud/ostype"
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
@@ -64,10 +65,10 @@ type Config struct {
 	SourceDisk    types.ID `mapstructure:"source_disk"`
 
 	// for ISO
-	ISOImageID       types.ID `mapstructure:"iso_id"`
-	common.ISOConfig `mapstructure:",squash"`
-	ISOImageSizeGB   int    `mapstructure:"iso_size"`
-	ISOImageName     string `mapstructure:"iso_name"`
+	ISOImageID            types.ID `mapstructure:"iso_id"`
+	commonsteps.ISOConfig `mapstructure:",squash"`
+	ISOImageSizeGB        int    `mapstructure:"iso_size"`
+	ISOImageName          string `mapstructure:"iso_name"`
 
 	// for artifact
 	ArchiveName        string        `mapstructure:"archive_name"`
