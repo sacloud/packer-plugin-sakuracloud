@@ -7,7 +7,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/hashicorp/packer/helper/multistep"
 	"github.com/hashicorp/packer/packer"
@@ -28,7 +28,7 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 	var privateKeys []string
 
 	if c.Comm.SSHPrivateKeyFile != "" {
-		bytes, err := ioutil.ReadFile(c.Comm.SSHPrivateKeyFile)
+		bytes, err := os.ReadFile(c.Comm.SSHPrivateKeyFile)
 		if err != nil {
 			err := fmt.Errorf("Error reading ssh key file: %s", err)
 			state.Put("error", err)
@@ -79,7 +79,7 @@ func (s *stepCreateSSHKey) Run(ctx context.Context, state multistep.StateBag) mu
 		pkey, ok := state.GetOk("privateKey")
 		if ok {
 			ui.Message(fmt.Sprintf("Saving key for debug purposes: %s", s.DebugKeyPath))
-			if err := ioutil.WriteFile(s.DebugKeyPath, []byte(pkey.(string)), 0600); err != nil {
+			if err := os.WriteFile(s.DebugKeyPath, []byte(pkey.(string)), 0600); err != nil {
 				state.Put("error", fmt.Errorf("Error saving debug key: %s", err))
 				return multistep.ActionHalt
 			}
