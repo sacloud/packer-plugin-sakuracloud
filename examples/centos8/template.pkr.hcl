@@ -1,3 +1,12 @@
+packer {
+  required_plugins {
+    sakuracloud = {
+      version = ">= 0.7.0"
+      source = "github.com/sacloud/sakuracloud"
+    }
+  }
+}
+
 source "sakuracloud" "example" {
   zone  = "is1b"
   zones = ["is1a", "is1b", "tk1a", "tk1v"]
