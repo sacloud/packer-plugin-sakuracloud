@@ -1,0 +1,69 @@
+# from: https://raw.githubusercontent.com/hashicorp/packer-plugin-scaffolding/main/.goreleaser.yml
+env:
+  - CGO_ENABLED=0
+  - PROJECT_NAME=packer-plugin-sakuracloud
+#  - PROJECT_NAME={{ .ProjectName }}
+builds:
+  # A separate build to run the packer-plugins-check on a linux_amd64 binary
+  - id: plugin-check
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    hooks:
+      post:
+        # This will check plugin compatibility against latest version of Packer
+        - cmd: |
+            go install github.com/hashicorp/packer/cmd/packer-plugins-check@latest &&
+            packer-plugins-check -load={{ .Name }}
+          dir: "{{ dir .Path}}"
+    flags:
+      - -trimpath #removes all file system paths from the compiled executable
+    ldflags:
+      - '-s -w -X github.com/sacloud/packer-builder-sakuracloud/version.Version={{.Version}} -extldflags -static'
+    goos:
+      - linux
+    goarch:
+      - amd64
+    binary: '{{ .Env.PROJECT_NAME }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}'
+
+  -
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    flags:
+      - -trimpath #removes all file system paths from the compiled executable
+    ldflags:
+      - '-s -w -X github.com/sacloud/packer-builder-sakuracloud/version.Version={{.Version}} -extldflags -static'
+    goos:
+      - freebsd
+      - windows
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - '386'
+      - arm
+      - arm64
+    ignore:
+      - goos: darwin
+        goarch: '386'
+      - goos: linux
+        goarch: amd64
+    binary: '{{ .Env.PROJECT_NAME }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}'
+archives:
+  - format: zip
+    name_template: '{{ .Env.PROJECT_NAME }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}'
+checksum:
+  name_template: '{{ .Env.PROJECT_NAME }}_v{{ .Version }}_SHA256SUMS'
+  algorithm: sha256
+signs:
+  - artifacts: checksum
+    args:
+      - "--batch"
+      - "--local-user"
+      - "E37EC0B895A9AC27DC4919AB96CEB4B93D86849D"
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
+release:
+  # If you want to manually examine the release before its live, uncomment this line:
+  # draft: true
+changelog:
+  skip: true

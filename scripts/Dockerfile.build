@@ -1,9 +1,0 @@
-FROM golang:1.14
-MAINTAINER Kazumichi Yamamoto <yamamoto.febc@gmail.com>
-
-RUN set -x && apt update && apt install -y zip 
-
-ADD . /go/src/github.com/sacloud/packer-builder-sakuracloud
-
-WORKDIR /go/src/github.com/sacloud/packer-builder-sakuracloud
-CMD ["make"]
