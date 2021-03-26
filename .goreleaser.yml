@@ -1,8 +1,6 @@
 # from: https://raw.githubusercontent.com/hashicorp/packer-plugin-scaffolding/main/.goreleaser.yml
 env:
   - CGO_ENABLED=0
-  - PROJECT_NAME=packer-plugin-sakuracloud
-#  - PROJECT_NAME={{ .ProjectName }}
 builds:
   # A separate build to run the packer-plugins-check on a linux_amd64 binary
   - id: plugin-check
@@ -17,19 +15,19 @@ builds:
     flags:
       - -trimpath #removes all file system paths from the compiled executable
     ldflags:
-      - '-s -w -X github.com/sacloud/packer-builder-sakuracloud/version.Version={{.Version}} -extldflags -static'
+      - '-s -w -X github.com/sacloud/packer-plugin-sakuracloud/version.Version={{.Version}} -extldflags -static'
     goos:
       - linux
     goarch:
       - amd64
-    binary: '{{ .Env.PROJECT_NAME }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}'
+    binary: '{{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}'
 
   -
     mod_timestamp: '{{ .CommitTimestamp }}'
     flags:
       - -trimpath #removes all file system paths from the compiled executable
     ldflags:
-      - '-s -w -X github.com/sacloud/packer-builder-sakuracloud/version.Version={{.Version}} -extldflags -static'
+      - '-s -w -X github.com/sacloud/packer-plugin-sakuracloud/version.Version={{.Version}} -extldflags -static'
     goos:
       - freebsd
       - windows
@@ -45,12 +43,12 @@ builds:
         goarch: '386'
       - goos: linux
         goarch: amd64
-    binary: '{{ .Env.PROJECT_NAME }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}'
+    binary: '{{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}'
 archives:
   - format: zip
-    name_template: '{{ .Env.PROJECT_NAME }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}'
+    name_template: '{{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}'
 checksum:
-  name_template: '{{ .Env.PROJECT_NAME }}_v{{ .Version }}_SHA256SUMS'
+  name_template: '{{ .ProjectName }}_v{{ .Version }}_SHA256SUMS'
   algorithm: sha256
 signs:
   - artifacts: checksum

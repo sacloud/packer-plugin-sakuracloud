@@ -1,7 +1,7 @@
-packer-builder-sakuracloud
+packer-plugin-sakuracloud
 ===
 
-[![Build Status](https://travis-ci.org/sacloud/packer-builder-sakuracloud.svg?branch=master)](https://travis-ci.org/sacloud/packer-builder-sakuracloud)
+[![Build Status](https://travis-ci.org/sacloud/packer-plugin-sakuracloud.svg?branch=master)](https://travis-ci.org/sacloud/packer-plugin-sakuracloud)
 [![Slack](https://slack.usacloud.jp/badge.svg)](https://slack.usacloud.jp/)  
 
 A builder plugin of packer for SakuraCloud
@@ -10,12 +10,12 @@ A builder plugin of packer for SakuraCloud
 
 ## 概要
 
-`packer-builder-sakuracloud`は[さくらのクラウド](http://cloud.sakura.ad.jp)での
+`packer-plugin-sakuracloud`は[さくらのクラウド](http://cloud.sakura.ad.jp)での
 アーカイブ(構築済みOSのテンプレート)を[Packer](https://packer.io)で作成するためのPackerプラグインです。
 
 ## 使い方(セットアップ)
 
-`packer-builder-sakuracloud`を実行するには、さくらのクラウドAPIキーが必要です。
+`packer-plugin-sakuracloud`を実行するには、さくらのクラウドAPIキーが必要です。
 
 あらかじめコントロールパネルからAPIキーを発行しておいてください。
 
@@ -27,7 +27,7 @@ A builder plugin of packer for SakuraCloud
 
 ### ローカルマシンへのインストール
 
-[リリースページ](https://github.com/sacloud/packer-builder-sakuracloud/releases/latest)から各プラットフォーム用のバイナリをダウンロードし、
+[リリースページ](https://github.com/sacloud/packer-plugin-sakuracloud/releases/latest)から各プラットフォーム用のバイナリをダウンロードし、
 以下の何れかのディレクトリへ展開、実行権を付与してください。
 
 - 1) `packer`コマンドが格納されているディレクトリ
@@ -35,7 +35,7 @@ A builder plugin of packer for SakuraCloud
 
 ### Dockerを利用する場合
 
-Dockerを利用する場合、`packer-builder-sakuracloud`の事前のインストール作業は不要です。
+Dockerを利用する場合、`packer-plugin-sakuracloud`の事前のインストール作業は不要です。
 DockerHubでイメージを公開していますので、以下のように実行できます。
 
     docker run -it --rm sacloud/packer:latest [packerサブコマンド] [packerオプション]
@@ -53,7 +53,7 @@ APIキーを環境変数で指定する場合、`-e`オプションなどを適�
 
 以下のコマンドでインストール可能です。
 
-    brew tap sacloud/homebrew-packer-builder-sakuracloud; brew install packer-builder-sakuracloud
+    brew tap sacloud/homebrew-packer-plugin-sakuracloud; brew install packer-plugin-sakuracloud
 
 インストール後は画面に表示される指示にしたがってコマンドを実行し、`~/.packer.d/plugins`配下にシンボリックリンクを作成します。
 
@@ -374,7 +374,7 @@ PackerがISOイメージのダウンロードを行い、さくらのクラウ�
 
 ## License
 
-  `packer-builder-sakuracloud` Copyright (C) 2016-2020 Kazumichi Yamamoto.
+  `packer-plugin-sakuracloud` Copyright (C) 2016-2020 Kazumichi Yamamoto.
 
   This project is published under [MPL-2.0](LICENSE).
   

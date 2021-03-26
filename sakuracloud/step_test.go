@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/sacloud/libsacloud/v2/sacloud/fake"
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	"github.com/sacloud/packer-builder-sakuracloud/iaas"
+	"github.com/sacloud/packer-plugin-sakuracloud/iaas"
 	"golang.org/x/crypto/ssh"
 )
 

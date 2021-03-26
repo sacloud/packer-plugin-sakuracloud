@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/plugin"
 	"github.com/hashicorp/packer-plugin-sdk/version"
-	"github.com/sacloud/packer-builder-sakuracloud/sakuracloud"
-	pversion "github.com/sacloud/packer-builder-sakuracloud/version"
+	"github.com/sacloud/packer-plugin-sakuracloud/sakuracloud"
+	pversion "github.com/sacloud/packer-plugin-sakuracloud/version"
 )
 
 var pluginVersion = version.InitializePluginVersion(pversion.Version, "")

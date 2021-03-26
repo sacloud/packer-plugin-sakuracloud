@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	"github.com/sacloud/packer-builder-sakuracloud/iaas"
+	"github.com/sacloud/packer-plugin-sakuracloud/iaas"
 )
 
 // Artifact is the result of a build and is the metadata that documents

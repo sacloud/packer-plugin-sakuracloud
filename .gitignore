@@ -1,4 +1,3 @@
 bin/*
 .env
-homebrew-packer-builder-sakuracloud/
 test.iso

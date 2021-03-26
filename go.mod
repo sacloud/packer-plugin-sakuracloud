@@ -1,4 +1,4 @@
-module github.com/sacloud/packer-builder-sakuracloud
+module github.com/sacloud/packer-plugin-sakuracloud
 
 require (
 	github.com/hashicorp/hcl/v2 v2.8.0
