@@ -401,7 +401,7 @@ PackerがISOイメージのダウンロードを行い、さくらのクラウ�
 
 ## License
 
-  `packer-plugin-sakuracloud` Copyright (C) 2016-2021 [The packer-plugin-sakuracloud Authors](AUTHORS).
+  `packer-plugin-sakuracloud` Copyright (C) 2016-2022 [The packer-plugin-sakuracloud Authors](AUTHORS).
 
   This project is published under [MPL-2.0](LICENSE).
   
