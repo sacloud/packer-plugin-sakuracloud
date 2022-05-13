@@ -19,7 +19,7 @@ install: build
 	cp -f $(CURDIR)/bin/packer-plugin-sakuracloud $(GOPATH)/bin/packer-plugin-sakuracloud
 
 build: generate clean
-	CGO_ENABLED=0 go build -mod vendor -ldflags "-s -w -extldflags -static" -o $(CURDIR)/bin/packer-plugin-sakuracloud $(CURDIR)/main.go
+	CGO_ENABLED=0 go build -ldflags "-s -w -extldflags -static" -o $(CURDIR)/bin/packer-plugin-sakuracloud $(CURDIR)/main.go
 
 generate:
 	go generate ./...
