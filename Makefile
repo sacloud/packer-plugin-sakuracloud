@@ -15,7 +15,7 @@ tools:
 install-packer:
 	apt update; apt install -y curl zip
 	curl -LO https://releases.hashicorp.com/packer/1.8.0/packer_1.8.0_linux_amd64.zip
-	unzip packer_1.8.0_linux_amd64.zip
+	unzip -o packer_1.8.0_linux_amd64.zip
 	install packer /usr/local/bin/
 
 .PHONY: clean
