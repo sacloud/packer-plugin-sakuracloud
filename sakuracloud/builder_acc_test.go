@@ -2,6 +2,7 @@ package sakuracloud
 
 import (
 	"context"
+	_ "embed"
 	"fmt"
 	"os"
 	"os/exec"
@@ -42,7 +43,7 @@ func TestBuilderAcc_basic(t *testing.T) {
 			testAccPreCheck(t)
 			return nil
 		},
-		Template: testBuilderAccBasic,
+		Template: testBuilderHCL2Minimum,
 		Check: func(buildCommand *exec.Cmd, logfile string) error {
 			if buildCommand.ProcessState != nil {
 				if buildCommand.ProcessState.ExitCode() != 0 {
@@ -89,41 +90,12 @@ func testAccPreCheck(t *testing.T) {
 	}
 }
 
-const testBuilderAccBasic = `
-{
-    "builders": [{
-        "type": "sakuracloud",
-        "zone": "is1a",
-        "os_type": "ubuntu2004",
-        "user_name": "ubuntu",
-        "password": "TestUserPassword01",
-        "disk_size": 20,
-        "disk_plan": "ssd",
-        "core" : 2,
-        "memory_size": 4,
-        "archive_name": "packer-acctest-minimum",
-        "archive_description": "description of archive"
-    }]
-}
-`
+//go:embed test-fixtures/minimum.pkr.hcl
+var testBuilderHCL2Minimum string
+
+//go:embed test-fixtures/with-ssh-key.pkr.hcl
+var testBuilderHCL2WithSshKey string
 
 func testBuilderAccWithSSHPrivateKeyFile(keyPath string) string {
-	return `
-{
-   "builders": [{
-       "type": "sakuracloud",
-       "zone": "is1a",
-       "os_type": "ubuntu2004",
-       "user_name": "ubuntu",
-       "password": "TestUserPassword01",
-       "disk_size": 20,
-       "disk_plan": "ssd",
-       "core" : 2,
-       "memory_size": 4,
-       "ssh_private_key_file": "` + keyPath + `",
-       "archive_name": "packer-acctest-sshkey",
-       "archive_description": "description of archive"
-   }]
-}
-`
+	return fmt.Sprintf(testBuilderHCL2WithSshKey, keyPath)
 }
