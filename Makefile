@@ -10,6 +10,14 @@ tools:
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/v1.38.0/install.sh | sh -s -- -b $$(go env GOPATH)/bin v1.38.0
 	go install github.com/hashicorp/packer-plugin-sdk/cmd/packer-sdc@v0.2.13
 
+# CI環境向けにpackerをセットアップ
+.PHONY: install-packer
+install-packer:
+	apt update; apt install -y curl zip
+	curl -LO https://releases.hashicorp.com/packer/1.8.0/packer_1.8.0_linux_amd64.zip
+	unzip packer_1.8.0_linux_amd64.zip
+	install packer /usr/local/bin/
+
 .PHONY: clean
 clean:
 	rm -Rf $(CURDIR)/bin/*
