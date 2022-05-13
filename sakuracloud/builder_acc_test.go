@@ -4,6 +4,8 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"io"
+	"log"
 	"os"
 	"os/exec"
 	"testing"
@@ -44,14 +46,7 @@ func TestBuilderAcc_basic(t *testing.T) {
 			return nil
 		},
 		Template: testBuilderHCL2Minimum,
-		Check: func(buildCommand *exec.Cmd, logfile string) error {
-			if buildCommand.ProcessState != nil {
-				if buildCommand.ProcessState.ExitCode() != 0 {
-					return fmt.Errorf("Bad exit code. Logfile: %s", logfile)
-				}
-			}
-			return nil
-		},
+		Check:    testAccCheckFunc,
 		Teardown: cleanupArchives,
 	})
 }
@@ -65,19 +60,33 @@ func TestBuilderAcc_withSSHKeyFile(t *testing.T) {
 			return nil
 		},
 		Template: testBuilderAccWithSSHPrivateKeyFile(dummyPrivateKeyFile),
-		Check: func(buildCommand *exec.Cmd, logfile string) error {
-			if buildCommand.ProcessState != nil {
-				if buildCommand.ProcessState.ExitCode() != 0 {
-					return fmt.Errorf("Bad exit code. Logfile: %s", logfile)
-				}
-			}
-			return nil
-		},
+		Check:    testAccCheckFunc,
 		Teardown: func() error {
 			deferFunc()
 			return cleanupArchives()
 		},
 	})
+}
+
+func testAccCheckFunc(buildCommand *exec.Cmd, logfile string) error {
+	logs, err := os.Open(logfile)
+	if err != nil {
+		return fmt.Errorf("Unable find %s", logfile)
+	}
+	defer logs.Close()
+
+	logsBytes, err := io.ReadAll(logs)
+	if err != nil {
+		return fmt.Errorf("Unable to read %s", logfile)
+	}
+
+	if buildCommand.ProcessState != nil {
+		if buildCommand.ProcessState.ExitCode() != 0 {
+			log.Println(string(logsBytes))
+			return fmt.Errorf("Bad exit code. Logfile: %s", logfile)
+		}
+	}
+	return nil
 }
 
 func testAccPreCheck(t *testing.T) {
