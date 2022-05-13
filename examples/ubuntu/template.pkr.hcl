@@ -1,3 +1,12 @@
+packer {
+  required_plugins {
+    sakuracloud = {
+      version = ">= 0.7"
+      source = "github.com/sacloud/sakuracloud"
+    }
+  }
+}
+
 locals {
   password = "TestUserPassword01"
 }

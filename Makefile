@@ -8,7 +8,7 @@ tools:
 	GO111MODULE=off go get golang.org/x/tools/cmd/goimports
 	GO111MODULE=off go get github.com/client9/misspell/cmd/misspell
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/v1.38.0/install.sh | sh -s -- -b $$(go env GOPATH)/bin v1.38.0
-	go install github.com/hashicorp/packer/cmd/mapstructure-to-hcl2@latest
+	go install github.com/hashicorp/packer-plugin-sdk/cmd/packer-sdc@v0.2.13
 
 .PHONY: clean
 clean:
