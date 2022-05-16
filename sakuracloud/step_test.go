@@ -10,9 +10,9 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/sacloud/libsacloud/v2/sacloud/fake"
-	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	"github.com/sacloud/packer-plugin-sakuracloud/iaas"
+	"github.com/sacloud/iaas-api-go/fake"
+	"github.com/sacloud/iaas-api-go/types"
+	"github.com/sacloud/packer-plugin-sakuracloud/platform"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -89,7 +89,7 @@ func dummyMinimumStateBag(t *testing.T, config *Config) multistep.StateBag {
 
 	// set fake API client
 	fake.SwitchFactoryFuncToFake()
-	iaasClient := iaas.NewClient("fake", "fake", "is1a")
+	iaasClient, _ := platform.NewClient("fake", "fake", "is1a")
 	iaasClient.FTPS = &fakeFTPSClient{}
 	state.Put("iaasClient", iaasClient)
 	return state

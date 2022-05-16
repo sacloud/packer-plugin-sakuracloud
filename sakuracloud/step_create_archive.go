@@ -6,9 +6,9 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/sacloud/libsacloud/v2/sacloud"
-	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	"github.com/sacloud/packer-plugin-sakuracloud/iaas"
+	"github.com/sacloud/iaas-api-go"
+	"github.com/sacloud/iaas-api-go/types"
+	"github.com/sacloud/packer-plugin-sakuracloud/platform"
 )
 
 type stepCreateArchive struct {
@@ -34,12 +34,12 @@ func (s *stepCreateArchive) Run(ctx context.Context, state multistep.StateBag) m
 	return multistep.ActionContinue
 }
 
-func (s *stepCreateArchive) createArchive(ctx context.Context, state multistep.StateBag) (*sacloud.Archive, error) {
-	archiveClient := state.Get("iaasClient").(*iaas.Client).Archive
+func (s *stepCreateArchive) createArchive(ctx context.Context, state multistep.StateBag) (*iaas.Archive, error) {
+	archiveClient := state.Get("iaasClient").(*platform.Client).Archive
 	c := state.Get("config").(Config)
 	diskID := state.Get("disk_id").(types.ID)
 
-	req := &iaas.CreateArchiveRequest{
+	req := &platform.CreateArchiveRequest{
 		DiskID:      diskID,
 		Name:        c.ArchiveName,
 		Tags:        c.ArchiveTags,

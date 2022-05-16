@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/mitchellh/go-vnc"
-	"github.com/sacloud/libsacloud/v2/sacloud"
+	"github.com/sacloud/iaas-api-go"
 )
 
 const keyLeftShift uint32 = 0xFFE1
@@ -39,7 +39,7 @@ type bootCommandTemplateData struct {
 // Uses:
 //   config *config
 //   ui     packer.Ui
-//   vnc    *sacloud.VNCProxyResponse
+//   vnc    *iaas.VNCProxyResponse
 //
 // Produces:
 //   <nothing>
@@ -56,7 +56,7 @@ func (s *stepTypeBootCommand) Run(ctx context.Context, state multistep.StateBag)
 
 	ui := state.Get("ui").(packer.Ui)
 	stepStartMsg(ui, s.Debug, "Type BootCommand")
-	vncCredentials := state.Get("vnc").(*sacloud.VNCProxyInfo)
+	vncCredentials := state.Get("vnc").(*iaas.VNCProxyInfo)
 
 	serverIP := state.Get("server_ip").(string)
 	defaultRoute := state.Get("default_route").(string)

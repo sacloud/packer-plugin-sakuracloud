@@ -14,8 +14,8 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/mitchellh/mapstructure"
-	"github.com/sacloud/libsacloud/v2/sacloud/ostype"
-	"github.com/sacloud/libsacloud/v2/sacloud/types"
+	"github.com/sacloud/iaas-api-go/ostype"
+	"github.com/sacloud/iaas-api-go/types"
 	"github.com/sacloud/packer-plugin-sakuracloud/sakuracloud/constants"
 )
 

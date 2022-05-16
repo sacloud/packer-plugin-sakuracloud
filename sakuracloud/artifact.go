@@ -6,8 +6,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	"github.com/sacloud/packer-plugin-sakuracloud/iaas"
+	"github.com/sacloud/iaas-api-go/types"
+	"github.com/sacloud/packer-plugin-sakuracloud/platform"
 )
 
 // Artifact is the result of a build and is the metadata that documents
@@ -23,7 +23,7 @@ type Artifact struct {
 	transferredZones []string
 
 	// client is the SakuraCloud API client
-	client iaas.Archive
+	client platform.Archive
 }
 
 // BuilderId returns the ID of the builder that was used to create this artifact.

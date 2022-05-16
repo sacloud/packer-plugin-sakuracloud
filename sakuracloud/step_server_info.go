@@ -6,9 +6,9 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/sacloud/libsacloud/v2/sacloud"
-	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	"github.com/sacloud/packer-plugin-sakuracloud/iaas"
+	"github.com/sacloud/iaas-api-go"
+	"github.com/sacloud/iaas-api-go/types"
+	"github.com/sacloud/packer-plugin-sakuracloud/platform"
 )
 
 type stepServerInfo struct {
@@ -19,14 +19,14 @@ func (s *stepServerInfo) Run(ctx context.Context, state multistep.StateBag) mult
 	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
 
-	caller := state.Get("iaasClient").(*iaas.Client).Caller
-	serverOp := sacloud.NewServerOp(caller)
+	caller := state.Get("iaasClient").(*platform.Client).Caller
+	serverOp := iaas.NewServerOp(caller)
 	serverID := state.Get("server_id").(types.ID)
 
 	stepStartMsg(ui, s.Debug, "Read Server Info")
 	ui.Say("\tWaiting for server to become active...")
 
-	// Set the Network informations on the state for later
+	// Set the Network information on the state for later
 	server, err := serverOp.Read(ctx, c.Zone, serverID)
 	if err != nil {
 		err := fmt.Errorf("Error retrieving server: %s", err)

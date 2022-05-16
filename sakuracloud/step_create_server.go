@@ -6,13 +6,13 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
-	diskBuilders "github.com/sacloud/libsacloud/v2/helper/builder/disk"
-	serverBuilders "github.com/sacloud/libsacloud/v2/helper/builder/server"
-	"github.com/sacloud/libsacloud/v2/helper/power"
-	"github.com/sacloud/libsacloud/v2/sacloud"
-	"github.com/sacloud/libsacloud/v2/sacloud/ostype"
-	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	"github.com/sacloud/packer-plugin-sakuracloud/iaas"
+	"github.com/sacloud/iaas-api-go"
+	"github.com/sacloud/iaas-api-go/helper/power"
+	"github.com/sacloud/iaas-api-go/ostype"
+	"github.com/sacloud/iaas-api-go/types"
+	diskBuilders "github.com/sacloud/iaas-service-go/disk/builder"
+	serverBuilders "github.com/sacloud/iaas-service-go/server/builder"
+	"github.com/sacloud/packer-plugin-sakuracloud/platform"
 	"github.com/sacloud/packer-plugin-sakuracloud/sakuracloud/constants"
 )
 
@@ -61,8 +61,8 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 
 	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
-	caller := state.Get("iaasClient").(*iaas.Client).Caller
-	serverOp := sacloud.NewServerOp(caller)
+	caller := state.Get("iaasClient").(*platform.Client).Caller
+	serverOp := iaas.NewServerOp(caller)
 	ctx := context.Background()
 
 	// Destroy the server we just created
@@ -79,7 +79,7 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 	if len(s.diskIDs) == 0 {
 		err = serverOp.Delete(ctx, c.Zone, s.serverID)
 	} else {
-		err = serverOp.DeleteWithDisks(ctx, c.Zone, s.serverID, &sacloud.ServerDeleteWithDisksRequest{IDs: s.diskIDs})
+		err = serverOp.DeleteWithDisks(ctx, c.Zone, s.serverID, &iaas.ServerDeleteWithDisksRequest{IDs: s.diskIDs})
 	}
 	if err != nil {
 		ui.Error(fmt.Sprintf(
@@ -89,7 +89,7 @@ func (s *stepCreateServer) Cleanup(state multistep.StateBag) {
 
 func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) *serverBuilders.Builder {
 	c := state.Get("config").(Config)
-	caller := state.Get("iaasClient").(*iaas.Client).Caller
+	caller := state.Get("iaasClient").(*platform.Client).Caller
 
 	interfaceDriver := types.InterfaceDrivers.VirtIO
 	if c.DisableVirtIONetPCI {
@@ -115,7 +115,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) *server
 
 func (s *stepCreateServer) createDiskBuilder(state multistep.StateBag) []diskBuilders.Builder {
 	c := state.Get("config").(Config)
-	caller := state.Get("iaasClient").(*iaas.Client).Caller
+	caller := state.Get("iaasClient").(*platform.Client).Caller
 
 	director := diskBuilders.Director{
 		OSType:          ostype.StrToOSType(c.OSType),

@@ -4,7 +4,7 @@ package sakuracloud
 
 import (
 	"github.com/hashicorp/hcl/v2/hcldec"
-	"github.com/sacloud/libsacloud/v2/sacloud/types"
+	"github.com/sacloud/iaas-api-go/types"
 	"github.com/zclconf/go-cty/cty"
 )
 

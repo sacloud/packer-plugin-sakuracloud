@@ -1,4 +1,4 @@
-package iaas
+package platform
 
 import (
 	"os"

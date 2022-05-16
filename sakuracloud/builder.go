@@ -10,16 +10,16 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/multistep/commonsteps"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/sacloud/libsacloud/v2/sacloud/ostype"
-	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	"github.com/sacloud/packer-plugin-sakuracloud/iaas"
+	"github.com/sacloud/iaas-api-go/ostype"
+	"github.com/sacloud/iaas-api-go/types"
+	"github.com/sacloud/packer-plugin-sakuracloud/platform"
 	"github.com/sacloud/packer-plugin-sakuracloud/sakuracloud/constants"
 )
 
 // BuilderId is the unique id for the builder
 const BuilderId = "packer.sakuracloud"
 
-// Builder implememts packer.Builder interface for
+// Builder implements packer.Builder interface for
 // handling actions for SakuraCloud
 type Builder struct {
 	config Config
@@ -44,7 +44,10 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, []string, error) {
 
 // Run is where the actual build should take place.
 func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (packer.Artifact, error) {
-	client := iaas.NewClient(b.config.AccessToken, b.config.AccessTokenSecret, b.config.Zone)
+	client, err := platform.NewClient(b.config.AccessToken, b.config.AccessTokenSecret, b.config.Zone)
+	if err != nil {
+		return nil, err
+	}
 
 	// Set up the state
 	state := new(multistep.BasicStateBag)
@@ -129,7 +132,7 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 			Debug: b.config.PackerDebug,
 			Ctx:   b.config.ctx,
 		},
-		communicateStep, // ssh or winrm
+		communicateStep, // ssh or win-rm
 		new(commonsteps.StepProvision),
 		&stepPowerOff{
 			Debug: b.config.PackerDebug,
