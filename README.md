@@ -376,7 +376,6 @@ PackerがISOイメージのダウンロードを行い、さくらのクラウ�
 ### パブリックアーカイブからの構築サンプル
 
  - [[CentOS]](examples/centos): CentOSパブリックアーカイブからの構築
- - [[CoreOS]](examples/coreos): CoreOSパブリックアーカイブからの構築
  - [[Ubuntu]](examples/ubuntu): Ubuntuパブリックアーカイブからの構築
  - [[Windows]](examples/windows): Windows Server 2012パブリックアーカイブから、`boot_command`でWinRMを有効にする構成
  - [[Windows2016]](examples/windows2016): Windows Server 2016パブリックアーカイブから、`boot_command`でWinRMを有効にする構成
@@ -390,7 +389,6 @@ PackerがISOイメージのダウンロードを行い、さくらのクラウ�
 
 ### ISOイメージからの構築サンプル
 
- - [[CentOS Atomic Host]](examples/atomic_host_centos) : CentOS Atomic Host ISOイメージのダウンロード〜最小構成での構築
  - [[CentOS]](examples/centos_iso): さくらのクラウド上のCentOS ISOイメージからの構築(ISOイメージをダウンロードするサンプルもあります)
  - [[Scientific Linux]](examples/scientific_linux): さくらのクラウド上のScienfitic Linux ISOイメージからの構築
  - [[Ubuntu]](examples/ubuntu_iso): さくらのクラウド上のUbuntu ISOイメージからの構築
