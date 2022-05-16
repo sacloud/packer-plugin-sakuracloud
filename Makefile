@@ -18,6 +18,12 @@ install-packer:
 	unzip -o packer_1.8.0_linux_amd64.zip
 	install packer /usr/local/bin/
 
+# CI環境向けにpackerプラグイン(sakuracloud)をセットアップ
+.PHONY: install-plugin
+install-plugin: build
+	mkdir -p ~/.packer.d/plugins
+	cp $(CURDIR)/bin/packer-plugin-sakuracloud ~/.packer.d/plugins/
+
 .PHONY: clean
 clean:
 	rm -Rf $(CURDIR)/bin/*
