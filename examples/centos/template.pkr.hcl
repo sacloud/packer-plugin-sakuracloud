@@ -1,7 +1,17 @@
-source "sakuracloud" "example" {
-  zone = "is1b"
+packer {
+  required_plugins {
+    sakuracloud = {
+      version = ">= 0.7.0"
+      source = "github.com/sacloud/sakuracloud"
+    }
+  }
+}
 
-  os_type   = "centos7"
+source "sakuracloud" "example" {
+  zone  = "is1b"
+  zones = ["is1a", "is1b", "tk1a", "tk1v"]
+
+  os_type   = "centos"
   password  = "TestUserPassword01"
   disk_size = 20
   disk_plan = "ssd"
@@ -19,9 +29,7 @@ build {
   ]
   provisioner "shell" {
     inline = [
-      "yum update -y",
-      "curl -fsSL https://get.docker.com/ | sh",
-      "systemctl enable docker.service",
+      "echo 'hello!'",
     ]
   }
 }
