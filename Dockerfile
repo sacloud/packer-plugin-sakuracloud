@@ -27,4 +27,4 @@ RUN make tools build
 FROM hashicorp/packer:light
 MAINTAINER Usacloud Authors <sacloud.users@gmail.com>
 
-COPY --from=builder /go/src/github.com/sacloud/packer-plugin-sakuracloud/bin/packer-plugin-sakuracloud /bin/
+COPY --from=builder /go/src/github.com/sacloud/packer-plugin-sakuracloud/packer-plugin-sakuracloud /bin/
