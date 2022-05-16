@@ -9,11 +9,11 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/sacloud/libsacloud/v2/pkg/size"
-	"github.com/sacloud/libsacloud/v2/sacloud"
-	"github.com/sacloud/libsacloud/v2/sacloud/search"
-	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	"github.com/sacloud/packer-plugin-sakuracloud/iaas"
+	"github.com/sacloud/iaas-api-go"
+	"github.com/sacloud/iaas-api-go/search"
+	"github.com/sacloud/iaas-api-go/types"
+	"github.com/sacloud/packages-go/size"
+	"github.com/sacloud/packer-plugin-sakuracloud/platform"
 	"github.com/sacloud/packer-plugin-sakuracloud/sakuracloud/constants"
 )
 
@@ -25,9 +25,9 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
 
-	client := state.Get("iaasClient").(*iaas.Client)
+	client := state.Get("iaasClient").(*platform.Client)
 	caller := client.Caller
-	isoImageOp := sacloud.NewCDROMOp(caller)
+	isoImageOp := iaas.NewCDROMOp(caller)
 
 	stepStartMsg(ui, s.Debug, "ISO-Image Upload")
 
@@ -37,7 +37,7 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	if c.ISOChecksum != "" {
-		searched, err := isoImageOp.Find(ctx, c.Zone, &sacloud.FindCondition{
+		searched, err := isoImageOp.Find(ctx, c.Zone, &iaas.FindCondition{
 			Filter: search.Filter{
 				search.Key("Name"): search.ExactMatch(c.ISOChecksum),
 			},
@@ -58,7 +58,7 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	ui.Say("\tUploading ISO to SakuraCloud...")
 	log.Printf("Remote uploading: %s", filepath)
 
-	isoImage, ftp, err := isoImageOp.Create(ctx, c.Zone, &sacloud.CDROMCreateRequest{
+	isoImage, ftp, err := isoImageOp.Create(ctx, c.Zone, &iaas.CDROMCreateRequest{
 		SizeMB:      size.GiBToMiB(c.ISOImageSizeGB),
 		Name:        c.ISOImageName,
 		Description: strings.Join(c.ISOConfig.ISOUrls, "\n"),

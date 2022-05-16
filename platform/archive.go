@@ -1,35 +1,33 @@
-package iaas
+package platform
 
 import (
 	"context"
 
-	archiveBuilder "github.com/sacloud/libsacloud/v2/helper/builder/archive"
-	"github.com/sacloud/libsacloud/v2/helper/query"
-	"github.com/sacloud/libsacloud/v2/helper/setup"
-	"github.com/sacloud/libsacloud/v2/sacloud"
-	"github.com/sacloud/libsacloud/v2/sacloud/accessor"
-	"github.com/sacloud/libsacloud/v2/sacloud/types"
+	"github.com/sacloud/iaas-api-go"
+	"github.com/sacloud/iaas-api-go/helper/query"
+	"github.com/sacloud/iaas-api-go/types"
+	archiveBuilder "github.com/sacloud/iaas-service-go/archive/builder"
 )
 
 // Archive is responsible for API calls of archive handling
 type Archive interface {
 	Delete(ctx context.Context, id types.ID) error
-	Create(ctx context.Context, req *CreateArchiveRequest) (*sacloud.Archive, error)
-	Transfer(ctx context.Context, zone string, req *TransferArchiveRequest) (*sacloud.Archive, error)
+	Create(ctx context.Context, req *CreateArchiveRequest) (*iaas.Archive, error)
+	Transfer(ctx context.Context, zone string, req *TransferArchiveRequest) (*iaas.Archive, error)
 }
 
 type archiveClient struct {
-	caller    sacloud.APICaller
-	archiveOp sacloud.ArchiveAPI
-	diskOp    sacloud.DiskAPI
+	caller    iaas.APICaller
+	archiveOp iaas.ArchiveAPI
+	diskOp    iaas.DiskAPI
 	zone      string
 }
 
-func newArchiveClient(caller sacloud.APICaller, zone string) *archiveClient {
+func newArchiveClient(caller iaas.APICaller, zone string) *archiveClient {
 	return &archiveClient{
 		caller:    caller,
-		archiveOp: sacloud.NewArchiveOp(caller),
-		diskOp:    sacloud.NewDiskOp(caller),
+		archiveOp: iaas.NewArchiveOp(caller),
+		diskOp:    iaas.NewDiskOp(caller),
 		zone:      zone,
 	}
 }
@@ -53,35 +51,21 @@ func (c *archiveClient) tagsFromAncestors(ctx context.Context, currentTags types
 	return parentArchive.Tags, nil
 }
 
-func (c *archiveClient) Create(ctx context.Context, req *CreateArchiveRequest) (*sacloud.Archive, error) {
+func (c *archiveClient) Create(ctx context.Context, req *CreateArchiveRequest) (*iaas.Archive, error) {
 	tags, err := c.tagsFromAncestors(ctx, req.Tags, req.DiskID)
 	if err != nil {
 		return nil, err
 	}
 
-	archiveBuilder := &setup.RetryableSetup{
-		IsWaitForCopy: true,
-		Create: func(ctx context.Context, zone string) (accessor.ID, error) {
-			return c.archiveOp.Create(ctx, zone, &sacloud.ArchiveCreateRequest{
-				SourceDiskID: req.DiskID,
-				Name:         req.Name,
-				Tags:         tags,
-				Description:  req.Description,
-			})
-		},
-		Read: func(ctx context.Context, zone string, id types.ID) (interface{}, error) {
-			return c.archiveOp.Read(ctx, zone, id)
-		},
-		Delete: func(ctx context.Context, zone string, id types.ID) error {
-			return c.archiveOp.Delete(ctx, zone, id)
-		},
-		RetryCount: 3,
-	}
-	res, err := archiveBuilder.Setup(ctx, c.zone)
-	if err != nil {
-		return nil, err
-	}
-	return res.(*sacloud.Archive), nil
+	builder := (&archiveBuilder.Director{
+		Name:         req.Name,
+		Description:  req.Description,
+		Tags:         tags,
+		SourceDiskID: req.DiskID,
+		Client:       archiveBuilder.NewAPIClient(c.caller),
+	}).Builder()
+
+	return builder.Build(ctx, c.zone)
 }
 
 // CreateArchiveRequest is a parameter of creating SakuraCloud Archive
@@ -101,7 +85,7 @@ type TransferArchiveRequest struct {
 	SourceArchiveZone string
 }
 
-func (c *archiveClient) Transfer(ctx context.Context, zone string, req *TransferArchiveRequest) (*sacloud.Archive, error) {
+func (c *archiveClient) Transfer(ctx context.Context, zone string, req *TransferArchiveRequest) (*iaas.Archive, error) {
 	tags, err := c.tagsFromAncestors(ctx, req.Tags, req.SourceArchiveID)
 	if err != nil {
 		return nil, err

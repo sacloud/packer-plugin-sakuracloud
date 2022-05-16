@@ -6,10 +6,10 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/sacloud/libsacloud/v2/helper/power"
-	"github.com/sacloud/libsacloud/v2/sacloud"
-	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	"github.com/sacloud/packer-plugin-sakuracloud/iaas"
+	"github.com/sacloud/iaas-api-go"
+	"github.com/sacloud/iaas-api-go/helper/power"
+	"github.com/sacloud/iaas-api-go/types"
+	"github.com/sacloud/packer-plugin-sakuracloud/platform"
 )
 
 type stepPowerOff struct {
@@ -20,8 +20,8 @@ func (s *stepPowerOff) Run(ctx context.Context, state multistep.StateBag) multis
 	c := state.Get("config").(Config)
 	ui := state.Get("ui").(packer.Ui)
 
-	caller := state.Get("iaasClient").(*iaas.Client).Caller
-	serverOp := sacloud.NewServerOp(caller)
+	caller := state.Get("iaasClient").(*platform.Client).Caller
+	serverOp := iaas.NewServerOp(caller)
 	serverID := state.Get("server_id").(types.ID)
 
 	stepStartMsg(ui, s.Debug, "PowerOff")

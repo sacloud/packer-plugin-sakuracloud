@@ -11,18 +11,21 @@ import (
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/acctest"
-	"github.com/sacloud/libsacloud/v2/helper/api"
-	"github.com/sacloud/libsacloud/v2/sacloud"
-	"github.com/sacloud/libsacloud/v2/sacloud/search"
+	sacloudClient "github.com/sacloud/api-client-go"
+	"github.com/sacloud/iaas-api-go"
+	"github.com/sacloud/iaas-api-go/helper/api"
+	"github.com/sacloud/iaas-api-go/search"
 )
 
 func cleanupArchives() error {
-	client := api.NewCaller(&api.CallerOptions{
-		AccessToken:       os.Getenv("SAKURACLOUD_ACCESS_TOKEN"),
-		AccessTokenSecret: os.Getenv("SAKURACLOUD_ACCESS_TOKEN_SECRET"),
+	client := api.NewCallerWithOptions(&api.CallerOptions{
+		Options: &sacloudClient.Options{
+			AccessToken:       os.Getenv("SAKURACLOUD_ACCESS_TOKEN"),
+			AccessTokenSecret: os.Getenv("SAKURACLOUD_ACCESS_TOKEN_SECRET"),
+		},
 	})
-	archiveOp := sacloud.NewArchiveOp(client)
-	found, err := archiveOp.Find(context.Background(), "is1a", &sacloud.FindCondition{
+	archiveOp := iaas.NewArchiveOp(client)
+	found, err := archiveOp.Find(context.Background(), "is1a", &iaas.FindCondition{
 		Filter: search.Filter{
 			search.Key("Name"): search.PartialMatch("packer-acctest-"),
 		},
@@ -36,19 +39,6 @@ func cleanupArchives() error {
 		}
 	}
 	return nil
-}
-
-func TestBuilderAcc_basic(t *testing.T) {
-	acctest.TestPlugin(t, &acctest.PluginTestCase{
-		Name: "sakuracloud-minimum",
-		CheckInit: func(cmd *exec.Cmd, s string) error {
-			testAccPreCheck(t)
-			return nil
-		},
-		Template: testBuilderHCL2Minimum,
-		Check:    testAccCheckFunc,
-		Teardown: cleanupArchives,
-	})
 }
 
 func TestBuilderAcc_withSSHKeyFile(t *testing.T) {
@@ -98,9 +88,6 @@ func testAccPreCheck(t *testing.T) {
 		}
 	}
 }
-
-//go:embed test-fixtures/minimum.pkr.hcl
-var testBuilderHCL2Minimum string
 
 //go:embed test-fixtures/with-ssh-key.pkr.hcl
 var testBuilderHCL2WithSshKey string

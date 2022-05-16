@@ -190,18 +190,14 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 | 値                              | 説明                                                    |
 |--------------------------------|-------------------------------------------------------|
 | `centos`                       | CentOS(最新安定板)                                         |
-| `centos8`                      | CentOS 8                                              |
 | `centos8stream`                | CentOS 8 Stream                                       |
 | `centos7`                      | CentOS 7                                              |
-| `centos6`                      | CentOS 6                                              |
 | `ubuntu`                       | Ubuntu(最新安定板)                                         |
 | `ubuntu2004`                   | Ubuntu 20.04                                          |
 | `ubuntu1804`                   | Ubuntu 18.04                                          |
-| `ubuntu1604`                   | Ubuntu 16.04                                          |
 | `debian`                       | Debian(最新安定板)                                         |
+| `debian11`                     | Debian11                                              |
 | `debian10`                     | Debian10                                              |
-| `debian9`                      | Debian9                                               |
-| `coreos`                       | CoreOS                                                |
 | `rancheros`                    | RancherOS                                             |
 | `k3os`                         | k3OS                                                  |
 | `kusanagi`                     | Kusanagi(CentOS7)                                     |

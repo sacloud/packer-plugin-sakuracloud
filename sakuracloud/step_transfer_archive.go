@@ -6,8 +6,8 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/sacloud/libsacloud/v2/sacloud/types"
-	"github.com/sacloud/packer-plugin-sakuracloud/iaas"
+	"github.com/sacloud/iaas-api-go/types"
+	"github.com/sacloud/packer-plugin-sakuracloud/platform"
 )
 
 type stepTransferArchive struct {
@@ -40,7 +40,7 @@ func (s *stepTransferArchive) Run(ctx context.Context, state multistep.StateBag)
 
 func (s *stepTransferArchive) transferArchives(ctx context.Context, state multistep.StateBag) error {
 	ui := state.Get("ui").(packer.Ui)
-	archiveClient := state.Get("iaasClient").(*iaas.Client).Archive
+	archiveClient := state.Get("iaasClient").(*platform.Client).Archive
 	c := state.Get("config").(Config)
 	archiveID := state.Get("archive_id").(types.ID)
 
@@ -52,7 +52,7 @@ func (s *stepTransferArchive) transferArchives(ctx context.Context, state multis
 		if c.Zone == zone {
 			continue
 		}
-		archive, err := archiveClient.Transfer(ctx, zone, &iaas.TransferArchiveRequest{
+		archive, err := archiveClient.Transfer(ctx, zone, &platform.TransferArchiveRequest{
 			Name:              c.ArchiveName,
 			Tags:              c.ArchiveTags,
 			Description:       c.ArchiveDescription,
