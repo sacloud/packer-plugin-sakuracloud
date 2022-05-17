@@ -67,4 +67,4 @@ ci-release-docs: install-packer-sdc
 	@/bin/sh -c "[ -d docs ] && zip -r docs.zip docs/"
 
 plugin-check: install-packer-sdc build
-	@packer-sdc plugin-check $(GOPATH)/bin/packer-plugin-sakuracloud
+	@packer-sdc plugin-check ${BINARY}
