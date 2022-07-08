@@ -1,17 +1,19 @@
-NAME=sakuracloud
-BINARY=packer-plugin-${NAME}
+#====================
+AUTHOR         ?= The sacloud/go-template Authors
+COPYRIGHT_YEAR ?= 2022
+
+BIN            ?= packer-plugin-sakuracloud
+
+include includes/go/common.mk
+include includes/go/single.mk
+#====================
+
 HASHICORP_PACKER_PLUGIN_SDK_VERSION?=$(shell go list -m github.com/hashicorp/packer-plugin-sdk | cut -d " " -f2)
 
-TEST?=$$(go list ./... | grep -v vendor)
-GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
-
-default: lint build
+default: fmt generate go-licenses-check goimports lint test
 
 .PHONY: tools
-tools: install-packer-sdc
-	GO111MODULE=off go get golang.org/x/tools/cmd/goimports
-	GO111MODULE=off go get github.com/client9/misspell/cmd/misspell
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/v1.38.0/install.sh | sh -s -- -b $$(go env GOPATH)/bin v1.38.0
+tools: dev-tools install-packer-sdc
 
 install-packer-sdc:
 	go install github.com/hashicorp/packer-plugin-sdk/cmd/packer-sdc@${HASHICORP_PACKER_PLUGIN_SDK_VERSION}
@@ -28,43 +30,16 @@ install-packer:
 .PHONY: install-plugin
 install-plugin: dev
 
-.PHONY: clean
-clean:
-	rm -f ${BINARY}
-
-build:
-	@go build -o ${BINARY}
-
 dev: build
 	@mkdir -p ~/.packer.d/plugins/
-	@mv ${BINARY} ~/.packer.d/plugins/${BINARY}
+	@mv ${BIN} ~/.packer.d/plugins/${BIN}
 
 generate:
 	go generate ./...
-
-.PHONY: test testacc
-test:
-	go test $(TEST) $(TESTARGS) -v -timeout=30m -parallel=4 ;
-
-testacc:
-	@echo "WARN: Acceptance tests will take a long time to run and may cost money. Ctrl-C if you want to cancel."
-	PACKER_ACC=1 go test -v $(TEST) $(TESTARGS) -timeout=45m
-
-.PHONY: lint fmt golint goimports
-lint: fmt goimports golangci-lint
-
-fmt:
-	find . -name '*.go' | grep -v vendor | xargs gofmt -s -w
-
-golangci-lint: fmt
-	golangci-lint run ./...
-
-goimports:
-	find . -name '*.go' | grep -v vendor | xargs goimports -l -w
 
 ci-release-docs: install-packer-sdc
 	@packer-sdc renderdocs -src docs -partials docs-partials/ -dst docs/
 	@/bin/sh -c "[ -d docs ] && zip -r docs.zip docs/"
 
 plugin-check: install-packer-sdc build
-	@packer-sdc plugin-check ${BINARY}
+	@packer-sdc plugin-check ${BIN}

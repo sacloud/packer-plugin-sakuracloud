@@ -32,7 +32,7 @@ test:
 .PHONY: testacc
 testacc:
 	@echo "running 'go test' with TESTACC=1..."
-	TESTACC=1 $(GO) test ./... $(TESTARGS) --tags=acctest -v -timeout=120m -parallel=8 ;
+	PACKER_ACC=1 TESTACC=1 $(GO) test ./... $(TESTARGS) --tags=acctest -v -timeout=120m -parallel=8 ;
 
 .PHONY: dev-tools
 dev-tools:
