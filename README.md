@@ -80,7 +80,7 @@ v0.7以降`homebrew`はサポートされなくなりました。
 #### APIキーの設定
 
 APIキーを環境変数に設定しておきます。
-(APIキーは以下で作成するjsonファイルに記載することも可能です)
+(APIキーは以下で作成するjsonファイルに記載する方法もあります)
 
     $ export SAKURACLOUD_ACCESS_TOKEN=[APIトークン]
     $ export SAKURACLOUD_ACCESS_TOKEN_SECRET=[APIシークレット]
@@ -175,9 +175,9 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 ### 必須項目
 
-- `access_token`(string): APIトークン。この値は環境変数`SAKURACLOUD_ACCESS_TOKEN`で指定することも可能です。
+- `access_token`(string): APIトークン。この値は環境変数`SAKURACLOUD_ACCESS_TOKEN`でも指定可能です。
 
-- `access_token_secret`(string): APIシークレット。この値は環境変数`SAKURACLOUD_ACCESS_TOKEN_SECRET`で指定することも可能です。
+- `access_token_secret`(string): APIシークレット。この値は環境変数`SAKURACLOUD_ACCESS_TOKEN_SECRET`でも指定可能です。
 
 - `zone`(string): 対象ゾーン。以下の値が指定可能です。
   - `is1a`: 石狩第1ゾーン
@@ -185,7 +185,7 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
   - `tk1a`: 東京第1ゾーン
   - `tk1b`: 東京第2ゾーン
     
-- `os_type`(string): ベースとするアーカイブの種別。以下の値が指定可能です。
+- `os_type`(string): ベースとするアーカイブの種別。以下の値が指定可能です
 
 | 値                              | 説明                                                    |
 |--------------------------------|-------------------------------------------------------|
@@ -256,9 +256,9 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 - `disable_virtio_net`(bool): `true`の場合、NICでの仮想化ドライバ利用を無効化します。デフォルト値:`false`
 
-- `source_archive`(int64): 元となるアーカイブのID、`os_type`が`windows`、又は`custom`の場合に指定可能です。
+- `source_archive`(int64): 元となるアーカイブのID、`os_type`が`windows`、又は`custom`の場合に指定可能です
 
-- `source_disk`(int64): 元となるディスクのID、`os_type`が`custom`の場合のみ指定可能です。
+- `source_disk`(int64): 元となるディスクのID、`os_type`が`custom`の場合のみ指定可能です
 
 - `iso_size`(int): アップロードするISOファイルのサイズ、`5`または`10`が指定可能(GB単位)、デフォルト値: `5`
 
@@ -281,7 +281,7 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 - SSH関連オプション: SSHキー関連の挙動を指定します。
 
-  - `disable_generate_public_key`: trueの場合、秘密鍵に対応する公開鍵の生成/さくらのクラウドAPIを通じての公開鍵アップロードを行いません。
+  - `disable_generate_public_key`: trueの場合、秘密鍵に対応する公開鍵の生成/さくらのクラウドAPIを通じての公開鍵アップロードを行いません
   - `ssh_private_key_file`: 秘密鍵ファイルのパス
 
 Note: `ssh_private_key_file`が未指定の場合、`packer build`実行時に秘密鍵/公開鍵が生成されます。  
@@ -293,7 +293,7 @@ Note: `ssh_private_key_file`が未指定の場合、`packer build`実行時に�
 
 ### ISOイメージ関連項目の指定について
 
-ISOイメージからの構築を行う場合、以下の項目を指定してください。
+ISOイメージから構築する場合、以下の項目を指定してください。
 
 #### さくらのクラウド上のISOイメージを利用する場合
 
@@ -309,7 +309,7 @@ ISOイメージからの構築を行う場合、以下の項目を指定して�
 #### ISOイメージをダウンロードして利用する場合
 
 ダウンロード元のURLなどを以下のように指定します。
-PackerがISOイメージのダウンロードを行い、さくらのクラウド上へアップロードを行います。
+PackerがISOイメージをダウンロードし、さくらのクラウド上へアップロードします。
 
   - `os_type`に`iso`を指定
   - `iso_url`または`iso_urls` にISOイメージのURLを指定
@@ -353,7 +353,8 @@ PackerがISOイメージのダウンロードを行い、さくらのクラウ�
 
 #### 使用例
 
-この例は以下ののキー入力を行うものです。
+この例は以下のキーを入力します。
+
  - 1) Ctrl+Alt+Delを送信
  - 2) 10秒待機
  - 3) パスワード文字列("put-your-password") + Enterキーを送信
@@ -375,17 +376,8 @@ PackerがISOイメージのダウンロードを行い、さくらのクラウ�
 
 ### パブリックアーカイブからの構築サンプル
 
- - [[CentOS]](examples/centos): CentOSパブリックアーカイブからの構築
- - [[Ubuntu]](examples/ubuntu): Ubuntuパブリックアーカイブからの構築
- - [[Windows]](examples/windows): Windows Server 2012パブリックアーカイブから、`boot_command`でWinRMを有効にする構成
- - [[Windows2016]](examples/windows2016): Windows Server 2016パブリックアーカイブから、`boot_command`でWinRMを有効にする構成
- 
-    Windowsパブリックアーカイブから構築したサーバーに対し、`boot_command`にて初回ログイン〜WinRMの有効化までを行います。
-
-    WinRMの有効化にはAnsibleが公開しているPowerShellスクリプトを用いています。
-    
-    WinRMでの接続後にPowerShellでのプロビジョニングを行います。
- 
+ - [[CentOS]](examples/centos): CentOSパブリックアーカイブからの構築  
+ - [[Ubuntu]](examples/ubuntu): Ubuntuパブリックアーカイブからの構築  
 
 ### ISOイメージからの構築サンプル
 
@@ -398,4 +390,3 @@ PackerがISOイメージのダウンロードを行い、さくらのクラウ�
   `packer-plugin-sakuracloud` Copyright (C) 2016-2022 [The packer-plugin-sakuracloud Authors](AUTHORS).
 
   This project is published under [MPL-2.0](LICENSE).
-  
