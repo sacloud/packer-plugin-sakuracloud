@@ -2,7 +2,7 @@ packer-plugin-sakuracloud
 ===
 
 ![Test Status](https://github.com/sacloud/packer-plugin-sakuracloud/workflows/Tests/badge.svg)
-[![Slack](https://img.shields.io/badge/Slack-Sacloud%20Workspace-brightgreen)](https://join.slack.com/t/sacloud/shared_invite/zt-ohsdpv2t-_Bi1_F0jDAAmWjoMQCmAxg)
+[![Discord](https://img.shields.io/badge/Discord-SAKURA%20Users-blue)](https://discord.gg/yUEDN8hbMf)
 [![License](https://img.shields.io/github/license/sacloud/packer-plugin-sakuracloud)](LICENSE)
 [![Version](https://img.shields.io/github/v/tag/sacloud/packer-plugin-sakuracloud)](https://github.com/sacloud/packer-plugin-sakuracloud/releases/latest)
 ![Downloads](https://img.shields.io/github/downloads/sacloud/packer-plugin-sakuracloud/total)
