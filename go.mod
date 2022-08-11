@@ -9,7 +9,7 @@ require (
 	github.com/sacloud/ftps v1.1.0
 	github.com/sacloud/iaas-api-go v1.0.0
 	github.com/sacloud/iaas-service-go v1.0.0
-	github.com/sacloud/packages-go v0.0.2
+	github.com/sacloud/packages-go v0.0.5
 	github.com/stretchr/testify v1.8.0
 	github.com/zclconf/go-cty v1.10.0
 	golang.org/x/crypto v0.0.0-20220517005047-85d78b3ac167
@@ -53,7 +53,7 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-sockaddr v1.0.2 // indirect
-	github.com/hashicorp/go-version v1.3.0 // indirect
+	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/serf v0.9.5 // indirect
