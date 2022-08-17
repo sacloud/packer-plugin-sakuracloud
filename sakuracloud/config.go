@@ -176,22 +176,19 @@ func setDefaultConfig(c *Config) {
 		}
 	}
 
-	os := ostype.StrToOSType(c.OSType)
-	if os.IsWindows() {
-		if c.Comm.WinRMUser == "" {
-			c.Comm.WinRMUser = c.UserName
-		}
-		if c.Comm.WinRMUser == "" {
-			c.Comm.WinRMUser = defaultWinRMUser
-		}
-		c.Comm.WinRMPassword = c.Password
-		c.Comm.WinRMTimeout = defaultWinRMTimeout
-		if c.Comm.WinRMPort == 0 {
-			if c.Comm.WinRMUseSSL {
-				c.Comm.WinRMPort = 5986
-			} else {
-				c.Comm.WinRMPort = 5985
-			}
+	if c.Comm.WinRMUser == "" {
+		c.Comm.WinRMUser = c.UserName
+	}
+	if c.Comm.WinRMUser == "" {
+		c.Comm.WinRMUser = defaultWinRMUser
+	}
+	c.Comm.WinRMPassword = c.Password
+	c.Comm.WinRMTimeout = defaultWinRMTimeout
+	if c.Comm.WinRMPort == 0 {
+		if c.Comm.WinRMUseSSL {
+			c.Comm.WinRMPort = 5986
+		} else {
+			c.Comm.WinRMPort = 5985
 		}
 	}
 
