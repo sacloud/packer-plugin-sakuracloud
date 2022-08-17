@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/multistep/commonsteps"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/sacloud/iaas-api-go/ostype"
 	"github.com/sacloud/iaas-api-go/types"
 	"github.com/sacloud/packer-plugin-sakuracloud/platform"
 	"github.com/sacloud/packer-plugin-sakuracloud/sakuracloud/constants"
@@ -62,30 +61,21 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 	var steps []multistep.Step
 
 	var communicateStep multistep.Step
-	os := ostype.StrToOSType(b.config.OSType)
-
 	getHostIPFunc := func(state multistep.StateBag) (string, error) {
 		ipAddress := state.Get("server_ip").(string)
 		return ipAddress, nil
 	}
 
-	if os.IsWindows() {
-		communicateStep = &communicator.StepConnectWinRM{
-			Config: &b.config.Comm,
-			Host:   getHostIPFunc,
-			WinRMConfig: func(multistep.StateBag) (*communicator.WinRMConfig, error) {
-				return &communicator.WinRMConfig{
-					Username: b.config.UserName,
-					Password: b.config.Password,
-				}, nil
-			},
-		}
-	} else {
-		communicateStep = &communicator.StepConnectSSH{
-			Config:    &b.config.Comm,
-			Host:      getHostIPFunc,
-			SSHConfig: b.config.Comm.SSHConfigFunc(),
-		}
+	communicateStep = &communicator.StepConnect{
+		Config:    &b.config.Comm,
+		Host:      getHostIPFunc,
+		SSHConfig: b.config.Comm.SSHConfigFunc(),
+		WinRMConfig: func(multistep.StateBag) (*communicator.WinRMConfig, error) {
+			return &communicator.WinRMConfig{
+				Username: b.config.UserName,
+				Password: b.config.Password,
+			}, nil
+		},
 	}
 
 	var isoSteps []multistep.Step

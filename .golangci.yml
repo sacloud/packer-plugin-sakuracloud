@@ -20,7 +20,7 @@ linters:
     - nakedret
     - misspell
     - staticcheck
-    - structcheck
+#    - structcheck
     - typecheck
     - unused
     - unconvert
