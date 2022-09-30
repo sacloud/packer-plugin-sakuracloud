@@ -37,12 +37,14 @@ type bootCommandTemplateData struct {
 // This step "types" the boot command into the VM over VNC.
 //
 // Uses:
-//   config *config
-//   ui     packer.Ui
-//   vnc    *iaas.VNCProxyResponse
+//
+//	config *config
+//	ui     packer.Ui
+//	vnc    *iaas.VNCProxyResponse
 //
 // Produces:
-//   <nothing>
+//
+//	<nothing>
 type stepTypeBootCommand struct {
 	Ctx   interpolate.Context
 	Debug bool

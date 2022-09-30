@@ -187,30 +187,28 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
     
 - `os_type`(string): ベースとするアーカイブの種別。以下の値が指定可能です
 
-| 値                              | 説明                                                    |
-|--------------------------------|-------------------------------------------------------|
-| `centos`                       | CentOS(最新安定板)                                         |
-| `centos8stream`                | CentOS 8 Stream                                       |
-| `centos7`                      | CentOS 7                                              |
-| `ubuntu`                       | Ubuntu(最新安定板)                                         |
-| `ubuntu2004`                   | Ubuntu 20.04                                          |
-| `ubuntu1804`                   | Ubuntu 18.04                                          |
-| `debian`                       | Debian(最新安定板)                                         |
-| `debian11`                     | Debian11                                              |
-| `debian10`                     | Debian10                                              |
-| `rancheros`                    | RancherOS                                             |
-| `k3os`                         | k3OS                                                  |
-| `kusanagi`                     | Kusanagi(CentOS7)                                     |
-| `freebsd`                      | FreeBSD                                               |
-| `windows2016`                  | Windows 2016                                          |
-| `windows2016-rds`              | Windows 2016(RDS)                                     |
-| `windows2016-rds-office`       | Windows 2016(RDS + Office)                            |
-| `windows2016-sql-web`          | Windows 2016 SQLServer(Web)                           |
-| `windows2016-sql-standard`     | Windows 2016 SQLServer(Standard)                      |
-| `windows2016-sql-standard-all` | Windows 2016 SQLServer(RDS+Office)                    |
-| `windows2019`                  | Windows 2019 Datacenter Edition                       |
-| `custom`                       | 任意のアーカイブID/ディスクIDを指定する場合                              |
-| `iso`                          | さくらのクラウド上のISOイメージ、<br />またはURLを指定してISOイメージをダウンロードする場合 |
+| 値             | 説明                                                    |
+|---------------|-------------------------------------------------------|
+| `centos`      | CentOS(最新安定板)                                         |
+| `centos7`     | CentOS 7                                              |
+| `almalinux`   | Alma Linux(最新安定板)                                     |
+| `almalinux9`  | Alma Linux 9                                          |
+| `almalinux8`  | Alma Linux 8                                          |
+| `rockylinux`  | Rocky Linux(最新安定板)                                    |
+| `rockylinux9` | Rocky Linux 9                                         |
+| `rockylinux8` | Rocky Linux 8                                         |
+| `miracle`     | MIRACLE LINUX(最新安定板)                                  |
+| `miracle8`    | MIRACLE LINUX 8                                       |
+| `ubuntu`      | Ubuntu(最新安定板)                                         |
+| `ubuntu2204`  | Ubuntu 22.04                                          |
+| `ubuntu2004`  | Ubuntu 20.04                                          |
+| `ubuntu1804`  | Ubuntu 18.04                                          |
+| `debian`      | Debian(最新安定板)                                         |
+| `debian11`    | Debian11                                              |
+| `debian10`    | Debian10                                              |
+| `kusanagi`    | Kusanagi(CentOS7)                                     |
+| `custom`      | 任意のアーカイブID/ディスクIDを指定する場合                              |
+| `iso`         | さくらのクラウド上のISOイメージ、<br />またはURLを指定してISOイメージをダウンロードする場合 |
 
 `os_type`が`custom`の場合、`source_archive` 又は `source_disk`の何れかの指定が必須です。
 
