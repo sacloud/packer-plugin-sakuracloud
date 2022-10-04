@@ -5,7 +5,7 @@ require (
 	github.com/hashicorp/packer-plugin-sdk v0.3.2
 	github.com/mitchellh/go-vnc v0.0.0-20150629162542-723ed9867aed
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/sacloud/api-client-go v0.2.1
+	github.com/sacloud/api-client-go v0.2.2
 	github.com/sacloud/ftps v1.1.0
 	github.com/sacloud/iaas-api-go v1.4.0
 	github.com/sacloud/iaas-service-go v1.3.1
