@@ -7,8 +7,8 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/sacloud/api-client-go v0.2.3
 	github.com/sacloud/ftps v1.1.0
-	github.com/sacloud/iaas-api-go v1.5.1
-	github.com/sacloud/iaas-service-go v1.3.2
+	github.com/sacloud/iaas-api-go v1.6.0
+	github.com/sacloud/iaas-service-go v1.4.0
 	github.com/sacloud/packages-go v0.0.6
 	github.com/stretchr/testify v1.8.1
 	github.com/zclconf/go-cty v1.11.0
@@ -31,7 +31,7 @@ require (
 	github.com/dylanmei/iso8601 v0.1.0 // indirect
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
-	github.com/fsnotify/fsnotify v1.5.4 // indirect
+	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/gofrs/flock v0.8.1 // indirect
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
@@ -86,7 +86,7 @@ require (
 	go.uber.org/ratelimit v0.2.0 // indirect
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
 	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f // indirect
-	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
+	golang.org/x/sys v0.0.0-20220908164124-27713097b956 // indirect
 	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
