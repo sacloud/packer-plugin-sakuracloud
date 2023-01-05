@@ -1,6 +1,6 @@
 #====================
-AUTHOR         ?= The sacloud/go-template Authors
-COPYRIGHT_YEAR ?= 2022
+AUTHOR         ?= The sacloud/packer-plugin-sakuracloud Authors
+COPYRIGHT_YEAR ?= 2016-2023
 
 BIN            ?= packer-plugin-sakuracloud
 
