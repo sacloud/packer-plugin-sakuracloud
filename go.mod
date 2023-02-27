@@ -10,7 +10,7 @@ require (
 	github.com/sacloud/iaas-api-go v1.8.3
 	github.com/sacloud/iaas-service-go v1.6.0
 	github.com/sacloud/packages-go v0.0.7
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 	github.com/zclconf/go-cty v1.12.1
 	golang.org/x/crypto v0.0.0-20220517005047-85d78b3ac167
 )
