@@ -8,7 +8,7 @@ require (
 	github.com/sacloud/api-client-go v0.2.7
 	github.com/sacloud/ftps v1.1.0
 	github.com/sacloud/iaas-api-go v1.9.0
-	github.com/sacloud/iaas-service-go v1.6.1
+	github.com/sacloud/iaas-service-go v1.7.0
 	github.com/sacloud/packages-go v0.0.8
 	github.com/stretchr/testify v1.8.2
 	github.com/zclconf/go-cty v1.13.0
