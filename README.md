@@ -230,9 +230,8 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 - `user_name`(string): SSH/WinRM接続時のユーザー名
 
-`os_type`にWindows系を指定した場合のデフォルト値:`Administrator`
-
-`os_type`がWindows系以外の場合のデフォルト値:`root`
+SSHでのデフォルト値:`Administrator`
+WinRMでのデフォルト値:`root`
 
 - `password`(string): SSH/WinRM接続時のパスワード
 
@@ -254,7 +253,7 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 - `disable_virtio_net`(bool): `true`の場合、NICでの仮想化ドライバ利用を無効化します。デフォルト値:`false`
 
-- `source_archive`(int64): 元となるアーカイブのID、`os_type`が`windows`、又は`custom`の場合に指定可能です
+- `source_archive`(int64): 元となるアーカイブのID、`os_type`が`custom`の場合に指定可能です
 
 - `source_disk`(int64): 元となるディスクのID、`os_type`が`custom`の場合のみ指定可能です
 
