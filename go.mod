@@ -6,7 +6,7 @@ require (
 	github.com/mitchellh/go-vnc v0.0.0-20150629162542-723ed9867aed
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/sacloud/api-client-go v0.2.7
-	github.com/sacloud/ftps v1.1.0
+	github.com/sacloud/ftps v1.2.0
 	github.com/sacloud/iaas-api-go v1.9.1
 	github.com/sacloud/iaas-service-go v1.7.0
 	github.com/sacloud/packages-go v0.0.8
