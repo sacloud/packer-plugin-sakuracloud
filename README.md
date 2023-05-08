@@ -230,9 +230,6 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 - `user_name`(string): SSH/WinRM接続時のユーザー名
 
-SSHでのデフォルト値:`Administrator`
-WinRMでのデフォルト値:`root`
-
 - `password`(string): SSH/WinRM接続時のパスワード
 
 - `us_keyboard`(bool): ISOイメージからのインストール時、コマンド送信にUSキーボードレイアウトを利用するか、デフォルト値:`false`
