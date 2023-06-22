@@ -1,7 +1,7 @@
 module github.com/sacloud/packer-plugin-sakuracloud
 
 require (
-	github.com/hashicorp/hcl/v2 v2.16.2
+	github.com/hashicorp/hcl/v2 v2.17.0
 	github.com/hashicorp/packer-plugin-sdk v0.4.0
 	github.com/mitchellh/go-vnc v0.0.0-20150629162542-723ed9867aed
 	github.com/mitchellh/mapstructure v1.5.0
