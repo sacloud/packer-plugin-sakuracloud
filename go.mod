@@ -5,7 +5,7 @@ require (
 	github.com/hashicorp/packer-plugin-sdk v0.4.0
 	github.com/mitchellh/go-vnc v0.0.0-20150629162542-723ed9867aed
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/sacloud/api-client-go v0.2.7
+	github.com/sacloud/api-client-go v0.2.8
 	github.com/sacloud/ftps v1.2.0
 	github.com/sacloud/iaas-api-go v1.10.0
 	github.com/sacloud/iaas-service-go v1.8.2
@@ -84,7 +84,7 @@ require (
 	github.com/pkg/sftp v1.13.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
-	github.com/sacloud/go-http v0.1.5 // indirect
+	github.com/sacloud/go-http v0.1.6 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
 	github.com/ulikunitz/xz v0.5.10 // indirect
 	go.opencensus.io v0.23.0 // indirect
