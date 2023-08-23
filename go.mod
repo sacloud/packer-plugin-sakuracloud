@@ -108,4 +108,4 @@ require (
 
 replace github.com/zclconf/go-cty => github.com/azr/go-cty v1.1.1-0.20200203143058-28fcda2fe0cc
 
-go 1.20
+go 1.21
