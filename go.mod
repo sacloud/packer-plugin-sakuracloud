@@ -11,7 +11,7 @@ require (
 	github.com/sacloud/iaas-service-go v1.8.2
 	github.com/sacloud/packages-go v0.0.9
 	github.com/stretchr/testify v1.8.3
-	github.com/zclconf/go-cty v1.13.0
+	github.com/zclconf/go-cty v1.13.2
 	golang.org/x/crypto v0.15.0
 )
 
@@ -106,6 +106,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/zclconf/go-cty => github.com/azr/go-cty v1.1.1-0.20200203143058-28fcda2fe0cc
+replace github.com/zclconf/go-cty => github.com/nywilken/go-cty v1.12.1 // added by packer-sdc fix as noted in github.com/hashicorp/packer-plugin-sdk/issues/187
 
 go 1.21
