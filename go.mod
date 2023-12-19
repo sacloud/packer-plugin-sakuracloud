@@ -12,7 +12,7 @@ require (
 	github.com/sacloud/packages-go v0.0.10
 	github.com/stretchr/testify v1.8.4
 	github.com/zclconf/go-cty v1.14.0
-	golang.org/x/crypto v0.16.0
+	golang.org/x/crypto v0.17.0
 )
 
 require (
