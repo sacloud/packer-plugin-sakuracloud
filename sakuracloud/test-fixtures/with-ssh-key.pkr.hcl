@@ -3,7 +3,7 @@ locals {
 }
 
 source "sakuracloud" "example" {
-  zone = "is1a"
+  zone = "%s"
 
   os_type   = "ubuntu2004"
   user_name = "ubuntu"
