@@ -18,6 +18,7 @@ import (
 )
 
 func cleanupArchives() error {
+	zone := os.Getenv("SAKURACLOUD_ZONE")
 	client := api.NewCallerWithOptions(&api.CallerOptions{
 		Options: &sacloudClient.Options{
 			AccessToken:       os.Getenv("SAKURACLOUD_ACCESS_TOKEN"),
@@ -25,7 +26,7 @@ func cleanupArchives() error {
 		},
 	})
 	archiveOp := iaas.NewArchiveOp(client)
-	found, err := archiveOp.Find(context.Background(), "is1a", &iaas.FindCondition{
+	found, err := archiveOp.Find(context.Background(), zone, &iaas.FindCondition{
 		Filter: search.Filter{
 			search.Key("Name"): search.PartialMatch("packer-acctest-"),
 		},
@@ -34,7 +35,7 @@ func cleanupArchives() error {
 		return err
 	}
 	for _, archive := range found.Archives {
-		if err := archiveOp.Delete(context.Background(), "is1a", archive.ID); err != nil {
+		if err := archiveOp.Delete(context.Background(), zone, archive.ID); err != nil {
 			return err
 		}
 	}
@@ -42,6 +43,7 @@ func cleanupArchives() error {
 }
 
 func TestBuilderAcc_withSSHKeyFile(t *testing.T) {
+	zone := os.Getenv("SAKURACLOUD_ZONE")
 	deferFunc := prepareTestPrivateKeyFile()
 	acctest.TestPlugin(t, &acctest.PluginTestCase{
 		Name: "sakuracloud-with-ssh-key",
@@ -49,7 +51,7 @@ func TestBuilderAcc_withSSHKeyFile(t *testing.T) {
 			testAccPreCheck(t)
 			return nil
 		},
-		Template: testBuilderAccWithSSHPrivateKeyFile(dummyPrivateKeyFile),
+		Template: testBuilderAccWithSSHPrivateKeyFile(zone, dummyPrivateKeyFile),
 		Check:    testAccCheckFunc,
 		Teardown: func() error {
 			deferFunc()
@@ -80,7 +82,7 @@ func testAccCheckFunc(buildCommand *exec.Cmd, logfile string) error {
 }
 
 func testAccPreCheck(t *testing.T) {
-	requiredEnvs := []string{"SAKURACLOUD_ACCESS_TOKEN", "SAKURACLOUD_ACCESS_TOKEN_SECRET"}
+	requiredEnvs := []string{"SAKURACLOUD_ACCESS_TOKEN", "SAKURACLOUD_ACCESS_TOKEN_SECRET", "SAKURACLOUD_ZONE"}
 
 	for _, k := range requiredEnvs {
 		if v := os.Getenv(k); v == "" {
@@ -92,6 +94,6 @@ func testAccPreCheck(t *testing.T) {
 //go:embed test-fixtures/with-ssh-key.pkr.hcl
 var testBuilderHCL2WithSshKey string
 
-func testBuilderAccWithSSHPrivateKeyFile(keyPath string) string {
-	return fmt.Sprintf(testBuilderHCL2WithSshKey, keyPath)
+func testBuilderAccWithSSHPrivateKeyFile(zone, keyPath string) string {
+	return fmt.Sprintf(testBuilderHCL2WithSshKey, zone, keyPath)
 }
