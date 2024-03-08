@@ -12,7 +12,7 @@ require (
 	github.com/sacloud/packages-go v0.0.10
 	github.com/stretchr/testify v1.9.0
 	github.com/zclconf/go-cty v1.14.0
-	golang.org/x/crypto v0.18.0
+	golang.org/x/crypto v0.21.0
 )
 
 require (
@@ -92,10 +92,10 @@ require (
 	go.uber.org/ratelimit v0.3.0 // indirect
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29 // indirect
 	golang.org/x/mod v0.14.0 // indirect
-	golang.org/x/net v0.18.0 // indirect
+	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/oauth2 v0.1.0 // indirect
-	golang.org/x/sys v0.16.0 // indirect
-	golang.org/x/term v0.16.0 // indirect
+	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/term v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	golang.org/x/tools v0.14.0 // indirect
