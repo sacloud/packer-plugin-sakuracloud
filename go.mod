@@ -7,12 +7,12 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/sacloud/api-client-go v0.2.10
 	github.com/sacloud/ftps v1.2.0
-	github.com/sacloud/iaas-api-go v1.11.2
-	github.com/sacloud/iaas-service-go v1.9.2
+	github.com/sacloud/iaas-api-go v1.12.0
+	github.com/sacloud/iaas-service-go v1.10.0
 	github.com/sacloud/packages-go v0.0.10
 	github.com/stretchr/testify v1.9.0
 	github.com/zclconf/go-cty v1.14.0
-	golang.org/x/crypto v0.21.0
+	golang.org/x/crypto v0.22.0
 )
 
 require (
@@ -85,7 +85,7 @@ require (
 	github.com/pkg/sftp v1.13.2 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
-	github.com/sacloud/go-http v0.1.7 // indirect
+	github.com/sacloud/go-http v0.1.8 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
 	github.com/ulikunitz/xz v0.5.10 // indirect
 	go.opencensus.io v0.23.0 // indirect
@@ -94,8 +94,8 @@ require (
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/oauth2 v0.1.0 // indirect
-	golang.org/x/sys v0.18.0 // indirect
-	golang.org/x/term v0.18.0 // indirect
+	golang.org/x/sys v0.19.0 // indirect
+	golang.org/x/term v0.19.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	golang.org/x/tools v0.14.0 // indirect
