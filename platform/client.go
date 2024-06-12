@@ -1,6 +1,7 @@
 package platform
 
 import (
+	"crypto/tls"
 	"fmt"
 
 	client "github.com/sacloud/api-client-go"
@@ -35,8 +36,12 @@ func NewClient(token, secret, zone string) (*Client, error) {
 	caller := api.NewCallerWithOptions(options)
 
 	// FTPS Client
-	ftpsClient := &ftps.FTPS{}
-	ftpsClient.TLSConfig.InsecureSkipVerify = true
+	ftpsClient := &ftps.FTPS{
+		TLSConfig: tls.Config{
+			InsecureSkipVerify: true,
+			MaxVersion:         tls.VersionTLS12,
+		},
+	}
 
 	return &Client{
 		Caller:  caller,
