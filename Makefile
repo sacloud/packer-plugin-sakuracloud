@@ -1,6 +1,6 @@
 #====================
 AUTHOR         ?= The sacloud/packer-plugin-sakuracloud Authors
-COPYRIGHT_YEAR ?= 2016-2023
+COPYRIGHT_YEAR ?= 2016-2025
 
 BIN            ?= packer-plugin-sakuracloud
 
