@@ -88,8 +88,8 @@ func TestConfig_Validate(t *testing.T) {
 				filter:   func(c *Config) { c.OSType = "" },
 			},
 			{
-				caseName: "os_type:centos",
-				filter:   func(c *Config) { c.OSType = "centos" },
+				caseName: "os_type:ubuntu",
+				filter:   func(c *Config) { c.OSType = "ubuntu" },
 				expect:   true,
 			},
 			{
@@ -175,6 +175,6 @@ func dummyValidConfig() Config {
 		AccessToken:       "token",
 		AccessTokenSecret: "secret",
 		Zone:              "is1a",
-		OSType:            "centos",
+		OSType:            "ubuntu",
 	}
 }
