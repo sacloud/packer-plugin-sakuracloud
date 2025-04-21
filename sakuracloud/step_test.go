@@ -25,7 +25,7 @@ var (
 		"access_token":        "aaaa",
 		"access_token_secret": "bbbb",
 		"zone":                "is1a",
-		"os_type":             "centos",
+		"os_type":             "ubuntu",
 	}
 )
 
