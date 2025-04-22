@@ -9,9 +9,9 @@ require (
 	github.com/sacloud/ftps v1.2.0
 	github.com/sacloud/iaas-api-go v1.14.0
 	github.com/sacloud/iaas-service-go v1.10.0
-	github.com/sacloud/packages-go v0.0.10
+	github.com/sacloud/packages-go v0.0.11
 	github.com/stretchr/testify v1.10.0
-	github.com/zclconf/go-cty v1.14.0
+	github.com/zclconf/go-cty v1.14.4
 	golang.org/x/crypto v0.31.0
 )
 
