@@ -108,7 +108,7 @@ source "sakuracloud" "example" {
   zone = "is1b" # アーカイブを作成する対象ゾーン
   zones = ["is1a", "is1b", "tk1a", "tk1v"] # 作成したアーカイブを転送する宛先ゾーン
 
-  os_type   = "centos7"
+  os_type   = "almalinux"
   password  = "TestUserPassword01"
   disk_size = 20
   disk_plan = "ssd"
@@ -146,7 +146,7 @@ $ cat <<EOF > example.json
     "builders": [{
         "type": "sakuracloud",
         "zone": "is1b",
-        "os_type": "centos7",
+        "os_type": "almalinux",
         "password": "TestUserPassword01"
     }],
     "provisioners":[
@@ -189,8 +189,6 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 | 値             | 説明                                                    |
 |---------------|-------------------------------------------------------|
-| `centos`      | CentOS(最新安定板)                                         |
-| `centos7`     | CentOS 7                                              |
 | `almalinux`   | Alma Linux(最新安定板)                                     |
 | `almalinux9`  | Alma Linux 9                                          |
 | `almalinux8`  | Alma Linux 8                                          |
@@ -198,14 +196,14 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 | `rockylinux9` | Rocky Linux 9                                         |
 | `rockylinux8` | Rocky Linux 8                                         |
 | `miracle`     | MIRACLE LINUX(最新安定板)                                  |
+| `miracle9`    | MIRACLE LINUX 9                                       |
 | `miracle8`    | MIRACLE LINUX 8                                       |
 | `ubuntu`      | Ubuntu(最新安定板)                                         |
+| `ubuntu2404`  | Ubuntu 24.04                                          |
 | `ubuntu2204`  | Ubuntu 22.04                                          |
-| `ubuntu2004`  | Ubuntu 20.04                                          |
-| `ubuntu1804`  | Ubuntu 18.04                                          |
 | `debian`      | Debian(最新安定板)                                         |
+| `debian12`    | Debian12                                              |
 | `debian11`    | Debian11                                              |
-| `debian10`    | Debian10                                              |
 | `kusanagi`    | Kusanagi(CentOS7)                                     |
 | `custom`      | 任意のアーカイブID/ディスクIDを指定する場合                              |
 | `iso`         | さくらのクラウド上のISOイメージ、<br />またはURLを指定してISOイメージをダウンロードする場合 |
