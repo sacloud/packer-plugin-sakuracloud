@@ -5,7 +5,7 @@ locals {
 source "sakuracloud" "example" {
   zone = "is1a"
 
-  os_type   = "ubuntu2004"
+  os_type   = "ubuntu2404"
   user_name = "ubuntu"
   password  = local.password
 

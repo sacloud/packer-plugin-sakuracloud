@@ -2,7 +2,7 @@
     "builders": [{
         "type": "sakuracloud",
         "zone": "is1b",
-        "os_type": "ubuntu2004",
+        "os_type": "ubuntu2404",
         "user_name": "ubuntu",
         "password": "TestUserPassword01",
         "core" : 2,
