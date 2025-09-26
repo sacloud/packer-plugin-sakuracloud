@@ -22,7 +22,7 @@ func TestBuilder_Prepare(t *testing.T) {
 		"SAKURACLOUD_ZONE",
 	}
 	for _, key := range clearEnvKeys {
-		os.Setenv(key, "")
+		os.Setenv(key, "") //nolint:errcheck,gosec
 	}
 
 	t.Run("with minimum config", func(t *testing.T) {

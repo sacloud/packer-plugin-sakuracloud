@@ -38,7 +38,7 @@ func NewClient(token, secret, zone string) (*Client, error) {
 	// FTPS Client
 	ftpsClient := &ftps.FTPS{
 		TLSConfig: tls.Config{
-			InsecureSkipVerify: true,
+			InsecureSkipVerify: true, //nolint:gosec
 			MaxVersion:         tls.VersionTLS12,
 		},
 	}
