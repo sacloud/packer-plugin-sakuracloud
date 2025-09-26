@@ -61,11 +61,11 @@ func TestBuilderAcc_withSSHKeyFile(t *testing.T) {
 }
 
 func testAccCheckFunc(buildCommand *exec.Cmd, logfile string) error {
-	logs, err := os.Open(logfile)
+	logs, err := os.Open(logfile) //nolint:gosec
 	if err != nil {
 		return fmt.Errorf("Unable find %s", logfile)
 	}
-	defer logs.Close()
+	defer logs.Close() //nolint:errcheck
 
 	logsBytes, err := io.ReadAll(logs)
 	if err != nil {

@@ -88,14 +88,14 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 		return multistep.ActionHalt
 	}
 
-	fs, err := os.Open(filepath)
+	fs, err := os.Open(filepath) //nolint:gosec
 	if err != nil {
 		err := fmt.Errorf("Error opening ISO file: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	defer fs.Close()
+	defer fs.Close() //nolint:errcheck
 
 	err = client.FTPS.StoreFile("packer-for-sakuracloud.iso", fs)
 	if err != nil {
