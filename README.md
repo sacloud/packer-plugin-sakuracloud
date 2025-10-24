@@ -187,26 +187,26 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
     
 - `os_type`(string): ベースとするアーカイブの種別。以下の値が指定可能です
 
-| 値             | 説明                                                    |
-|---------------|-------------------------------------------------------|
-| `almalinux`   | Alma Linux(最新安定板)                                     |
-| `almalinux9`  | Alma Linux 9                                          |
-| `almalinux8`  | Alma Linux 8                                          |
-| `rockylinux`  | Rocky Linux(最新安定板)                                    |
-| `rockylinux9` | Rocky Linux 9                                         |
-| `rockylinux8` | Rocky Linux 8                                         |
-| `miracle`     | MIRACLE LINUX(最新安定板)                                  |
-| `miracle9`    | MIRACLE LINUX 9                                       |
-| `miracle8`    | MIRACLE LINUX 8                                       |
-| `ubuntu`      | Ubuntu(最新安定板)                                         |
-| `ubuntu2404`  | Ubuntu 24.04                                          |
-| `ubuntu2204`  | Ubuntu 22.04                                          |
-| `debian`      | Debian(最新安定板)                                         |
-| `debian12`    | Debian12                                              |
-| `debian11`    | Debian11                                              |
-| `kusanagi`    | Kusanagi(CentOS7)                                     |
-| `custom`      | 任意のアーカイブID/ディスクIDを指定する場合                              |
-| `iso`         | さくらのクラウド上のISOイメージ、<br />またはURLを指定してISOイメージをダウンロードする場合 |
+| 値              | 説明                                                    |
+|----------------|-------------------------------------------------------|
+| `almalinux`    | Alma Linux(最新安定板)                                     |
+| `almalinux10`  | Alma Linux 10                                         |
+| `almalinux9`   | Alma Linux 9                                          |
+| `rockylinux`   | Rocky Linux(最新安定板)                                    |
+| `rockylinux10` | Rocky Linux 10                                        |
+| `rockylinux9`  | Rocky Linux 8                                         |
+| `miracle`      | MIRACLE LINUX(最新安定板)                                  |
+| `miracle9`     | MIRACLE LINUX 9                                       |
+| `miracle8`     | MIRACLE LINUX 8                                       |
+| `ubuntu`       | Ubuntu(最新安定板)                                         |
+| `ubuntu2404`   | Ubuntu 24.04                                          |
+| `ubuntu2204`   | Ubuntu 22.04                                          |
+| `debian`       | Debian(最新安定板)                                         |
+| `debian12`     | Debian12                                              |
+| `debian11`     | Debian11                                              |
+| `kusanagi`     | Kusanagi(CentOS7)                                     |
+| `custom`       | 任意のアーカイブID/ディスクIDを指定する場合                              |
+| `iso`          | さくらのクラウド上のISOイメージ、<br />またはURLを指定してISOイメージをダウンロードする場合 |
 
 `os_type`が`custom`の場合、`source_archive` 又は `source_disk`の何れかの指定が必須です。
 
@@ -222,6 +222,7 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 - `zones`: 作成したアーカイブを転送する宛先ゾーン名のリスト。以下のいずれかの値を指定(複数指定可)
     - `is1a`: 石狩第1ゾーン
     - `is1b`: 石狩第2ゾーン
+    - `is1c`: 石狩第3ゾーン
     - `tk1a`: 東京第1ゾーン
     - `tk1b`: 東京第2ゾーン
     - `tk1v`: サンドボックス
