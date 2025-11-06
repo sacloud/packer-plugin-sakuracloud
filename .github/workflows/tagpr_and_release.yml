@@ -2,7 +2,7 @@
 name: tagpr
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
 
 jobs:
   tagpr:
@@ -83,7 +83,7 @@ jobs:
       with:
         context: .
         platforms: linux/amd64,linux/arm64
-        tags: ${{ steps.meta.outputs.tags }},ghcr.io/sacloud/packer:latest
+        tags: ${{ steps.meta.outputs.tags }},ghcr.io/sacloud/packer:latest,ghcr.io/sacloud/packer:${{ steps.tagpr.outputs.tag }}
         push: true
       if: ${{ steps.tagpr.outputs.tag != ''}}
 
