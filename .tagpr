@@ -44,5 +44,5 @@
 #
 [tagpr]
 	vPrefix = true
-	releaseBranch = main
+	releaseBranch = master
 	versionFile = version/version.go
