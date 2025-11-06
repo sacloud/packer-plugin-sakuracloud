@@ -59,7 +59,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ghcr.io/sacloud/usacloud
+        images: ghcr.io/sacloud/packer
       if: ${{ steps.tagpr.outputs.tag != ''}}
 
     - name: Set up QEMU
