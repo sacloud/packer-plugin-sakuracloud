@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.10.2](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.10.1...v0.10.2) - 2025-11-12
+- docker: golang:1.25 by @yamamoto-febc in https://github.com/sacloud/packer-plugin-sakuracloud/pull/261
+
 ## [v0.10.1](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.10.0...v0.10.1) - 2025-11-12
 - goreleaser v2 by @yamamoto-febc in https://github.com/sacloud/packer-plugin-sakuracloud/pull/258
 - go: bump golang.org/x/crypto from 0.43.0 to 0.44.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/257
