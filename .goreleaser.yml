@@ -1,21 +1,14 @@
-# from: https://raw.githubusercontent.com/hashicorp/packer-plugin-scaffolding/main/.goreleaser.yml
-env:
-  - CGO_ENABLED=0
+version: 2
 before:
   hooks:
-    # We strongly recommend running tests to catch any regression before release.
-    # Even though, this an optional step.
-    - go test ./...
-    # As part of the release doc files are included as a separate deliverable for
-    # consumption by Packer.io. To include a separate docs.zip uncomment the following command.
-    #- make ci-release-docs
-    # Check plugin compatibility with required version of the Packer SDK
     - make plugin-check
 builds:
   # A separated build to run the packer-plugins-check only once for a linux_amd64 binary
   -
     id: plugin-check
     mod_timestamp: '{{ .CommitTimestamp }}'
+    env:
+      - CGO_ENABLED=0
     flags:
       - -trimpath #removes all file system paths from the compiled executable
     ldflags:
@@ -27,6 +20,8 @@ builds:
     binary: '{{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}'
   -
     mod_timestamp: '{{ .CommitTimestamp }}'
+    env:
+      - CGO_ENABLED=0
     flags:
       - -trimpath #removes all file system paths from the compiled executable
     ldflags:
@@ -46,9 +41,11 @@ builds:
         goarch: '386'
       - goos: linux
         goarch: amd64
+      - goos: windows
+        goarch: arm
     binary: '{{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}'
 archives:
-  - format: zip
+  - formats: [ 'zip' ]
     name_template: '{{ .ProjectName }}_v{{ .Version }}_{{ .Env.API_VERSION }}_{{ .Os }}_{{ .Arch }}'
 checksum:
   name_template: '{{ .ProjectName }}_v{{ .Version }}_SHA256SUMS'
@@ -67,4 +64,4 @@ release:
   # If you want to manually examine the release before its live, uncomment this line:
   # draft: true
 changelog:
-  skip: false
+  disable: false
