@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.10.1](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.10.0...v0.10.1) - 2025-11-12
+- goreleaser v2 by @yamamoto-febc in https://github.com/sacloud/packer-plugin-sakuracloud/pull/258
+- go: bump golang.org/x/crypto from 0.43.0 to 0.44.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/257
+- go: bump github.com/hashicorp/hcl/v2 from 2.20.0 to 2.24.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/230
+
 ## [v0.10.0](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.9.5...v0.10.0) - 2025-11-06
 - Copyright 2025 by @yamamoto-febc in https://github.com/sacloud/packer-plugin-sakuracloud/pull/216
 - go: bump github.com/sacloud/iaas-api-go from 1.11.2 to 1.14.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/203
