@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.11.0](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.10.1...v0.11.0) - 2026-01-07
+- docker: golang:1.25 by @yamamoto-febc in https://github.com/sacloud/packer-plugin-sakuracloud/pull/261
+- feat: cloud-init by @yamamoto-febc in https://github.com/sacloud/packer-plugin-sakuracloud/pull/274
+- go: bump github.com/sacloud/api-client-go from 0.3.3 to 0.3.4 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/273
+- go: bump github.com/sacloud/iaas-service-go from 1.18.1 to 1.20.1 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/272
+- ci: bump actions/checkout from 5 to 6 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/266
+
 ## [v0.10.1](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.10.0...v0.10.1) - 2025-11-12
 - goreleaser v2 by @yamamoto-febc in https://github.com/sacloud/packer-plugin-sakuracloud/pull/258
 - go: bump golang.org/x/crypto from 0.43.0 to 0.44.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/257
