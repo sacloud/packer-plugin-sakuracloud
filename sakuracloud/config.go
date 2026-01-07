@@ -54,10 +54,11 @@ type Config struct {
 	DiskPlan       string `mapstructure:"disk_plan"`
 
 	// for Server
-	Core                int  `mapstructure:"core"`
-	MemorySize          int  `mapstructure:"memory_size"`
-	DisableVirtIONetPCI bool `mapstructure:"disable_virtio_net"`
-	ForceShutdown       bool `mapstructure:"force_shutdown"`
+	Core                int    `mapstructure:"core"`
+	MemorySize          int    `mapstructure:"memory_size"`
+	DisableVirtIONetPCI bool   `mapstructure:"disable_virtio_net"`
+	ForceShutdown       bool   `mapstructure:"force_shutdown"`
+	UserData            string `mapstructure:"user_data"`
 
 	// for Source
 	OSType        string   `mapstructure:"os_type"`
