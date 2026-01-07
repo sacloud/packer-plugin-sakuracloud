@@ -1,17 +1,17 @@
 module github.com/sacloud/packer-plugin-sakuracloud
 
-go 1.24.0
+go 1.25
 
 require (
 	github.com/hashicorp/hcl/v2 v2.24.0
 	github.com/hashicorp/packer-plugin-sdk v0.6.4
 	github.com/mitchellh/go-vnc v0.0.0-20150629162542-723ed9867aed
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/sacloud/api-client-go v0.3.3
+	github.com/sacloud/api-client-go v0.3.4
 	github.com/sacloud/ftps v1.2.0
 	github.com/sacloud/iaas-api-go v1.21.1
 	github.com/sacloud/iaas-service-go v1.18.1
-	github.com/sacloud/packages-go v0.0.11
+	github.com/sacloud/packages-go v0.0.12
 	github.com/stretchr/testify v1.11.1
 	github.com/zclconf/go-cty v1.16.3
 	golang.org/x/crypto v0.44.0
