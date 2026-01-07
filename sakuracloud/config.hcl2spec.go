@@ -82,6 +82,7 @@ type FlatConfig struct {
 	MemorySize                *int              `mapstructure:"memory_size" cty:"memory_size" hcl:"memory_size"`
 	DisableVirtIONetPCI       *bool             `mapstructure:"disable_virtio_net" cty:"disable_virtio_net" hcl:"disable_virtio_net"`
 	ForceShutdown             *bool             `mapstructure:"force_shutdown" cty:"force_shutdown" hcl:"force_shutdown"`
+	UserData                  *string           `mapstructure:"user_data" cty:"user_data" hcl:"user_data"`
 	OSType                    *string           `mapstructure:"os_type" cty:"os_type" hcl:"os_type"`
 	SourceArchive             *types.ID         `mapstructure:"source_archive" cty:"source_archive" hcl:"source_archive"`
 	SourceDisk                *types.ID         `mapstructure:"source_disk" cty:"source_disk" hcl:"source_disk"`
@@ -185,6 +186,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"memory_size":                  &hcldec.AttrSpec{Name: "memory_size", Type: cty.Number, Required: false},
 		"disable_virtio_net":           &hcldec.AttrSpec{Name: "disable_virtio_net", Type: cty.Bool, Required: false},
 		"force_shutdown":               &hcldec.AttrSpec{Name: "force_shutdown", Type: cty.Bool, Required: false},
+		"user_data":                    &hcldec.AttrSpec{Name: "user_data", Type: cty.String, Required: false},
 		"os_type":                      &hcldec.AttrSpec{Name: "os_type", Type: cty.String, Required: false},
 		"source_archive":               &hcldec.AttrSpec{Name: "source_archive", Type: cty.Number, Required: false},
 		"source_disk":                  &hcldec.AttrSpec{Name: "source_disk", Type: cty.Number, Required: false},

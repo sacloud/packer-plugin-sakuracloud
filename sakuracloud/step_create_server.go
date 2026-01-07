@@ -104,6 +104,7 @@ func (s *stepCreateServer) createServerBuilder(state multistep.StateBag) *server
 		Generation:      types.PlanGenerations.Default,
 		InterfaceDriver: interfaceDriver,
 		BootAfterCreate: true,
+		UserData:        c.UserData,
 		CDROMID:         c.ISOImageID,
 		NIC:             &serverBuilders.SharedNICSetting{}, // TODO 共有セグメントのみサポート
 		DiskBuilders:    s.createDiskBuilder(state),
@@ -135,6 +136,11 @@ func (s *stepCreateServer) createDiskBuilder(state multistep.StateBag) []diskBui
 
 	if keys, ok := state.GetOk("publicKeys"); ok {
 		director.EditParameter.SSHKeys = keys.([]string)
+	}
+
+	// UserData(cloud-init)が設定されている場合、EditParameterは無視する
+	if c.UserData != "" {
+		director.EditParameter = nil
 	}
 
 	return []diskBuilders.Builder{director.Builder()}

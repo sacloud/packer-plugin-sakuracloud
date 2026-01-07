@@ -247,6 +247,8 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 - `memory_size`(int): メモリサイズ(GB単位)、デフォルト値:`1`
 
+- `user_data`(string): cloud-init起動をする際に渡すパラメータ。このフィールドを指定する場合、`user_name`や`disable_generate_public_key`, `ssh_private_key_file`なども適切に指定する必要があります。詳細は[cloud-initのexample](./examples/cloud-init)を参照してください
+
 - `disable_virtio_net`(bool): `true`の場合、NICでの仮想化ドライバ利用を無効化します。デフォルト値:`false`
 
 - `source_archive`(int64): 元となるアーカイブのID、`os_type`が`custom`の場合に指定可能です
