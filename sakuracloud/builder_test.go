@@ -17,9 +17,9 @@ func TestBuilder_ImplementsBuilder(t *testing.T) {
 
 func TestBuilder_Prepare(t *testing.T) {
 	clearEnvKeys := []string{
-		"SAKURACLOUD_ACCESS_TOKEN",
-		"SAKURACLOUD_ACCESS_TOKEN_SECRET",
-		"SAKURACLOUD_ZONE",
+		"SAKURA_ACCESS_TOKEN",
+		"SAKURA_ACCESS_TOKEN_SECRET",
+		"SAKURA_ZONE",
 	}
 	for _, key := range clearEnvKeys {
 		os.Setenv(key, "") //nolint:errcheck,gosec

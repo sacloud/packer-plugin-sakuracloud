@@ -9,8 +9,8 @@ import (
 )
 
 func TestConfig_Defaults(t *testing.T) {
-	os.Setenv("SAKURACLOUD_ACCESS_TOKEN", "token")         //nolint
-	os.Setenv("SAKURACLOUD_ACCESS_TOKEN_SECRET", "secret") //nolint
+	os.Setenv("SAKURA_ACCESS_TOKEN", "token")         //nolint
+	os.Setenv("SAKURA_ACCESS_TOKEN_SECRET", "secret") //nolint
 
 	config := &Config{}
 	config.OSType = "windows2016"
@@ -53,9 +53,9 @@ func TestConfig_Validate(t *testing.T) {
 
 	t.Run("valid config", func(t *testing.T) {
 		clearEnvKeys := []string{
-			"SAKURACLOUD_ACCESS_TOKEN",
-			"SAKURACLOUD_ACCESS_TOKEN_SECRET",
-			"SAKURACLOUD_ZONE",
+			"SAKURA_ACCESS_TOKEN",
+			"SAKURA_ACCESS_TOKEN_SECRET",
+			"SAKURA_ZONE",
 		}
 		for _, key := range clearEnvKeys {
 			os.Setenv(key, "") //nolint:errcheck,gosec
