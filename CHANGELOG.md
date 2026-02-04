@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.12.0](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.11.0...v0.12.0) - 2026-02-04
+- ftps: use Min/Max version and ServerName in tls.Config by @yamamoto-febc in https://github.com/sacloud/packer-plugin-sakuracloud/pull/280
+- go: bump github.com/sacloud/api-client-go from 0.3.4 to 0.3.5 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/279
+- go: bump github.com/hashicorp/packer-plugin-sdk from 0.6.4 to 0.6.5 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/278
+- go: bump golang.org/x/crypto from 0.46.0 to 0.47.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/277
+- go: bump github.com/sacloud/iaas-service-go from 1.21.0 to 1.21.1 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/275
+- feat: use SAKURA_* env vars instead of SAKURACLOUD_* by @yamamoto-febc in https://github.com/sacloud/packer-plugin-sakuracloud/pull/282
+
 ## [v0.11.0](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.10.1...v0.11.0) - 2026-01-07
 - docker: golang:1.25 by @yamamoto-febc in https://github.com/sacloud/packer-plugin-sakuracloud/pull/261
 - feat: cloud-init by @yamamoto-febc in https://github.com/sacloud/packer-plugin-sakuracloud/pull/274
