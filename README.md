@@ -62,8 +62,8 @@ APIキーを環境変数で指定する場合、`-e`オプションなどを適�
 
     # APIキーを環境変数で指定、カレントディレクトリのexample.jsonをテンプレートとして指定してビルドする例
     $ docker run -it --rm \
-             -e SAKURACLOUD_ACCESS_TOKEN \
-             -e SAKURACLOUD_ACCESS_TOKEN_SECRET \
+             -e SAKURA_ACCESS_TOKEN \
+             -e SAKURA_ACCESS_TOKEN_SECRET \
              -v $PWD:/work \
              -w /work \
              ghcr.io/sacloud/packer:latest build example.pkr.hcl
@@ -82,8 +82,8 @@ v0.7以降`homebrew`はサポートされなくなりました。
 APIキーを環境変数に設定しておきます。
 (APIキーは以下で作成するjsonファイルに記載する方法もあります)
 
-    $ export SAKURACLOUD_ACCESS_TOKEN=[APIトークン]
-    $ export SAKURACLOUD_ACCESS_TOKEN_SECRET=[APIシークレット]
+    $ export SAKURA_ACCESS_TOKEN=[APIトークン]
+    $ export SAKURA_ACCESS_TOKEN_SECRET=[APIシークレット]
 
 #### テンプレートファイルの作成(HCL)
 
@@ -175,13 +175,14 @@ jsonファイルで指定できるオプションの一覧は以下の通りで�
 
 ### 必須項目
 
-- `access_token`(string): APIトークン。この値は環境変数`SAKURACLOUD_ACCESS_TOKEN`でも指定可能です。
+- `access_token`(string): APIトークン。この値は環境変数`SAKURA_ACCESS_TOKEN`/`SAKURACLOUD_ACCESS_TOKEN`でも指定可能です。
 
-- `access_token_secret`(string): APIシークレット。この値は環境変数`SAKURACLOUD_ACCESS_TOKEN_SECRET`でも指定可能です。
+- `access_token_secret`(string): APIシークレット。この値は環境変数`SAKURA_ACCESS_TOKEN_SECRET`/`SAKURACLOUD_ACCESS_TOKEN_SECRET`でも指定可能です。
 
 - `zone`(string): 対象ゾーン。以下の値が指定可能です。
   - `is1a`: 石狩第1ゾーン
   - `is1b`: 石狩第2ゾーン
+  - `is1c`: 石狩第2ゾーン
   - `tk1a`: 東京第1ゾーン
   - `tk1b`: 東京第2ゾーン
     

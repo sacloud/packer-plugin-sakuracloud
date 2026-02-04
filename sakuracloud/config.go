@@ -132,10 +132,10 @@ func setDefaultConfig(c *Config) {
 	// Defaults
 	if c.AccessToken == "" {
 		// Default to environment variable for api_token, if it exists
-		c.AccessToken = os.Getenv("SAKURACLOUD_ACCESS_TOKEN")
+		c.AccessToken = os.Getenv("SAKURA_ACCESS_TOKEN")
 	}
 	if c.AccessTokenSecret == "" {
-		c.AccessTokenSecret = os.Getenv("SAKURACLOUD_ACCESS_TOKEN_SECRET")
+		c.AccessTokenSecret = os.Getenv("SAKURA_ACCESS_TOKEN_SECRET")
 	}
 
 	if len(c.Zones) == 0 {

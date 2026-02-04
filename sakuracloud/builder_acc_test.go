@@ -18,11 +18,11 @@ import (
 )
 
 func cleanupArchives() error {
-	zone := os.Getenv("SAKURACLOUD_ZONE")
+	zone := os.Getenv("SAKURA_ZONE")
 	client := api.NewCallerWithOptions(&api.CallerOptions{
 		Options: &sacloudClient.Options{
-			AccessToken:       os.Getenv("SAKURACLOUD_ACCESS_TOKEN"),
-			AccessTokenSecret: os.Getenv("SAKURACLOUD_ACCESS_TOKEN_SECRET"),
+			AccessToken:       os.Getenv("SAKURA_ACCESS_TOKEN"),
+			AccessTokenSecret: os.Getenv("SAKURA_ACCESS_TOKEN_SECRET"),
 		},
 	})
 	archiveOp := iaas.NewArchiveOp(client)
@@ -43,7 +43,7 @@ func cleanupArchives() error {
 }
 
 func TestBuilderAcc_withSSHKeyFile(t *testing.T) {
-	zone := os.Getenv("SAKURACLOUD_ZONE")
+	zone := os.Getenv("SAKURA_ZONE")
 	deferFunc := prepareTestPrivateKeyFile()
 	acctest.TestPlugin(t, &acctest.PluginTestCase{
 		Name: "sakuracloud-with-ssh-key",
@@ -82,7 +82,7 @@ func testAccCheckFunc(buildCommand *exec.Cmd, logfile string) error {
 }
 
 func testAccPreCheck(t *testing.T) {
-	requiredEnvs := []string{"SAKURACLOUD_ACCESS_TOKEN", "SAKURACLOUD_ACCESS_TOKEN_SECRET", "SAKURACLOUD_ZONE"}
+	requiredEnvs := []string{"SAKURA_ACCESS_TOKEN", "SAKURA_ACCESS_TOKEN_SECRET", "SAKURA_ZONE"}
 
 	for _, k := range requiredEnvs {
 		if v := os.Getenv(k); v == "" {
