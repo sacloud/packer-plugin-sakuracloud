@@ -90,34 +90,6 @@ func dummyMinimumStateBag(t *testing.T, config *Config) multistep.StateBag {
 	// set fake API client
 	fake.SwitchFactoryFuncToFake()
 	iaasClient, _ := platform.NewClient("fake", "fake", "is1a")
-	iaasClient.FTPS = &fakeFTPSClient{}
 	state.Put("iaasClient", iaasClient)
 	return state
-}
-
-type fakeFTPSClient struct {
-	connectErr   error
-	loginErr     error
-	storeFileErr error
-	quitErr      error
-}
-
-// Connect .
-func (c *fakeFTPSClient) Connect(string, int) error {
-	return c.connectErr
-}
-
-// Login .
-func (c *fakeFTPSClient) Login(string, string) error {
-	return c.loginErr
-}
-
-// StoreFile .
-func (c *fakeFTPSClient) StoreFile(string, *os.File) error {
-	return c.storeFileErr
-}
-
-// Quit .
-func (c *fakeFTPSClient) Quit() error {
-	return c.quitErr
 }

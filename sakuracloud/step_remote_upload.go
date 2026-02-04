@@ -2,6 +2,7 @@ package sakuracloud
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"log"
 	"os"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/sacloud/ftps"
 	"github.com/sacloud/iaas-api-go"
 	"github.com/sacloud/iaas-api-go/search"
 	"github.com/sacloud/iaas-api-go/types"
@@ -72,7 +74,15 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 
 	// upload iso by FTPS
-	err = client.FTPS.Connect(ftp.HostName, 21)
+	ftpsClient := &ftps.FTPS{
+		TLSConfig: tls.Config{
+			ServerName: ftp.HostName,
+			MinVersion: tls.VersionTLS12,
+			MaxVersion: tls.VersionTLS13,
+		},
+	}
+
+	err = ftpsClient.Connect(ftp.HostName, 21)
 	if err != nil {
 		err := fmt.Errorf("Error connecting FTPS server: %s", err)
 		state.Put("error", err)
@@ -80,7 +90,7 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 		return multistep.ActionHalt
 	}
 
-	err = client.FTPS.Login(ftp.User, ftp.Password)
+	err = ftpsClient.Login(ftp.User, ftp.Password)
 	if err != nil {
 		err := fmt.Errorf("Error login FTPS server: %s", err)
 		state.Put("error", err)
@@ -97,14 +107,14 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 	defer fs.Close() //nolint:errcheck
 
-	err = client.FTPS.StoreFile("packer-for-sakuracloud.iso", fs)
+	err = ftpsClient.StoreFile("packer-for-sakuracloud.iso", fs)
 	if err != nil {
 		err := fmt.Errorf("Error store file on FTPS server: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	if err := client.FTPS.Quit(); err != nil {
+	if err := ftpsClient.Quit(); err != nil {
 		err := fmt.Errorf("Error quit on FTPS server: %s", err)
 		state.Put("error", err)
 		ui.Error(err.Error())
