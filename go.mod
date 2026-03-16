@@ -4,7 +4,7 @@ go 1.25.5
 
 require (
 	github.com/hashicorp/hcl/v2 v2.24.0
-	github.com/hashicorp/packer-plugin-sdk v0.6.5
+	github.com/hashicorp/packer-plugin-sdk v0.6.6
 	github.com/mitchellh/go-vnc v0.0.0-20150629162542-723ed9867aed
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/sacloud/api-client-go v0.3.5
