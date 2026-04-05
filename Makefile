@@ -31,8 +31,7 @@ install-packer:
 install-plugin: dev
 
 dev: build
-	@mkdir -p ~/.packer.d/plugins/
-	@mv ${BIN} ~/.packer.d/plugins/${BIN}
+	@packer plugins install -force --path ./${BIN} github.com/sacloud/sakuracloud
 
 generate:
 	go generate ./...
