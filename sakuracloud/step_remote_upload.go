@@ -7,10 +7,11 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/sacloud/ftps"
+	ftpclient "github.com/jlaffaye/ftp"
 	"github.com/sacloud/iaas-api-go"
 	"github.com/sacloud/iaas-api-go/search"
 	"github.com/sacloud/iaas-api-go/types"
@@ -57,7 +58,7 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 		}
 	}
 
-	ui.Say("\tUploading ISO to SakuraCloud...")
+	ui.Say("\tUploading ISO to SAKURA Cloud...")
 	log.Printf("Remote uploading: %s", filepath)
 
 	isoImage, ftp, err := isoImageOp.Create(ctx, c.Zone, &iaas.CDROMCreateRequest{
@@ -67,22 +68,24 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 		Tags:        types.Tags{constants.UploadedFromPackerMarkerTag},
 	})
 	if err != nil {
-		err := fmt.Errorf("Error creating ISO image: %s", err)
+		err := fmt.Errorf("Error creating ISO image: %s(Name: '%s', SizeMB: %d)",
+			err,
+			c.ISOImageName,
+			size.GiBToMiB(c.ISOImageSizeGB))
 		state.Put("error", err)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
 
 	// upload iso by FTPS
-	ftpsClient := &ftps.FTPS{
-		TLSConfig: tls.Config{
+	ftpsClient, err := ftpclient.Dial(
+		fmt.Sprintf("%s:%d", ftp.HostName, 21),
+		ftpclient.DialWithTimeout(30*time.Minute),
+		ftpclient.DialWithExplicitTLS(&tls.Config{
 			ServerName: ftp.HostName,
 			MinVersion: tls.VersionTLS12,
 			MaxVersion: tls.VersionTLS13,
-		},
-	}
-
-	err = ftpsClient.Connect(ftp.HostName, 21)
+		}))
 	if err != nil {
 		err := fmt.Errorf("Error connecting FTPS server: %s", err)
 		state.Put("error", err)
@@ -107,7 +110,7 @@ func (s *stepRemoteUpload) Run(ctx context.Context, state multistep.StateBag) mu
 	}
 	defer fs.Close() //nolint:errcheck
 
-	err = ftpsClient.StoreFile("packer-for-sakuracloud.iso", fs)
+	err = ftpsClient.Stor("packer-for-sakuracloud.iso", fs)
 	if err != nil {
 		err := fmt.Errorf("Error store file on FTPS server: %s", err)
 		state.Put("error", err)

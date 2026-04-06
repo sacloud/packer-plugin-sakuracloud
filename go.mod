@@ -5,10 +5,10 @@ go 1.25.5
 require (
 	github.com/hashicorp/hcl/v2 v2.24.0
 	github.com/hashicorp/packer-plugin-sdk v0.6.5
+	github.com/jlaffaye/ftp v0.2.0
 	github.com/mitchellh/go-vnc v0.0.0-20150629162542-723ed9867aed
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/sacloud/api-client-go v0.3.5
-	github.com/sacloud/ftps v1.2.0
 	github.com/sacloud/iaas-api-go v1.25.0
 	github.com/sacloud/iaas-service-go v1.22.0
 	github.com/sacloud/packages-go v0.0.12
@@ -113,6 +113,7 @@ require (
 	github.com/pkg/sftp v1.13.2 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
+	github.com/sacloud/ftps v1.2.0 // indirect
 	github.com/sacloud/go-http v0.1.9 // indirect
 	github.com/sacloud/saclient-go v0.2.7 // indirect
 	github.com/tidwall/transform v0.0.0-20201103190739-32f242e2dbde // indirect
