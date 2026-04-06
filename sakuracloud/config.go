@@ -212,9 +212,18 @@ func setDefaultConfig(c *Config) {
 		if c.ISOChecksum == "" {
 			c.ISOImageName = def
 		} else {
-			c.ISOImageName = c.ISOChecksum
+			// CDROM.Name must be at most 64 characters long
+			c.ISOImageName = truncate(c.ISOChecksum, 64)
 		}
 	}
+}
+
+// Truncate returns the string s, truncated to at most max characters.
+func truncate(name string, max int) string {
+	if len(name) > max {
+		return name[:max]
+	}
+	return name
 }
 
 func validateConfig(c *Config, errs *packer.MultiError) *packer.MultiError {
