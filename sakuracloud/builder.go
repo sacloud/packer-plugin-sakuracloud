@@ -78,32 +78,6 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 		},
 	}
 
-	var isoSteps []multistep.Step
-	if b.config.ISOImageID > 0 {
-		isoSteps = []multistep.Step{
-			&stepPrepareISO{
-				Debug: b.config.PackerDebug,
-			},
-		}
-	} else {
-		isoSteps = []multistep.Step{
-			&commonsteps.StepDownload{
-				Checksum:    b.config.ISOChecksum,
-				Description: "ISO",
-				Extension:   "iso",
-				ResultKey:   "iso_path",
-				TargetPath:  b.config.TargetPath,
-				Url:         b.config.ISOUrls,
-			},
-			&stepRemoteUpload{
-				Debug: b.config.PackerDebug,
-			},
-			&stepPrepareISO{
-				Debug: b.config.PackerDebug,
-			},
-		}
-	}
-
 	steps = []multistep.Step{
 		&stepCreateSSHKey{
 			Debug:        b.config.PackerDebug,
@@ -136,6 +110,33 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 	}
 
 	if b.config.OSType == constants.TargetOSISO {
+		var isoSteps []multistep.Step
+		if b.config.ISOImageID > 0 {
+			isoSteps = []multistep.Step{
+				&stepPrepareISO{
+					Debug: b.config.PackerDebug,
+				},
+			}
+		} else {
+			// iso_id is not provided. getting ISO image from the URL.
+			isoSteps = []multistep.Step{
+				&commonsteps.StepDownload{
+					Checksum:    b.config.ISOChecksum,
+					Description: "ISO",
+					Extension:   "iso",
+					ResultKey:   "iso_path",
+					TargetPath:  b.config.TargetPath,
+					Url:         b.config.ISOUrls,
+				},
+				&stepRemoteUpload{
+					Debug: b.config.PackerDebug,
+				},
+				&stepPrepareISO{
+					Debug: b.config.PackerDebug,
+				},
+			}
+		}
+
 		steps = append(isoSteps, steps...)
 	}
 
