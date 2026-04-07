@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.12.1](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.12.0...v0.12.1) - 2026-04-07
+- `iso_checksum_url` and `iso_checksum_url` was removed since packer 1.… by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/297
+- makefile: use `packer plugins install --path` by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/296
+- k3os was deprecated. Remove example from the repo. by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/299
+- Remove scientific linux example by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/300
+- replace sacloud/ftps to jlaffaye/ftp by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/302
+
 ## [v0.12.0](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.11.0...v0.12.0) - 2026-02-04
 - ftps: use Min/Max version and ServerName in tls.Config by @yamamoto-febc in https://github.com/sacloud/packer-plugin-sakuracloud/pull/280
 - go: bump github.com/sacloud/api-client-go from 0.3.4 to 0.3.5 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/279
