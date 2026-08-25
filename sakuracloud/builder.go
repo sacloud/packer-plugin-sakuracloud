@@ -10,9 +10,9 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/multistep/commonsteps"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/sacloud/iaas-api-go/types"
 	"github.com/sacloud/packer-plugin-sakuracloud/platform"
 	"github.com/sacloud/packer-plugin-sakuracloud/sakuracloud/constants"
+	"github.com/sacloud/sacloud-sdk-go/api/iaas/types"
 )
 
 // BuilderId is the unique id for the builder

@@ -6,8 +6,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/sacloud/iaas-api-go/types"
 	"github.com/sacloud/packer-plugin-sakuracloud/platform"
+	"github.com/sacloud/sacloud-sdk-go/api/iaas/types"
 )
 
 // Artifact is the result of a build and is the metadata that documents
