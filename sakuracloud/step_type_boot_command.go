@@ -82,7 +82,7 @@ func (s *stepTypeBootCommand) Run(ctx context.Context, state multistep.StateBag)
 		host = vncCredentials.IOServerHost
 	}
 
-	nc, err := net.Dial("tcp", fmt.Sprintf("%s:%s", host, vncCredentials.Port))
+	nc, err := net.Dial("tcp", vncAddress(host, vncCredentials.Port.String()))
 	if err != nil {
 		err := fmt.Errorf("Error connecting to VNC: %s", err)
 		state.Put("error", err)
@@ -138,6 +138,10 @@ func (s *stepTypeBootCommand) Run(ctx context.Context, state multistep.StateBag)
 }
 
 func (*stepTypeBootCommand) Cleanup(multistep.StateBag) {}
+
+func vncAddress(host, port string) string {
+	return net.JoinHostPort(host, port)
+}
 
 func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 	// Scancodes reference: https://github.com/qemu/qemu/blob/master/ui/vnc_keysym.h
@@ -458,7 +462,7 @@ func vncSendString(c *vnc.ClientConn, original string, useUSKeyboard bool) {
 		if keyCode == 0 {
 			r, size := utf8.DecodeRuneInString(original)
 			original = original[size:]
-			keyCode = uint32(r)
+			keyCode = uint32(r) //nolint:gosec // utf8.DecodeRuneInString never returns a negative rune.
 			keyShift = unicode.IsUpper(r) || strings.ContainsRune(shiftedChars, r)
 
 			log.Printf("Sending char '%c', code %d, shift %v", r, keyCode, keyShift)
