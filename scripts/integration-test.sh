@@ -25,7 +25,7 @@ if [[ -z "${SAKURA_ACCESS_TOKEN:-}" ]] || [[ -z "${SAKURA_ACCESS_TOKEN_SECRET:-}
 fi
 
 echo "==> Step 1: Confirm archive list is empty before test"
-before=$(usacloud archive list -o table --scope user --zone is1b -o json)
+before=$(usacloud archive list --scope user --zone is1b -o json)
 echo "$before"
 if [[ -n "$before" ]] && [[ "$before" != "[]" ]]; then
     echo "Error: Expected empty array before test, but got: $before" >&2
