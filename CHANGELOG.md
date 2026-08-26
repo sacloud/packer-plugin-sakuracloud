@@ -1,5 +1,31 @@
 # Changelog
 
+## [v0.12.1](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.12.0...v0.12.1) - 2026-08-26
+
+### 🚀 Changes
+- `iso_checksum_url` and `iso_checksum_url` was removed since packer 1.… by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/297
+- makefile: use `packer plugins install --path` by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/296
+- k3os was deprecated. Remove example from the repo. by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/299
+- Remove scientific linux example by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/300
+- replace sacloud/ftps to jlaffaye/ftp by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/302
+- ghcr.io now accepts GITHUB_TOKEN by @shyouhei in https://github.com/sacloud/packer-plugin-sakuracloud/pull/306
+- pin actions by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/307
+- Fix VNC address construction by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/308
+- chore: update golangci-lint to v2.12.2 and Go to 1.26 by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/310
+- Migrate sacloud sdk go by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/309
+- Update release.yml changelog categories by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/311
+- Dockerfile 内での go インタープリターバージョンを 1.26 にします by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/313
+- feat: add integration test script by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/312
+### 📦 Dependency Updates
+- ci: bump docker/setup-buildx-action from 3.12.0 to 4.3.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/290
+- go: bump golang.org/x/crypto from 0.54.0 to 0.55.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/303
+- go: bump github.com/hashicorp/packer-plugin-sdk from 0.6.5 to 0.6.10 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/295
+- ci: bump docker/setup-qemu-action from 3.7.0 to 4.2.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/289
+- ci: bump docker/login-action from 3.7.0 to 4.6.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/288
+- ci: bump crazy-max/ghaction-import-gpg from 6.3.0 to 7.0.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/287
+- ci: bump goreleaser/goreleaser-action from 6.4.0 to 7.2.3 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/286
+- go: bump google.golang.org/grpc from 1.79.3 to 1.82.1 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/314
+
 ## [v0.12.0](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.11.0...v0.12.0) - 2026-02-04
 - ftps: use Min/Max version and ServerName in tls.Config by @yamamoto-febc in https://github.com/sacloud/packer-plugin-sakuracloud/pull/280
 - go: bump github.com/sacloud/api-client-go from 0.3.4 to 0.3.5 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/279
