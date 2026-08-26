@@ -3,6 +3,8 @@ on:
   schedule:
     - cron: '30 23 * * *'
   workflow_dispatch:
+permissions:
+  contents: read
 env:
   GOPROXY: https://proxy.golang.org
 jobs:
