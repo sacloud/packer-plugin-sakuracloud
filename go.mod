@@ -11,7 +11,7 @@ require (
 	github.com/sacloud/sacloud-sdk-go v0.1.1-0.20260826005941-a89e20cd2874
 	github.com/stretchr/testify v1.11.1
 	github.com/zclconf/go-cty v1.18.1
-	golang.org/x/crypto v0.54.0
+	golang.org/x/crypto v0.55.0
 )
 
 require (
@@ -125,7 +125,7 @@ require (
 	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/term v0.45.0 // indirect
-	golang.org/x/text v0.40.0 // indirect
+	golang.org/x/text v0.41.0 // indirect
 	golang.org/x/time v0.11.0 // indirect
 	golang.org/x/tools v0.48.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
