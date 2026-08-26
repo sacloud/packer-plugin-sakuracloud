@@ -6,14 +6,14 @@ import (
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
-	"github.com/sacloud/iaas-api-go"
-	"github.com/sacloud/iaas-api-go/helper/power"
-	"github.com/sacloud/iaas-api-go/ostype"
-	"github.com/sacloud/iaas-api-go/types"
-	diskBuilders "github.com/sacloud/iaas-service-go/disk/builder"
-	serverBuilders "github.com/sacloud/iaas-service-go/server/builder"
 	"github.com/sacloud/packer-plugin-sakuracloud/platform"
 	"github.com/sacloud/packer-plugin-sakuracloud/sakuracloud/constants"
+	"github.com/sacloud/sacloud-sdk-go/api/iaas"
+	"github.com/sacloud/sacloud-sdk-go/api/iaas/helper/power"
+	"github.com/sacloud/sacloud-sdk-go/api/iaas/ostype"
+	"github.com/sacloud/sacloud-sdk-go/api/iaas/types"
+	diskBuilders "github.com/sacloud/sacloud-sdk-go/service/iaas/disk/builder"
+	serverBuilders "github.com/sacloud/sacloud-sdk-go/service/iaas/server/builder"
 )
 
 type stepCreateServer struct {

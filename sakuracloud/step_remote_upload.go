@@ -12,12 +12,12 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
 	ftpclient "github.com/jlaffaye/ftp"
-	"github.com/sacloud/iaas-api-go"
-	"github.com/sacloud/iaas-api-go/search"
-	"github.com/sacloud/iaas-api-go/types"
-	"github.com/sacloud/packages-go/size"
 	"github.com/sacloud/packer-plugin-sakuracloud/platform"
 	"github.com/sacloud/packer-plugin-sakuracloud/sakuracloud/constants"
+	"github.com/sacloud/sacloud-sdk-go/api/iaas"
+	"github.com/sacloud/sacloud-sdk-go/api/iaas/search"
+	"github.com/sacloud/sacloud-sdk-go/api/iaas/types"
+	"github.com/sacloud/sacloud-sdk-go/common/packages/size"
 )
 
 type stepRemoteUpload struct {

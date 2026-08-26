@@ -11,20 +11,21 @@ import (
 	"testing"
 
 	"github.com/hashicorp/packer-plugin-sdk/acctest"
-	sacloudClient "github.com/sacloud/api-client-go"
-	"github.com/sacloud/iaas-api-go"
-	"github.com/sacloud/iaas-api-go/helper/api"
-	"github.com/sacloud/iaas-api-go/search"
+	"github.com/sacloud/sacloud-sdk-go/api/iaas"
+	"github.com/sacloud/sacloud-sdk-go/api/iaas/search"
+	"github.com/sacloud/sacloud-sdk-go/common/saclient"
 )
 
 func cleanupArchives() error {
 	zone := os.Getenv("SAKURA_ZONE")
-	client := api.NewCallerWithOptions(&api.CallerOptions{
-		Options: &sacloudClient.Options{
-			AccessToken:       os.Getenv("SAKURA_ACCESS_TOKEN"),
-			AccessTokenSecret: os.Getenv("SAKURA_ACCESS_TOKEN_SECRET"),
-		},
-	})
+	var sa saclient.Client
+	if err := sa.SetEnviron(os.Environ()); err != nil {
+		return err
+	}
+	if err := sa.Populate(); err != nil {
+		return err
+	}
+	client := iaas.NewClientFromSaclient(&sa)
 	archiveOp := iaas.NewArchiveOp(client)
 	found, err := archiveOp.Find(context.Background(), zone, &iaas.FindCondition{
 		Filter: search.Filter{
