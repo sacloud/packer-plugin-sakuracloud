@@ -1,6 +1,6 @@
 module github.com/sacloud/packer-plugin-sakuracloud
 
-go 1.25.5
+go 1.26
 
 require (
 	github.com/hashicorp/hcl/v2 v2.24.0
