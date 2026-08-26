@@ -2,3 +2,4 @@ bin/*
 .env
 test.iso
 packer-plugin-sakuracloud
+integration-test-*.log
