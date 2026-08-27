@@ -1,5 +1,17 @@
 # Changelog
 
+## [v0.12.2](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.12.1...v0.12.2) - 2026-08-27
+
+### 🚀 Changes
+- Harden test workflow permissions by @tokuhirom in https://github.com/sacloud/packer-plugin-sakuracloud/pull/316
+### 📦 Dependency Updates
+- ci: bump actions/checkout from 6.1.0 to 7.0.1 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/321
+- ci: bump actions/setup-go from 6.5.0 to 7.0.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/318
+- ci: bump docker/build-push-action from 6.19.2 to 7.3.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/320
+- ci: bump docker/metadata-action from 5.10.0 to 6.2.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/319
+- go: bump github.com/jlaffaye/ftp from 0.2.2 to 0.2.4 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/323
+- go: bump github.com/stretchr/testify from 1.11.1 to 1.12.1 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/322
+
 ## [v0.12.1](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.12.0...v0.12.1) - 2026-08-26
 
 ### 🚀 Changes
