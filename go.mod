@@ -11,7 +11,7 @@ require (
 	github.com/sacloud/sacloud-sdk-go v0.1.1-0.20260826005941-a89e20cd2874
 	github.com/stretchr/testify v1.12.1
 	github.com/zclconf/go-cty v1.18.1
-	golang.org/x/crypto v0.55.0
+	golang.org/x/crypto v0.56.0
 )
 
 require (
