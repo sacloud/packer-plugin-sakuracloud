@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.12.3](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.12.2...v0.12.3) - 2026-10-13
+
+### 📦 Dependency Updates
+- ci: bump Songmu/tagpr from 1.20.3 to 1.21.2 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/340
+- go: bump github.com/hashicorp/packer-plugin-sdk from 0.6.10 to 0.6.12 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/339
+- go: bump github.com/sacloud/sacloud-sdk-go from 0.1.1-0.20260826005941-a89e20cd2874 to 0.3.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/338
+- ci: bump docker/setup-buildx-action from 4.3.0 to 4.4.1 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/335
+- ci: bump docker/setup-qemu-action from 4.3.0 to 4.4.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/333
+- ci: bump docker/build-push-action from 7.3.0 to 7.4.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/332
+- go: bump golang.org/x/crypto from 0.57.0 to 0.58.0 by @dependabot[bot] in https://github.com/sacloud/packer-plugin-sakuracloud/pull/330
+
 ## [v0.12.2](https://github.com/sacloud/packer-plugin-sakuracloud/compare/v0.12.1...v0.12.2) - 2026-09-10
 
 ### 🚀 Changes
