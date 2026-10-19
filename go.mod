@@ -8,7 +8,7 @@ require (
 	github.com/jlaffaye/ftp v0.2.4
 	github.com/mitchellh/go-vnc v0.0.0-20150629162542-723ed9867aed
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/sacloud/sacloud-sdk-go v0.3.0
+	github.com/sacloud/sacloud-sdk-go v0.3.1
 	github.com/stretchr/testify v1.12.1
 	github.com/zclconf/go-cty v1.19.0
 	golang.org/x/crypto v0.58.0
